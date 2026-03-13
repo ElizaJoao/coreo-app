@@ -1,0 +1,20 @@
+{
+  "name": "coreo-app",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace web",
+    "dev:mobile": "npm run start --workspace mobile",
+    "dev:api": "npm run dev --workspace api",
+    "dev": "npm run dev:web & npm run dev:api",
+    "build": "npm run build --workspace web && npm run build --workspace api",
+    "lint": "npm run lint --workspace web && npm run lint --workspace api"
+  },
+  "devDependencies": {
+    "turbo": "^2.8.16"
+  }
+}
