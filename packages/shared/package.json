@@ -2,5 +2,8 @@
   "name": "@coreo/shared",
   "version": "1.0.0",
   "private": true,
-  "main": "src/index.ts"
+  "main": "src/index.ts",
+  "dependencies": {
+    "zod": "^3.25.76"
+  }
 }

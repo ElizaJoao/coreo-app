@@ -8,10 +8,18 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@coreo/shared": "workspace:*",
+    "bcryptjs": "^3.0.2",
     "express": "^4.19.2",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.1.5"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.18",
+    "@types/express": "^4.17.23",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/bcryptjs": "^2.4.6",
     "tsx": "^4.9.3",
     "typescript": "^5.7.0"
   }
