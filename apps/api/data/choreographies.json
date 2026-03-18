@@ -1,0 +1,42 @@
+{
+  "items": [
+    {
+      "id": "kDzx-ikI0YWDNRtaV5Hgl",
+      "name": "Salsa — intermediate (30min)",
+      "style": "Salsa",
+      "level": "intermediate",
+      "audience": "adults",
+      "durationMinutes": 30,
+      "bpm": 160,
+      "timeline": [
+        {
+          "name": "Step touch",
+          "counts": "8x8",
+          "cue": "Moderate focus — clean transitions"
+        },
+        {
+          "name": "Grapevine",
+          "counts": "4x8",
+          "cue": "Moderate focus — clean transitions"
+        },
+        {
+          "name": "V-step",
+          "counts": "4x8",
+          "cue": "Moderate focus — clean transitions"
+        },
+        {
+          "name": "Mambo",
+          "counts": "4x8",
+          "cue": "Moderate focus — clean transitions"
+        },
+        {
+          "name": "Turn + pose",
+          "counts": "4x8",
+          "cue": "Moderate focus — clean transitions"
+        }
+      ],
+      "createdAt": "2026-03-17T15:24:54.770Z",
+      "updatedAt": "2026-03-17T15:24:54.770Z"
+    }
+  ]
+}

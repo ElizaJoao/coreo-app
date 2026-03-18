@@ -1,0 +1,13 @@
+{
+  "items": [
+    {
+      "id": "IhFpLC36H1ZcyMwttvB9J",
+      "email": "test2@example.com",
+      "createdAt": "2026-03-17T17:54:28.983Z",
+      "subscription": {
+        "status": "none"
+      },
+      "passwordHash": "$2b$10$uDpPeo/4ufKV3oReXMrGe.hAYe.Z.Y50tUdutkgqjNeADIa1srcBi"
+    }
+  ]
+}
