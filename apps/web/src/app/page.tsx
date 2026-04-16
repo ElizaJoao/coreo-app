@@ -4,18 +4,10 @@ export default function Home() {
   const sample: Choreography = { id: "1", name: "Warmup Flow", style: "Zumba" };
 
   return (
-    <main style={{ padding: 24 }}>
-      <h1 style={{ marginTop: 0 }}>Coreo</h1>
+    <main className="p-6">
+      <h1 className="mt-0 text-3xl font-semibold tracking-tight">Coreo</h1>
       <p>Web app scaffold is running.</p>
-      <pre
-        style={{
-          background: "#111",
-          color: "#eee",
-          padding: 16,
-          borderRadius: 8,
-          overflowX: "auto"
-        }}
-      >
+      <pre className="mt-4 overflow-x-auto rounded-lg bg-zinc-900/80 p-4 text-sm text-zinc-100">
         {JSON.stringify(sample, null, 2)}
       </pre>
     </main>
