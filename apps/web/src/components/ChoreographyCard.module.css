@@ -1,0 +1,25 @@
+@reference "tailwindcss";
+
+.card {
+  @apply block rounded-2xl border border-zinc-800 bg-[#0D0D0D] p-5 transition-colors hover:border-zinc-600;
+}
+
+.name {
+  @apply text-base font-semibold tracking-tight text-zinc-100;
+}
+
+.meta {
+  @apply mt-2 flex flex-wrap gap-1.5;
+}
+
+.badge {
+  @apply rounded-full border border-zinc-700 px-2.5 py-0.5 text-xs text-zinc-400;
+}
+
+.badgeAccent {
+  @apply rounded-full bg-[#F5C842]/15 px-2.5 py-0.5 text-xs font-medium text-[#F5C842];
+}
+
+.date {
+  @apply mt-3 text-xs text-zinc-500;
+}

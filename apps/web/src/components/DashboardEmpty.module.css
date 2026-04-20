@@ -1,0 +1,13 @@
+@reference "tailwindcss";
+
+.container {
+  @apply flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-700 py-16 text-center;
+}
+
+.message {
+  @apply text-zinc-400;
+}
+
+.btn {
+  @apply mt-4 rounded-xl bg-[#F5C842] px-5 py-2 text-sm font-semibold text-black transition-opacity hover:opacity-90;
+}

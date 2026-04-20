@@ -5,6 +5,9 @@ dist
 
 # Next.js build output
 .next
+.env
+.env.*
+!.env.example
 
 # Expo / React Native
 .expo

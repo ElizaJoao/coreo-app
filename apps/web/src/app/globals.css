@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --font-inter: "Inter", sans-serif;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter);
+}
+

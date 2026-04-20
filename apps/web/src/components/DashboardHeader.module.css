@@ -1,0 +1,23 @@
+@reference "tailwindcss";
+
+.header {
+  @apply flex items-center justify-between gap-4;
+}
+
+.headingGroup {}
+
+.title {
+  @apply m-0 text-3xl font-semibold tracking-tight text-[#F5C842];
+}
+
+.greeting {
+  @apply mt-1 text-sm text-zinc-400;
+}
+
+.actions {
+  @apply flex items-center gap-2;
+}
+
+.newBtn {
+  @apply rounded-xl bg-[#F5C842] px-4 py-2 text-sm font-semibold text-black transition-opacity hover:opacity-90;
+}

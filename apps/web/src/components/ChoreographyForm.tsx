@@ -1,0 +1,155 @@
+"use client";
+
+import type {
+  ChoreographyDifficulty,
+  ChoreographyDurationMinutes,
+  ChoreographyStyle,
+} from "../types/choreography";
+import styles from "./ChoreographyForm.module.css";
+
+export type ChoreographyFormProps = {
+  style: ChoreographyStyle;
+  onStyleChange: (style: ChoreographyStyle) => void;
+  danceStyles: readonly ChoreographyStyle[];
+  fitnessStyles: readonly ChoreographyStyle[];
+  styleError?: string;
+
+  duration: ChoreographyDurationMinutes;
+  durationIndex: number;
+  durationIndexMin: number;
+  durationIndexMax: number;
+  onDurationIndexChange: (index: number) => void;
+  durationError?: string;
+
+  targetAudience: string;
+  onTargetAudienceChange: (value: string) => void;
+  targetAudienceError?: string;
+
+  difficulty: ChoreographyDifficulty;
+  onDifficultyChange: (difficulty: ChoreographyDifficulty) => void;
+  difficulties: readonly ChoreographyDifficulty[];
+  difficultyError?: string;
+
+  description: string;
+  onDescriptionChange: (value: string) => void;
+  descriptionError?: string;
+
+  isValid: boolean;
+  isSubmitting?: boolean;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+};
+
+export function ChoreographyForm(props: ChoreographyFormProps) {
+  return (
+    <form onSubmit={props.onSubmit} className={styles.form}>
+      <div className={styles.header}>
+        <div className={styles.headerText}>
+          <h2 className={styles.title}>Create a choreography</h2>
+          <p className={styles.subtitle}>Pick a style, duration, and audience.</p>
+        </div>
+        <div className={styles.badge}>Coreo</div>
+      </div>
+
+      <div className={styles.fields}>
+        <div className={styles.field}>
+          <label className={styles.label}>Style</label>
+          <select
+            value={props.style}
+            onChange={(e) => props.onStyleChange(e.target.value as ChoreographyStyle)}
+            className={styles.select}
+          >
+            <optgroup label="Dance">
+              {props.danceStyles.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Fitness">
+              {props.fitnessStyles.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </optgroup>
+          </select>
+          {props.styleError ? <p className={styles.fieldError}>{props.styleError}</p> : null}
+        </div>
+
+        <div className={styles.field}>
+          <div className={styles.durationRow}>
+            <label className={styles.label}>Duration</label>
+            <span className={styles.durationValue}>{props.duration} min</span>
+          </div>
+          <input
+            type="range"
+            min={props.durationIndexMin}
+            max={props.durationIndexMax}
+            step={1}
+            value={props.durationIndex}
+            onChange={(e) => props.onDurationIndexChange(Number(e.target.value))}
+            className={styles.rangeInput}
+          />
+          {props.durationError ? (
+            <p className={styles.fieldError}>{props.durationError}</p>
+          ) : null}
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label}>Target audience</label>
+          <input
+            value={props.targetAudience}
+            onChange={(e) => props.onTargetAudienceChange(e.target.value)}
+            placeholder="e.g., Seniors, Beginners, HIIT lovers"
+            className={styles.input}
+          />
+          {props.targetAudienceError ? (
+            <p className={styles.fieldError}>{props.targetAudienceError}</p>
+          ) : null}
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label}>Difficulty</label>
+          <select
+            value={props.difficulty}
+            onChange={(e) => props.onDifficultyChange(e.target.value as ChoreographyDifficulty)}
+            className={styles.select}
+          >
+            {props.difficulties.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+          {props.difficultyError ? (
+            <p className={styles.fieldError}>{props.difficultyError}</p>
+          ) : null}
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label}>Description</label>
+          <textarea
+            value={props.description}
+            onChange={(e) => props.onDescriptionChange(e.target.value)}
+            rows={5}
+            placeholder="Describe the vibe, goals, and any constraints…"
+            className={styles.textarea}
+          />
+          {props.descriptionError ? (
+            <p className={styles.fieldError}>{props.descriptionError}</p>
+          ) : null}
+        </div>
+      </div>
+
+      <div className={styles.footer}>
+        <button
+          type="submit"
+          disabled={!props.isValid || props.isSubmitting}
+          className={styles.submitBtn}
+        >
+          {props.isSubmitting ? "Generating…" : "Generate"}
+        </button>
+      </div>
+    </form>
+  );
+}
