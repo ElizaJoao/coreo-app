@@ -1,0 +1,19 @@
+@reference "tailwindcss";
+
+.wave {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 28px;
+  opacity: 0.9;
+}
+
+.bar {
+  width: 2.5px;
+  background: var(--accent);
+  border-radius: 2px;
+}

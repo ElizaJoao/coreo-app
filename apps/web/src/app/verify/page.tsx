@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 
@@ -8,23 +8,17 @@ import { VerifyForm } from "../../components/VerifyForm";
 import { type VerificationMethod } from "../../constants/auth";
 import { ROUTES } from "../../constants/routes";
 import { useVerifyForm } from "../../hooks/useVerifyForm";
+import { loadPendingVerifySession, type PendingVerifySession } from "../../lib/pending-verify-session";
 
-const SESSION_KEY = "coreo_pending_verify";
-
-export type PendingVerifySession = {
-  email: string;
-  password: string;
-};
-
-export function savePendingVerifySession(data: PendingVerifySession) {
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
+export default function VerifyPageShell() {
+  return (
+    <Suspense>
+      <VerifyPage />
+    </Suspense>
+  );
 }
 
-export function clearPendingVerifySession() {
-  sessionStorage.removeItem(SESSION_KEY);
-}
-
-export default function VerifyPage() {
+function VerifyPage() {
   const params = useSearchParams();
   const [session, setSession] = useState<PendingVerifySession | null>(null);
   const [ready, setReady] = useState(false);
@@ -34,10 +28,7 @@ export default function VerifyPage() {
   const destination = params.get("dest") ?? "";
 
   useEffect(() => {
-    const raw = sessionStorage.getItem(SESSION_KEY);
-    if (raw) {
-      setSession(JSON.parse(raw) as PendingVerifySession);
-    }
+    setSession(loadPendingVerifySession());
     setReady(true);
   }, []);
 

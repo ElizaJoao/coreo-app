@@ -126,10 +126,9 @@ export function useAuthForm(mode: Mode) {
         const { pendingId } = (await response.json()) as { pendingId: string };
 
         // Store credentials in sessionStorage — never in the URL
-        sessionStorage.setItem(
-          "coreo_pending_verify",
-          JSON.stringify({ email: values.email, password: values.password }),
-        );
+        import("../lib/pending-verify-session").then(({ savePendingVerifySession }) => {
+          savePendingVerifySession({ email: values.email, password: values.password });
+        });
 
         const destination =
           values.method === "email" ? maskEmail(values.email) : maskPhone(values.phone);

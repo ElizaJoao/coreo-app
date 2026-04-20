@@ -1,13 +1,206 @@
 @reference "tailwindcss";
 
-.main {
-  @apply p-6;
+.page {
+  padding: 32px 28px 80px 28px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-.emptyWrapper {
-  @apply mt-10;
+/* Hero header */
+.pageHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
 }
 
+.pageTitle {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin: 0;
+  line-height: 1.05;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  color: var(--text);
+}
+
+.accentWord {
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 800;
+}
+
+.pageSub {
+  color: var(--text-3);
+  font-size: 14px;
+  margin-top: 8px;
+  max-width: 540px;
+}
+
+.pageActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  transition: all 120ms;
+  letter-spacing: -0.005em;
+}
+
+.btnGhost:hover {
+  background: var(--surface-2);
+  color: var(--text);
+  border-color: var(--border-2);
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: var(--shadow-btn-primary);
+  cursor: pointer;
+  transition: filter 120ms, transform 120ms;
+  letter-spacing: -0.005em;
+}
+
+.btnPrimary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+/* Stats strip */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* Section header */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 28px 0 14px 0;
+  gap: 16px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0;
+  color: var(--text);
+}
+
+.sectionAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  transition: all 120ms;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.sectionAction:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* Week row */
+.calRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 120ms;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  border-color: var(--border-2);
+  color: var(--text);
+}
+
+.chipActive {
+  composes: chip;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: transparent;
+  font-weight: 600;
+}
+
+.filterDivider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+/* Card grid */
 .grid {
-  @apply mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+@media (max-width: 960px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

@@ -1,0 +1,66 @@
+@reference "tailwindcss";
+
+.cell {
+  flex: 1;
+  min-width: 80px;
+  padding: 12px 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 120ms;
+  text-align: center;
+}
+
+.cell:hover {
+  border-color: var(--border-2);
+}
+
+.cellToday {
+  composes: cell;
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.name {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+.number {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 4px 0;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.cellToday .number {
+  color: var(--accent);
+}
+
+.classes {
+  font-size: 11px;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-weight: 500;
+}
+
+.rest {
+  color: var(--text-4);
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}

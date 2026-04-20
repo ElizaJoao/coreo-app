@@ -16,6 +16,7 @@ export type ChoreographyMove = {
   duration: number;
   description: string;
   order: number;
+  tag?: string;
 };
 
 export type Choreography = {
@@ -30,5 +31,7 @@ export type Choreography = {
   moves: ChoreographyMove[];
   createdAt: string;
   updatedAt: string;
+  plays?: number;
+  lastUsed?: string;
 };
 
