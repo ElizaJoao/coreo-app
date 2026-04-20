@@ -1,25 +1,74 @@
 @reference "tailwindcss";
 
 .card {
-  @apply block rounded-2xl border border-zinc-800 bg-[#0D0D0D] p-5 transition-colors hover:border-zinc-600;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 160ms, transform 160ms, box-shadow 160ms;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  text-decoration: none;
+}
+
+.card:hover {
+  border-color: var(--border-3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.headerText {
+  min-width: 0;
+}
+
+.styleLabel {
+  font-size: 11.5px;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
 }
 
 .name {
-  @apply text-base font-semibold tracking-tight text-zinc-100;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  color: var(--text);
 }
 
 .meta {
-  @apply mt-2 flex flex-wrap gap-1.5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
 }
 
-.badge {
-  @apply rounded-full border border-zinc-700 px-2.5 py-0.5 text-xs text-zinc-400;
+.footer {
+  margin-top: auto;
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  color: var(--text-3);
+  border-top: 1px solid var(--border);
 }
 
-.badgeAccent {
-  @apply rounded-full bg-[#F5C842]/15 px-2.5 py-0.5 text-xs font-medium text-[#F5C842];
-}
-
-.date {
-  @apply mt-3 text-xs text-zinc-500;
+.plays {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }

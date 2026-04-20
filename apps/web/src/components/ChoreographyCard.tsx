@@ -1,6 +1,10 @@
 import Link from "next/link";
 
+import { DANCE_STYLES } from "../constants/choreography";
 import type { Choreography } from "../types/choreography";
+import { Badge } from "./Badge";
+import { BpmPill } from "./BpmPill";
+import { MiniWaveform } from "./MiniWaveform";
 import styles from "./ChoreographyCard.module.css";
 
 export type ChoreographyCardProps = {
@@ -8,22 +12,39 @@ export type ChoreographyCardProps = {
   href: string;
 };
 
+function getCategory(style: string): string {
+  return (DANCE_STYLES as readonly string[]).includes(style) ? "Dance" : "Fitness";
+}
+
 export function ChoreographyCard({ choreography, href }: ChoreographyCardProps) {
-  const date = new Date(choreography.createdAt).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const category = getCategory(choreography.style);
+  const bpm = choreography.music?.bpm;
+  const waveSeed = bpm ?? choreography.moves.length * 17;
 
   return (
     <Link href={href} className={styles.card}>
-      <p className={styles.name}>{choreography.name}</p>
-      <div className={styles.meta}>
-        <span className={styles.badgeAccent}>{choreography.style}</span>
-        <span className={styles.badge}>{choreography.duration} min</span>
-        <span className={styles.badge}>{choreography.difficulty}</span>
+      <div className={styles.header}>
+        <div className={styles.headerText}>
+          <div className={styles.styleLabel}>{choreography.style} · {category}</div>
+          <div className={styles.name}>{choreography.name}</div>
+        </div>
+        {bpm && <BpmPill bpm={bpm} />}
       </div>
-      <p className={styles.date}>{date}</p>
+
+      <MiniWaveform seed={waveSeed} count={32} />
+
+      <div className={styles.meta}>
+        <Badge>{choreography.duration} min</Badge>
+        <Badge>{choreography.difficulty}</Badge>
+        <Badge>{choreography.moves.length} moves</Badge>
+      </div>
+
+      <div className={styles.footer}>
+        <span>{choreography.lastUsed ? `Used ${choreography.lastUsed}` : new Date(choreography.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+        {choreography.plays != null && (
+          <span className={styles.plays}>{choreography.plays} plays</span>
+        )}
+      </div>
     </Link>
   );
 }
