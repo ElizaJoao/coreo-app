@@ -67,13 +67,14 @@ export async function storePendingSignup(input: {
 export async function getPendingSignup(
   id: string,
 ): Promise<PendingSignupRow | null> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("pending_signups")
     .select()
     .eq("id", id)
     .gt("expires_at", new Date().toISOString())
     .single();
 
+  console.log("[getPendingSignup] id:", id, "data:", data, "error:", error);
   return (data as PendingSignupRow) ?? null;
 }
 
@@ -89,7 +90,7 @@ export async function sendEmailCode(
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   await resend.emails.send({
-    from: "Offbeat Move <noreply@offbeatmove.com>",
+    from: "Offbeat Move <onboarding@resend.dev>",
     to: email,
     subject: `Your verification code: ${code}`,
     html: `
@@ -107,6 +108,11 @@ export async function sendEmailCode(
 }
 
 export async function sendSmsCode(phone: string, code: string): Promise<void> {
+  if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
+    console.log(`[DEV] SMS code for ${phone}: ${code}`);
+    return;
+  }
+
   const client = twilio(
     process.env.TWILIO_ACCOUNT_SID,
     process.env.TWILIO_AUTH_TOKEN,

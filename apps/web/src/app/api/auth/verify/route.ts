@@ -23,7 +23,17 @@ export async function POST(request: Request) {
 
   const pending = await getPendingSignup(pendingId);
 
-  if (!pending || pending.code_hash !== hashCode(code)) {
+  if (!pending) {
+    console.error("[verify] pending signup not found or expired:", pendingId);
+    return NextResponse.json({ error: "Verification session expired. Please sign up again." }, { status: 400 });
+  }
+
+  const computedHash = hashCode(code);
+  console.log("[verify] submitted code:", JSON.stringify(code), "length:", code.length);
+  console.log("[verify] stored hash:", pending.code_hash);
+  console.log("[verify] computed hash:", computedHash);
+  if (pending.code_hash !== computedHash) {
+    console.error("[verify] code mismatch for pendingId:", pendingId);
     return NextResponse.json({ error: AUTH_ERRORS.INVALID_CODE }, { status: 400 });
   }
 

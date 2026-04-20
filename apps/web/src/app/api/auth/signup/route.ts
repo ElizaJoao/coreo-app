@@ -64,7 +64,8 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ pendingId });
-  } catch {
+  } catch (err) {
+    console.error("[signup]", err);
     return NextResponse.json({ error: AUTH_ERRORS.SEND_FAILED }, { status: 500 });
   }
 }
