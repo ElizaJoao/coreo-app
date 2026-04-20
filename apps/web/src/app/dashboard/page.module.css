@@ -1,0 +1,13 @@
+@reference "tailwindcss";
+
+.main {
+  @apply p-6;
+}
+
+.emptyWrapper {
+  @apply mt-10;
+}
+
+.grid {
+  @apply mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
+}

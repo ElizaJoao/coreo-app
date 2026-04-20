@@ -1,0 +1,17 @@
+@reference "tailwindcss";
+
+.main {
+  @apply p-6;
+}
+
+.title {
+  @apply m-0 text-3xl font-semibold tracking-tight text-[#F5C842];
+}
+
+.subtitle {
+  @apply mt-1 mb-6 text-sm text-zinc-400;
+}
+
+.errorBanner {
+  @apply mb-4 max-w-2xl rounded-xl border border-red-900 bg-red-950/40 px-4 py-3 text-sm text-red-300;
+}

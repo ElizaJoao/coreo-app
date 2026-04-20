@@ -1,0 +1,29 @@
+@reference "tailwindcss";
+
+.section {
+  @apply flex min-h-screen flex-col items-center justify-center px-6 text-center;
+}
+
+.eyebrow {
+  @apply mb-4 inline-block rounded-full bg-[#F5C842]/15 px-4 py-1 text-xs font-medium tracking-widest text-[#F5C842] uppercase;
+}
+
+.title {
+  @apply m-0 text-5xl font-bold tracking-tight;
+}
+
+.subtitle {
+  @apply mt-4 max-w-md text-base text-zinc-400;
+}
+
+.actions {
+  @apply mt-8 flex flex-wrap items-center justify-center gap-3;
+}
+
+.btnPrimary {
+  @apply rounded-xl bg-[#F5C842] px-6 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90;
+}
+
+.btnSecondary {
+  @apply rounded-xl border border-zinc-700 px-6 py-2.5 text-sm text-zinc-200 transition-colors hover:border-zinc-500;
+}

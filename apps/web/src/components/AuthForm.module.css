@@ -1,0 +1,55 @@
+@reference "tailwindcss";
+
+.form {
+  @apply w-full max-w-md rounded-2xl border border-zinc-800 bg-[#0D0D0D] p-6;
+}
+
+.title {
+  @apply m-0 text-2xl font-semibold text-[#F5C842];
+}
+
+.subtitle {
+  @apply mt-2 text-sm text-zinc-300;
+}
+
+.fields {
+  @apply mt-5 grid gap-4;
+}
+
+.field {}
+
+.label {
+  @apply text-sm font-medium text-zinc-200;
+}
+
+.input {
+  @apply mt-2 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-[#F5C842] focus:ring-2 focus:ring-[#F5C842]/30;
+}
+
+.hint {
+  @apply mt-1 text-xs text-zinc-400;
+}
+
+.fieldError {
+  @apply mt-1 text-sm text-red-300;
+}
+
+.formError {
+  @apply mt-4 text-sm text-red-300;
+}
+
+.submitBtn {
+  @apply mt-5 inline-flex w-full items-center justify-center rounded-xl bg-[#F5C842] px-4 py-2 text-sm font-semibold text-black disabled:opacity-50;
+}
+
+.methodToggle {
+  @apply mt-1 flex gap-2;
+}
+
+.methodBtn {
+  @apply flex-1 rounded-xl border border-zinc-700 bg-zinc-900 py-2 text-sm text-zinc-300 transition-colors;
+}
+
+.methodBtnActive {
+  @apply border-[#F5C842] bg-[#F5C842]/10 text-[#F5C842] font-medium;
+}

@@ -1,0 +1,73 @@
+@reference "tailwindcss";
+
+.card {
+  @apply w-full max-w-2xl rounded-2xl border border-zinc-800 bg-[#0D0D0D] p-6;
+}
+
+.header {}
+
+.name {
+  @apply m-0 text-2xl font-semibold tracking-tight;
+}
+
+.meta {
+  @apply mt-3 flex flex-wrap gap-2;
+}
+
+.badge {
+  @apply rounded-full border border-zinc-700 px-3 py-0.5 text-xs text-zinc-300;
+}
+
+.badgeAccent {
+  @apply rounded-full bg-[#F5C842]/15 px-3 py-0.5 text-xs font-medium text-[#F5C842];
+}
+
+.music {
+  @apply mt-5 rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3;
+}
+
+.musicLabel {
+  @apply text-xs font-medium uppercase tracking-widest text-zinc-500;
+}
+
+.musicTitle {
+  @apply mt-1 text-sm font-medium text-zinc-100;
+}
+
+.musicSub {
+  @apply text-xs text-zinc-400;
+}
+
+.movesSection {
+  @apply mt-6;
+}
+
+.movesTitle {
+  @apply mb-3 text-xs font-medium uppercase tracking-widest text-zinc-500;
+}
+
+.moveList {
+  @apply grid gap-3;
+}
+
+.move {
+  @apply flex gap-4 rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3;
+}
+
+.moveOrder {
+  @apply mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#F5C842]/15 text-xs font-semibold text-[#F5C842];
+}
+
+.moveBody {}
+
+.moveName {
+  @apply text-sm font-medium text-zinc-100;
+}
+
+.moveMeta {
+  @apply mt-0.5 text-xs text-zinc-400;
+}
+
+.moveDesc {
+  @apply mt-1 text-xs text-zinc-300;
+}
