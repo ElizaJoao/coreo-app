@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { useMusicSearch } from "../hooks/useMusicSearch";
 import type { ChoreographyMusic } from "../types/choreography";
@@ -15,41 +15,58 @@ export type MusicEditorProps = {
 export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
   const { query, setQuery, results, isSearching } = useMusicSearch();
   const [playingId, setPlayingId] = useState<number | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [audioError, setAudioError] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const currentIdRef = useRef<number | null>(null);
 
   function playPreview(trackId: number, previewUrl: string) {
-    if (playingId === trackId) {
-      audioRef.current?.pause();
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // Toggle off if same track
+    if (currentIdRef.current === trackId && !audio.paused) {
+      audio.pause();
       setPlayingId(null);
+      currentIdRef.current = null;
       return;
     }
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
-    const audio = new Audio(previewUrl);
+
+    setAudioError(false);
+    audio.src = previewUrl;
     audio.volume = 0.7;
-    audio.play().catch(() => null);
-    audio.onended = () => setPlayingId(null);
-    audioRef.current = audio;
+    currentIdRef.current = trackId;
     setPlayingId(trackId);
+
+    audio.load();
+    audio.play().catch(() => {
+      setAudioError(true);
+      setPlayingId(null);
+      currentIdRef.current = null;
+    });
   }
 
   function selectTrack(trackName: string, artistName: string) {
     onUpdate({ title: trackName, artist: artistName });
     setQuery("");
-    audioRef.current?.pause();
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
     setPlayingId(null);
+    currentIdRef.current = null;
   }
-
-  useEffect(() => {
-    return () => { audioRef.current?.pause(); };
-  }, []);
 
   const m = music ?? { title: "", artist: "", bpm: 120 };
   const showResults = results.length > 0 && query.trim().length >= 2;
 
   return (
     <div className={styles.root}>
+      {/* Hidden audio element — always in DOM so ref is stable */}
+      <audio
+        ref={audioRef}
+        onEnded={() => { setPlayingId(null); currentIdRef.current = null; }}
+        onError={() => { setAudioError(true); setPlayingId(null); currentIdRef.current = null; }}
+      />
+
       {/* Search */}
       <div className={styles.searchRow}>
         <div className={styles.searchWrap}>
@@ -63,6 +80,10 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
           {isSearching && <span className={styles.searchSpinner} />}
         </div>
       </div>
+
+      {audioError && (
+        <p className={styles.audioError}>Preview unavailable for this track.</p>
+      )}
 
       {/* Results */}
       {showResults && (
