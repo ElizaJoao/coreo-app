@@ -89,7 +89,7 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate }: Sidebar
         <div className={styles.upgradeCard}>
           <div className={styles.upgradeTitle}>Upgrade to Pro</div>
           <div className={styles.upgradeDesc}>Unlimited choreographies & music search</div>
-          <button type="button" className={styles.upgradeBtn} onClick={() => onNavigate("/")}>
+          <button type="button" className={styles.upgradeBtn} onClick={() => onNavigate("/dashboard/upgrade")}>
             View plans →
           </button>
         </div>
