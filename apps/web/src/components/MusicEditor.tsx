@@ -20,8 +20,9 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
   const currentIdRef = useRef<number | null>(null);
 
   function playPreview(trackId: number, previewUrl: string) {
+    console.log("[MusicEditor] playPreview", { trackId, previewUrl, audioEl: audioRef.current });
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio) { console.error("[MusicEditor] no audio element"); return; }
 
     if (currentIdRef.current === trackId && !audio.paused) {
       audio.pause();
@@ -31,8 +32,7 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
     }
 
     setAudioError(false);
-    // Route through proxy to avoid CDN CORS/CSP issues
-    audio.src = `/api/music/preview?url=${encodeURIComponent(previewUrl)}`;
+    audio.src = previewUrl;
     audio.volume = 0.7;
     currentIdRef.current = trackId;
     setPlayingId(trackId);
