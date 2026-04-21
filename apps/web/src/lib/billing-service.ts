@@ -7,25 +7,34 @@ const PLAN_PRICE_IDS: Record<"pro" | "max", string> = {
   max: process.env.STRIPE_MAX_PRICE_ID!,
 };
 
+function isTestMode(): boolean {
+  return process.env.STRIPE_SECRET_KEY?.startsWith("sk_test_") ?? false;
+}
+
+function customerIdColumn(): "stripe_customer_id" | "stripe_test_customer_id" {
+  return isTestMode() ? "stripe_test_customer_id" : "stripe_customer_id";
+}
+
 export async function getOrCreateStripeCustomer(
   userId: string,
   email: string,
   name: string,
 ): Promise<string> {
+  const col = customerIdColumn();
   const { data } = await supabase
     .from("users")
-    .select("stripe_customer_id")
+    .select(col)
     .eq("id", userId)
     .single();
 
-  const existing = (data as { stripe_customer_id: string | null } | null)?.stripe_customer_id;
+  const existing = (data as Record<string, string | null> | null)?.[col];
   if (existing) return existing;
 
   const customer = await getStripe().customers.create({ email, name, metadata: { userId } });
 
   await supabase
     .from("users")
-    .update({ stripe_customer_id: customer.id })
+    .update({ [col]: customer.id })
     .eq("id", userId);
 
   return customer.id;
@@ -51,7 +60,7 @@ export async function createCheckoutSession(opts: {
     metadata: { userId: opts.userId, plan: opts.plan },
     subscription_data: { metadata: { userId: opts.userId, plan: opts.plan } },
     locale: "pt" as const,
-    phone_number_collection: { enabled: true }, // required for MB WAY
+    phone_number_collection: { enabled: true },
   });
 
   return session.url!;
@@ -61,13 +70,14 @@ export async function createPortalSession(
   userId: string,
   returnUrl: string,
 ): Promise<string> {
+  const col = customerIdColumn();
   const { data } = await supabase
     .from("users")
-    .select("stripe_customer_id")
+    .select(col)
     .eq("id", userId)
     .single();
 
-  const customerId = (data as { stripe_customer_id: string | null } | null)?.stripe_customer_id;
+  const customerId = (data as Record<string, string | null> | null)?.[col];
   if (!customerId) throw new Error("No Stripe customer found");
 
   const portal = await getStripe().billingPortal.sessions.create({
@@ -85,10 +95,11 @@ export async function setUserPlan(userId: string, plan: Plan, subscriptionId?: s
 }
 
 export async function getUserByStripeCustomerId(customerId: string) {
+  const col = customerIdColumn();
   const { data } = await supabase
     .from("users")
     .select("id, plan")
-    .eq("stripe_customer_id", customerId)
+    .eq(col, customerId)
     .single();
   return data as { id: string; plan: Plan } | null;
 }
