@@ -2,12 +2,16 @@
 
 import { useState } from "react";
 
-import { PLAN_META, type Plan } from "../../../constants/plans";
+import { PLAN_META, PLANS, type Plan } from "../../../constants/plans";
 import styles from "./page.module.css";
 
-const PLANS: ("pro" | "max")[] = ["pro", "max"];
-
-export function UpgradeClient({ currentPlan }: { currentPlan: Plan }) {
+export function UpgradeClient({
+  currentPlan,
+  success,
+}: {
+  currentPlan: Plan;
+  success?: boolean;
+}) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string>();
 
@@ -39,83 +43,105 @@ export function UpgradeClient({ currentPlan }: { currentPlan: Plan }) {
       window.location.href = data.url;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
-      setLoading("portal");
-    } finally {
       setLoading(null);
     }
   }
 
-  const isPaid = currentPlan !== "free";
-
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1 className={styles.title}>
-          {isPaid ? "Your subscription" : "Upgrade your plan"}
-        </h1>
+        <h1 className={styles.title}>Plans & billing</h1>
         <p className={styles.subtitle}>
-          {isPaid
-            ? "Manage your current subscription or change plans."
-            : "Unlock unlimited choreographies, music search, and more."}
+          Choose the plan that fits your needs. Cancel anytime.
         </p>
       </div>
 
+      {success && (
+        <div className={styles.successBanner}>
+          Payment successful — your plan has been activated!
+        </div>
+      )}
+
       {error && <p className={styles.error}>{error}</p>}
 
-      {isPaid ? (
-        <div className={styles.activeCard}>
-          <div className={styles.activePlanName}>
-            {PLAN_META[currentPlan].name} plan
-          </div>
-          <p className={styles.activePlanDesc}>
-            You have access to all {PLAN_META[currentPlan].name} features.
-          </p>
-          <button
-            type="button"
-            className={styles.portalBtn}
-            onClick={handleManageBilling}
-            disabled={loading === "portal"}
-          >
-            {loading === "portal" ? "Opening…" : "Manage billing & invoices →"}
-          </button>
-        </div>
-      ) : (
-        <div className={styles.grid}>
-          {PLANS.map((planId) => {
-            const plan = PLAN_META[planId];
-            return (
-              <div key={planId} className={`${styles.card} ${planId === "pro" ? styles.cardHighlight : ""}`}>
-                {plan.badge && <span className={styles.badge}>{plan.badge}</span>}
-                <div className={styles.planName}>{plan.name}</div>
-                <div className={styles.price}>
-                  <span className={styles.priceCurrency}>€</span>
-                  <span className={styles.priceAmount}>{plan.price}</span>
-                  <span className={styles.pricePeriod}>/mo</span>
-                </div>
-                <ul className={styles.features}>
-                  {plan.features.map((f) => (
-                    <li key={f} className={styles.feature}>
-                      <span className={styles.check}>✓</span>{f}
-                    </li>
-                  ))}
-                </ul>
+      <div className={styles.grid}>
+        {PLANS.map((planId) => {
+          const plan = PLAN_META[planId];
+          const isCurrent = planId === currentPlan;
+          const isUpgradeable = planId !== "free" && !isCurrent;
+
+          return (
+            <div
+              key={planId}
+              className={`${styles.card} ${plan.highlight && !isCurrent ? styles.cardHighlight : ""} ${isCurrent ? styles.cardCurrent : ""}`}
+            >
+              {isCurrent && (
+                <span className={styles.badgeCurrent}>Current plan</span>
+              )}
+              {!isCurrent && plan.badge && (
+                <span className={styles.badge}>{plan.badge}</span>
+              )}
+
+              <div className={styles.planName}>{plan.name}</div>
+
+              <div className={styles.price}>
+                {plan.price === 0 ? (
+                  <span className={styles.priceAmount}>Free</span>
+                ) : (
+                  <>
+                    <span className={styles.priceCurrency}>€</span>
+                    <span className={styles.priceAmount}>{plan.price}</span>
+                    <span className={styles.pricePeriod}>/mo</span>
+                  </>
+                )}
+              </div>
+
+              <ul className={styles.features}>
+                {plan.features.map((f) => (
+                  <li key={f} className={styles.feature}>
+                    <span className={styles.check}>✓</span>{f}
+                  </li>
+                ))}
+              </ul>
+
+              {planId !== "free" && (
                 <div className={styles.paymentMethods}>
                   <span className={styles.paymentLabel}>Pay with</span>
                   <span className={styles.paymentChip}>💳 Card</span>
                   <span className={styles.paymentChip}>🏦 Multibanco</span>
                 </div>
+              )}
+
+              {isCurrent ? (
+                <button type="button" className={styles.btnCurrent} disabled>
+                  Current plan
+                </button>
+              ) : isUpgradeable ? (
                 <button
                   type="button"
-                  className={planId === "pro" ? styles.btnPrimary : styles.btnSecondary}
-                  onClick={() => handleUpgrade(planId)}
+                  className={plan.highlight ? styles.btnPrimary : styles.btnSecondary}
+                  onClick={() => handleUpgrade(planId as "pro" | "max")}
                   disabled={!!loading}
                 >
-                  {loading === planId ? "Redirecting…" : `Start ${plan.name} — €${plan.price}/mo`}
+                  {loading === planId
+                    ? "Redirecting…"
+                    : `Start ${plan.name} — €${plan.price}/mo`}
                 </button>
-              </div>
-            );
-          })}
-        </div>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+
+      {currentPlan !== "free" && (
+        <button
+          type="button"
+          className={styles.portalBtn}
+          onClick={handleManageBilling}
+          disabled={loading === "portal"}
+        >
+          {loading === "portal" ? "Opening…" : "Manage billing & invoices →"}
+        </button>
       )}
 
       <p className={styles.fine}>

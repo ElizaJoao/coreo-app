@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       email: session.user.email ?? "",
       name: session.user.name ?? "",
       plan,
-      successUrl: `${origin}${ROUTES.DASHBOARD}?upgraded=1`,
+      successUrl: `${origin}${ROUTES.DASHBOARD_UPGRADE}?success=1`,
       cancelUrl: `${origin}${ROUTES.DASHBOARD_UPGRADE}`,
     });
 
