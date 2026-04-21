@@ -9,6 +9,7 @@ export type AuthUser = {
   id: string;
   email: string;
   name: string;
+  plan: string;
 };
 
 type UserRow = {
@@ -16,6 +17,7 @@ type UserRow = {
   email: string;
   name: string;
   password_hash: string;
+  plan: string;
 };
 
 export async function hashPassword(password: string): Promise<string> {
@@ -34,7 +36,7 @@ async function verifyPassword(password: string, stored: string): Promise<boolean
 export async function getUserByEmail(email: string): Promise<AuthUser | null> {
   const { data } = await supabase
     .from("users")
-    .select("id, email, name")
+    .select("id, email, name, plan")
     .eq("email", email.toLowerCase())
     .single();
 
@@ -59,7 +61,7 @@ export async function createUserFromHash(input: {
   const { data, error } = await supabase
     .from("users")
     .insert({ email: input.email, name: input.name, password_hash: input.passwordHash })
-    .select("id, email, name")
+    .select("id, email, name, plan")
     .single();
 
   if (error) {
@@ -86,5 +88,5 @@ export async function verifyUserCredentials(
   const valid = await verifyPassword(password, row.password_hash);
   if (!valid) return null;
 
-  return { id: row.id, email: row.email, name: row.name };
+  return { id: row.id, email: row.email, name: row.name, plan: row.plan ?? "free" };
 }

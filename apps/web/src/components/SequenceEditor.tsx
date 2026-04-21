@@ -53,7 +53,11 @@ export function SequenceEditor(props: SequenceEditorProps) {
 
       {/* Move sequence */}
       <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>Sequence</h2>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Sequence</h2>
+          <div className={styles.sectionLine} />
+          <span className={styles.duration}>{props.moves.length} moves</span>
+        </div>
         <div className={styles.moveList}>
           {props.moves.map((move, i) => (
             <MoveRow
@@ -76,7 +80,10 @@ export function SequenceEditor(props: SequenceEditorProps) {
 
       {/* Music */}
       <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>Music</h2>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Music</h2>
+          <div className={styles.sectionLine} />
+        </div>
         <MusicEditor
           music={props.music}
           onUpdate={props.onUpdateMusic}
@@ -90,7 +97,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
           <span className={styles.saveError}>Failed to save. Try again.</span>
         )}
         {props.status === "saved" && (
-          <span className={styles.saveSuccess}>Saved!</span>
+          <span className={styles.saveSuccess}>✓ Saved</span>
         )}
         <button
           type="button"

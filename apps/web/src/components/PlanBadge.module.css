@@ -1,0 +1,24 @@
+@reference "tailwindcss";
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+.pro {
+  background: oklch(0.82 0.17 85 / 0.15);
+  border: 1px solid oklch(0.82 0.17 85 / 0.35);
+  color: var(--accent);
+}
+
+.max {
+  background: oklch(0.70 0.18 300 / 0.15);
+  border: 1px solid oklch(0.70 0.18 300 / 0.4);
+  color: oklch(0.80 0.16 300);
+}

@@ -1,45 +1,53 @@
 @reference "tailwindcss";
 
 .row {
-  display: flex;
-  gap: 12px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 0;
   border-radius: var(--radius-md);
-  padding: 12px;
-  transition: border-color 0.15s;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.row:hover { border-color: var(--border-2); }
+.row:hover {
+  border-color: var(--border-2);
+  box-shadow: 0 2px 12px -4px rgba(0,0,0,0.4);
+}
 
+/* Left gutter: number + arrows */
 .orderCol {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  background: var(--surface-3);
+  border-right: 1px solid var(--border);
   gap: 4px;
-  min-width: 28px;
 }
 
 .orderNum {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-4);
   font-variant-numeric: tabular-nums;
-  padding-top: 2px;
+  line-height: 1;
 }
 
 .arrows {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .arrowBtn {
   background: transparent;
   border: none;
   color: var(--text-4);
-  font-size: 9px;
-  padding: 2px 4px;
+  font-size: 8px;
+  padding: 3px 6px;
   cursor: pointer;
   border-radius: 4px;
   line-height: 1;
@@ -48,71 +56,83 @@
 
 .arrowBtn:hover:not(:disabled) {
   color: var(--text);
-  background: var(--surface-3);
+  background: var(--border);
 }
 
-.arrowBtn:disabled { opacity: 0.25; cursor: default; }
+.arrowBtn:disabled { opacity: 0.2; cursor: default; }
 
+/* Right body */
 .body {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-width: 0;
+  gap: 0;
 }
 
 .topLine {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid var(--border);
 }
 
 .nameInput {
   flex: 1;
   background: transparent;
   border: none;
-  border-bottom: 1px solid transparent;
   color: var(--text);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 2px 0;
+  letter-spacing: -0.01em;
+  padding: 0;
   outline: none;
-  transition: border-color 0.15s;
   min-width: 0;
+  caret-color: var(--accent);
 }
 
-.nameInput:focus { border-bottom-color: var(--accent); }
+.nameInput::placeholder { color: var(--text-4); }
 
 .durationField {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 6px;
 }
 
 .durationInput {
-  width: 56px;
-  background: var(--surface-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  font-size: 13px;
+  width: 44px;
+  background: transparent;
+  border: none;
+  color: var(--text-2);
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
-  padding: 3px 6px;
   text-align: right;
   outline: none;
 }
 
-.durationUnit { font-size: 12px; color: var(--text-3); }
+.durationUnit {
+  font-size: 11px;
+  color: var(--text-4);
+  font-weight: 500;
+}
 
 .deleteBtn {
   background: transparent;
   border: none;
   color: var(--text-4);
-  font-size: 12px;
-  padding: 4px 6px;
+  font-size: 11px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   border-radius: 6px;
   transition: color 0.1s, background 0.1s;
+  flex-shrink: 0;
 }
 
 .deleteBtn:hover {
@@ -124,14 +144,15 @@
   width: 100%;
   background: transparent;
   border: none;
-  border-left: 2px solid var(--border);
-  padding-left: 10px;
-  color: var(--text-2);
+  padding: 8px 12px;
+  color: var(--text-3);
   font-size: 12px;
+  line-height: 1.5;
   resize: none;
   outline: none;
   font-family: var(--font-inter);
-  transition: border-color 0.15s;
+  transition: color 0.15s;
 }
 
-.descInput:focus { border-left-color: var(--accent); }
+.descInput:focus { color: var(--text-2); }
+.descInput::placeholder { color: var(--text-4); font-style: italic; }

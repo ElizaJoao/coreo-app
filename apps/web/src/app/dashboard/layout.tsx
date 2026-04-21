@@ -18,12 +18,13 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   const name = session?.user?.name ?? "User";
   const email = session?.user?.email ?? "";
   const userId = session?.user?.id;
+  const plan = ((session?.user as { plan?: string })?.plan ?? "free") as "free" | "pro" | "max";
 
   const choreographies = userId ? await getChoreographiesByUser(userId) : [];
 
   return (
     <DashboardShell
-      user={{ name, email, initials: getInitials(name) }}
+      user={{ name, email, initials: getInitials(name), plan }}
       libraryCount={choreographies.length}
     >
       {children}

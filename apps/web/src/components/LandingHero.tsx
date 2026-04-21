@@ -10,19 +10,36 @@ export type LandingHeroProps = {
 export function LandingHero({ loginHref, signupHref }: LandingHeroProps) {
   return (
     <section className={styles.section}>
-      <span className={styles.eyebrow}>Coreo</span>
-      <h1 className={styles.title}>Choreographies,{"\n"}crafted by AI</h1>
+      <span className={styles.eyebrow}>
+        <span className={styles.eyebrowDot} />
+        AI-powered choreography
+      </span>
+
+      <h1 className={styles.title}>
+        {"Choreographies,\n"}
+        <span className={styles.titleAccent}>crafted by AI</span>
+      </h1>
+
       <p className={styles.subtitle}>
-        Describe your class and let Coreo generate a complete move sequence — style, duration,
-        difficulty, and music suggestion included.
+        Describe your class and let Offbeat Move generate a complete move
+        sequence — style, duration, difficulty, and music included.
       </p>
+
       <div className={styles.actions}>
         <Link href={signupHref} className={styles.btnPrimary}>
-          Get started free
+          Get started free →
         </Link>
         <Link href={loginHref} className={styles.btnSecondary}>
           Sign in
         </Link>
+      </div>
+
+      <div className={styles.proof}>
+        <span>No credit card required</span>
+        <span className={styles.proofDot} />
+        <span>5 free choreographies / month</span>
+        <span className={styles.proofDot} />
+        <span>Cancel anytime</span>
       </div>
     </section>
   );

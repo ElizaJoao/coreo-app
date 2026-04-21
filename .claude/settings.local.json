@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_Supabase__list_projects",
+      "mcp__claude_ai_Supabase__list_tables",
+      "mcp__claude_ai_Supabase__apply_migration",
+      "Bash(npx tsc *)",
+      "mcp__claude_ai_Supabase__get_project_url",
+      "mcp__claude_ai_Supabase__get_publishable_keys",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:3000 -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s http://localhost:3003 -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s http://localhost:3003)",
+      "Bash(curl -s http://localhost:3003/login -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s http://localhost:3003/signup -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s http://localhost:3003/dashboard -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s http://localhost:3003/dashboard)",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(npm install *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git config *)",
+      "Bash(git push *)",
+      "Bash(gh pr create --title 'feat: full app scaffold with auth, dashboard and 2-step verification' --body ' *)",
+      "Bash(winget install *)",
+      "Bash(choco install *)",
+      "Bash(gh pr create --title 'docs: add project README' --body ' *)",
+      "Bash('/c/Program Files/GitHub CLI/gh.exe' pr create --title 'docs: add project README' --body ' *)",
+      "Bash(git commit *)"
+    ]
+  }
+}

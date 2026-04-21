@@ -119,8 +119,50 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Upgrade card */
+.upgradeCard {
+  margin-top: auto;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  border: 1px solid oklch(0.82 0.17 85 / 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.upgradeTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+
+.upgradeDesc {
+  font-size: 11px;
+  color: var(--text-3);
+  line-height: 1.4;
+}
+
+.upgradeBtn {
+  margin-top: 8px;
+  align-self: flex-start;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.upgradeBtn:hover { opacity: 0.85; }
+
 /* User pill */
 .userPill {
+  margin-top: 8px !important;
   margin-top: auto;
   display: flex;
   align-items: center;
@@ -148,6 +190,12 @@
 .userMeta {
   min-width: 0;
   flex: 1;
+}
+
+.userNameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .userName {

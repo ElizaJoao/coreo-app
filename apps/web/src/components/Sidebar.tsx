@@ -1,10 +1,13 @@
+import type { Plan } from "../constants/plans";
 import { IconHome, IconSpark, IconLibrary, IconCalendar, IconTrend, IconSettings } from "./Icons";
+import { PlanBadge } from "./PlanBadge";
 import styles from "./Sidebar.module.css";
 
 export type SidebarUser = {
   name: string;
   email: string;
   initials: string;
+  plan: Plan;
 };
 
 export type SidebarNavItem = {
@@ -82,10 +85,23 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate }: Sidebar
         );
       })}
 
+      {user.plan === "free" && (
+        <div className={styles.upgradeCard}>
+          <div className={styles.upgradeTitle}>Upgrade to Pro</div>
+          <div className={styles.upgradeDesc}>Unlimited choreographies & music search</div>
+          <button type="button" className={styles.upgradeBtn} onClick={() => onNavigate("/")}>
+            View plans →
+          </button>
+        </div>
+      )}
+
       <div className={styles.userPill}>
         <div className={styles.userAvatar}>{user.initials}</div>
         <div className={styles.userMeta}>
-          <div className={styles.userName}>{user.name}</div>
+          <div className={styles.userNameRow}>
+            <span className={styles.userName}>{user.name}</span>
+            <PlanBadge plan={user.plan} />
+          </div>
           <div className={styles.userEmail}>{user.email}</div>
         </div>
       </div>
