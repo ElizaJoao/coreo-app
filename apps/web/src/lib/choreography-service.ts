@@ -68,6 +68,36 @@ export async function getChoreographiesByUser(userId: string): Promise<Choreogra
   return (data as ChoreographyRow[]).map(rowToChoreography);
 }
 
+export type UpdateChoreographyInput = {
+  name?: string;
+  moves?: ChoreographyMove[];
+  music?: ChoreographyMusic | null;
+  description?: string;
+};
+
+export async function updateChoreography(
+  id: string,
+  userId: string,
+  input: UpdateChoreographyInput,
+): Promise<Choreography> {
+  const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (input.name !== undefined) patch.name = input.name;
+  if (input.moves !== undefined) patch.moves = input.moves;
+  if (input.music !== undefined) patch.music = input.music;
+  if (input.description !== undefined) patch.description = input.description;
+
+  const { data, error } = await supabase
+    .from("choreographies")
+    .update(patch)
+    .eq("id", id)
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return rowToChoreography(data as ChoreographyRow);
+}
+
 export async function getChoreographyById(
   id: string,
   userId: string,

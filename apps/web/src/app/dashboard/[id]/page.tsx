@@ -2,9 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { auth } from "../../../auth";
-import { ChoreographyResult } from "../../../components/ChoreographyResult";
 import { ROUTES } from "../../../constants/routes";
 import { getChoreographyById } from "../../../lib/choreography-service";
+import { ChoreographyEditor } from "./ChoreographyEditor";
 import styles from "./page.module.css";
 
 type Props = {
@@ -22,10 +22,15 @@ export default async function ChoreographyPage({ params }: Props) {
 
   return (
     <main className={styles.main}>
-      <Link href={ROUTES.DASHBOARD} className={styles.backLink}>
-        ← Back to dashboard
-      </Link>
-      <ChoreographyResult choreography={choreography} />
+      <div className={styles.topBar}>
+        <Link href={ROUTES.DASHBOARD} className={styles.backLink}>← Back</Link>
+        <div className={styles.badges}>
+          <span className={styles.badge}>{choreography.style}</span>
+          <span className={styles.badge}>{choreography.difficulty}</span>
+          <span className={styles.badge}>{choreography.duration} min</span>
+        </div>
+      </div>
+      <ChoreographyEditor choreography={choreography} />
     </main>
   );
 }
