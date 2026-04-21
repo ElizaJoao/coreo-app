@@ -45,9 +45,8 @@ export async function createCheckoutSession(opts: {
     customer: customerId,
     mode: "subscription",
     line_items: [{ price: PLAN_PRICE_IDS[opts.plan], quantity: 1 }],
-    // card + multibanco support subscriptions in Portugal/EUR
-    // mb_way is one-time only — not supported for subscriptions
-    payment_method_types: ["card", "multibanco"],
+    // Let Stripe show all payment methods enabled in the dashboard
+    automatic_payment_methods: { enabled: true },
     currency: "eur",
     success_url: opts.successUrl,
     cancel_url: opts.cancelUrl,
