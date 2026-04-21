@@ -37,12 +37,14 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
     currentIdRef.current = trackId;
     setPlayingId(trackId);
 
-    audio.play().catch((err) => {
-      console.error("[MusicEditor] play failed:", err);
-      setAudioError(true);
-      setPlayingId(null);
-      currentIdRef.current = null;
-    });
+    audio.play()
+      .then(() => console.log("[MusicEditor] play() started, duration:", audio.duration))
+      .catch((err) => {
+        console.error("[MusicEditor] play failed:", err);
+        setAudioError(true);
+        setPlayingId(null);
+        currentIdRef.current = null;
+      });
   }
 
   function selectTrack(trackName: string, artistName: string) {
@@ -63,8 +65,13 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
       {/* Hidden audio element — always in DOM so ref is stable */}
       <audio
         ref={audioRef}
+        onCanPlay={() => console.log("[MusicEditor] canplay fired")}
         onEnded={() => { setPlayingId(null); currentIdRef.current = null; }}
-        onError={() => { setAudioError(true); setPlayingId(null); currentIdRef.current = null; }}
+        onError={(e) => {
+          const el = e.currentTarget;
+          console.error("[MusicEditor] audio error", el.error?.code, el.error?.message);
+          setAudioError(true); setPlayingId(null); currentIdRef.current = null;
+        }}
       />
 
       {/* Search */}
