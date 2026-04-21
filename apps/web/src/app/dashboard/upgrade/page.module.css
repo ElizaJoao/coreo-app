@@ -274,6 +274,29 @@
 .btnSecondary:hover:not(:disabled) { border-color: var(--border-3); color: var(--text); }
 .btnSecondary:disabled { opacity: 0.5; cursor: default; }
 
+.billingActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.cancelBtn {
+  background: transparent;
+  border: none;
+  color: var(--danger, oklch(0.72 0.19 25));
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+
+.cancelBtn:hover:not(:disabled) { opacity: 1; text-decoration: underline; }
+.cancelBtn:disabled { opacity: 0.4; cursor: default; }
+
 .fine {
   font-size: 11px;
   color: var(--text-4);

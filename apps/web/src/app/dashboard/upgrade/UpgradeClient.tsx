@@ -7,13 +7,17 @@ import styles from "./page.module.css";
 
 export function UpgradeClient({
   currentPlan,
-  success,
+  successPlan,
 }: {
   currentPlan: Plan;
-  success?: boolean;
+  successPlan?: Plan;
 }) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string>();
+
+  // If we just came back from a successful checkout, use the purchased plan
+  // optimistically in case the webhook hasn't updated the DB yet.
+  const effectivePlan: Plan = successPlan ?? currentPlan;
 
   async function handleUpgrade(plan: "pro" | "max") {
     setLoading(plan);
@@ -33,7 +37,7 @@ export function UpgradeClient({
     }
   }
 
-  async function handleManageBilling() {
+  async function handlePortal() {
     setLoading("portal");
     setError(undefined);
     try {
@@ -56,18 +60,12 @@ export function UpgradeClient({
         </p>
       </div>
 
-      {success && (
-        <div className={styles.successBanner}>
-          Payment successful — your plan has been activated!
-        </div>
-      )}
-
       {error && <p className={styles.error}>{error}</p>}
 
       <div className={styles.grid}>
         {PLANS.map((planId) => {
           const plan = PLAN_META[planId];
-          const isCurrent = planId === currentPlan;
+          const isCurrent = planId === effectivePlan;
           const isUpgradeable = planId !== "free" && !isCurrent;
 
           return (
@@ -133,15 +131,25 @@ export function UpgradeClient({
         })}
       </div>
 
-      {currentPlan !== "free" && (
-        <button
-          type="button"
-          className={styles.portalBtn}
-          onClick={handleManageBilling}
-          disabled={loading === "portal"}
-        >
-          {loading === "portal" ? "Opening…" : "Manage billing & invoices →"}
-        </button>
+      {effectivePlan !== "free" && (
+        <div className={styles.billingActions}>
+          <button
+            type="button"
+            className={styles.portalBtn}
+            onClick={handlePortal}
+            disabled={loading === "portal"}
+          >
+            {loading === "portal" ? "Opening…" : "Manage billing & invoices →"}
+          </button>
+          <button
+            type="button"
+            className={styles.cancelBtn}
+            onClick={handlePortal}
+            disabled={loading === "portal"}
+          >
+            Cancel subscription
+          </button>
+        </div>
       )}
 
       <p className={styles.fine}>
