@@ -23,7 +23,6 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Toggle off if same track
     if (currentIdRef.current === trackId && !audio.paused) {
       audio.pause();
       setPlayingId(null);
@@ -32,13 +31,14 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
     }
 
     setAudioError(false);
-    audio.src = previewUrl;
+    // Route through proxy to avoid CDN CORS/CSP issues
+    audio.src = `/api/music/preview?url=${encodeURIComponent(previewUrl)}`;
     audio.volume = 0.7;
     currentIdRef.current = trackId;
     setPlayingId(trackId);
 
-    audio.load();
-    audio.play().catch(() => {
+    audio.play().catch((err) => {
+      console.error("[MusicEditor] play failed:", err);
       setAudioError(true);
       setPlayingId(null);
       currentIdRef.current = null;
