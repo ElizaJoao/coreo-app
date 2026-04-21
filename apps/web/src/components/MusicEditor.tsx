@@ -19,6 +19,18 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const currentIdRef = useRef<number | null>(null);
 
+  function testBeep() {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = 440;
+    gain.gain.value = 0.3;
+    osc.start();
+    osc.stop(ctx.currentTime + 0.5);
+  }
+
   function playPreview(trackId: number, previewUrl: string) {
     console.log("[MusicEditor] playPreview", { trackId, previewUrl, audioEl: audioRef.current });
     const audio = audioRef.current;
@@ -73,6 +85,11 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
           setAudioError(true); setPlayingId(null); currentIdRef.current = null;
         }}
       />
+
+      {/* Audio test */}
+      <button type="button" onClick={testBeep} className={styles.clearBtn} style={{marginBottom: 4}}>
+        🔊 Test audio (click for beep)
+      </button>
 
       {/* Search */}
       <div className={styles.searchRow}>
