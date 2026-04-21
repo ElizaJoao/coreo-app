@@ -45,8 +45,9 @@ export async function createCheckoutSession(opts: {
     customer: customerId,
     mode: "subscription",
     line_items: [{ price: PLAN_PRICE_IDS[opts.plan], quantity: 1 }],
-    // Enable MB WAY, Multibanco and cards — all available in Portugal / EUR
-    payment_method_types: ["card", "mb_way", "multibanco"],
+    // card + multibanco support subscriptions in Portugal/EUR
+    // mb_way is one-time only — not supported for subscriptions
+    payment_method_types: ["card", "multibanco"],
     currency: "eur",
     success_url: opts.successUrl,
     cancel_url: opts.cancelUrl,

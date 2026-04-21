@@ -102,7 +102,6 @@ export function UpgradeClient({ currentPlan }: { currentPlan: Plan }) {
                 <div className={styles.paymentMethods}>
                   <span className={styles.paymentLabel}>Pay with</span>
                   <span className={styles.paymentChip}>💳 Card</span>
-                  <span className={styles.paymentChip}>📱 MB WAY</span>
                   <span className={styles.paymentChip}>🏦 Multibanco</span>
                 </div>
                 <button
@@ -121,7 +120,7 @@ export function UpgradeClient({ currentPlan }: { currentPlan: Plan }) {
 
       <p className={styles.fine}>
         Payments processed securely by Stripe. Cancel anytime from the billing portal.
-        MB WAY and Multibanco available for Portugal. All prices in EUR.
+        Multibanco available for Portugal. All prices in EUR.
       </p>
     </div>
   );
