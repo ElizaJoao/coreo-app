@@ -131,7 +131,7 @@ export function ChoreographyForm(props: ChoreographyFormProps) {
           <textarea
             value={props.description}
             onChange={(e) => props.onDescriptionChange(e.target.value)}
-            rows={5}
+            rows={8}
             placeholder="Describe the vibe, goals, and any constraints…"
             className={styles.textarea}
           />

@@ -50,8 +50,8 @@ function validate(values: ChoreographyFormValues): ChoreographyFormErrors {
   }
 
   const desc = values.description.trim();
-  if (desc.length > 600) {
-    errors.description = "Description is too long (max 600 chars).";
+  if (desc.length > 4000) {
+    errors.description = "Description is too long (max 4000 chars).";
   }
 
   return errors;
