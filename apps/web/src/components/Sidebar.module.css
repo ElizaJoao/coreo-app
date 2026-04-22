@@ -138,6 +138,13 @@
 
 .upgradeBtn:hover { opacity: 0.85; }
 
+/* Language switcher row */
+.langRow {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+}
+
 /* User pill */
 .userPill {
   margin-top: 8px !important;

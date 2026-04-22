@@ -90,13 +90,13 @@ export async function sendEmailCode(
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   await resend.emails.send({
-    from: "Offbeat Move <onboarding@resend.dev>",
+    from: "Offbeat <onboarding@resend.dev>",
     to: email,
     subject: `Your verification code: ${code}`,
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto">
         <h2>Hi ${name},</h2>
-        <p>Your Offbeat Move verification code is:</p>
+        <p>Your Offbeat verification code is:</p>
         <div style="font-size:36px;font-weight:bold;letter-spacing:8px;margin:24px 0;color:#F5C842">
           ${code}
         </div>
@@ -119,7 +119,7 @@ export async function sendSmsCode(phone: string, code: string): Promise<void> {
   );
 
   await client.messages.create({
-    body: `Your Offbeat Move verification code is: ${code}. Expires in ${VERIFICATION_CODE_EXPIRY_MINUTES} minutes.`,
+    body: `Your Offbeat verification code is: ${code}. Expires in ${VERIFICATION_CODE_EXPIRY_MINUTES} minutes.`,
     from: process.env.TWILIO_PHONE_NUMBER,
     to: phone,
   });

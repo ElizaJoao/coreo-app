@@ -9,6 +9,7 @@ import { MusicEditor } from "./MusicEditor";
 import { RehearsalMode } from "./RehearsalMode";
 import { FormationEditor } from "./FormationEditor";
 import { FormationPlayback } from "./FormationPlayback";
+import { PreviewPlayer } from "./PreviewPlayer";
 import styles from "./SequenceEditor.module.css";
 
 export type SequenceEditorProps = {
@@ -42,6 +43,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
 
   const [rehearsalOpen, setRehearsalOpen] = useState(false);
   const [formationPlaybackOpen, setFormationPlaybackOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const totalSec = props.moves.reduce((s, m) => s + m.duration, 0);
@@ -70,6 +72,14 @@ export function SequenceEditor(props: SequenceEditorProps) {
           onClose={() => setFormationPlaybackOpen(false)}
         />
       )}
+      {isPro && previewOpen && (
+        <PreviewPlayer
+          moves={props.moves}
+          music={props.music}
+          plan={plan}
+          onClose={() => setPreviewOpen(false)}
+        />
+      )}
 
       <div className={styles.editor}>
         {/* Header */}
@@ -81,6 +91,9 @@ export function SequenceEditor(props: SequenceEditorProps) {
               onChange={(e) => props.onNameChange(e.target.value)}
               placeholder="Choreography name"
             />
+            <span className={plan === "max" ? styles.planBadgeMax : plan === "pro" ? styles.planBadgePro : styles.planBadgeFree}>
+              {plan === "max" ? "Max" : plan === "pro" ? "Pro" : "Free"}
+            </span>
             <span className={styles.duration}>
               {totalMin}:{remSec.toString().padStart(2, "0")} total
             </span>
@@ -92,22 +105,29 @@ export function SequenceEditor(props: SequenceEditorProps) {
             placeholder="Notes or description…"
             rows={2}
           />
-          {/* Pro/Max action buttons */}
-          {isPro && (
-            <div className={styles.actionRow}>
-              <button type="button" className={styles.shareBtn} onClick={handleShare}>
-                {copied ? "✓ Link copied!" : "🔗 Share with students"}
-              </button>
-              {isMax && (
+          {/* Action buttons */}
+          <div className={styles.actionRow}>
+            {isPro ? (
+              <>
+                <button type="button" className={styles.shareBtn} onClick={handleShare}>
+                  {copied ? "✓ Link copied!" : "🔗 Share with students"}
+                </button>
                 <button
                   type="button"
-                  className={styles.rehearsalBtn}
-                  onClick={() => setRehearsalOpen(true)}
+                  className={styles.previewBtn}
+                  onClick={() => setPreviewOpen(true)}
                 >
-                  ▶ Rehearsal mode
+                  ▶ Preview all moves
                 </button>
-              )}
-              {isPro && (
+                {isMax && (
+                  <button
+                    type="button"
+                    className={styles.rehearsalBtn}
+                    onClick={() => setRehearsalOpen(true)}
+                  >
+                    ▶ Rehearsal mode
+                  </button>
+                )}
                 <button
                   type="button"
                   className={styles.rehearsalBtn}
@@ -116,9 +136,13 @@ export function SequenceEditor(props: SequenceEditorProps) {
                 >
                   ▶ Play formation
                 </button>
-              )}
-            </div>
-          )}
+              </>
+            ) : (
+              <a href="/dashboard/upgrade" className={styles.previewLocked}>
+                🔒 Preview all moves — Pro feature
+              </a>
+            )}
+          </div>
         </div>
 
         {/* Move sequence */}
@@ -162,8 +186,8 @@ export function SequenceEditor(props: SequenceEditorProps) {
           />
         </div>
 
-        {/* Formations — Pro/Max */}
-        {isPro && (
+        {/* Formations — Pro/Max or locked teaser for Free */}
+        {isPro ? (
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Formations</h2>
@@ -177,6 +201,25 @@ export function SequenceEditor(props: SequenceEditorProps) {
               getFormationForMove={props.getFormationForMove}
               onUpdatePosition={props.onUpdatePosition}
             />
+          </div>
+        ) : (
+          <div className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>Formations</h2>
+              <div className={styles.sectionLine} />
+            </div>
+            <a href="/dashboard/upgrade" className={styles.formationsTeaser}>
+              <div className={styles.formationsTeaserStage}>
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className={styles.formationsTeaserDot} style={{ left: `${15 + (i % 3) * 30}%`, top: `${30 + Math.floor(i / 3) * 35}%` }} />
+                ))}
+              </div>
+              <div className={styles.formationsTeaserOverlay}>
+                <span className={styles.formationsTeaserIcon}>🔒</span>
+                <span className={styles.formationsTeaserText}>Drag-and-drop formations — Pro feature</span>
+                <span className={styles.formationsTeaserCta}>Upgrade to Pro →</span>
+              </div>
+            </a>
           </div>
         )}
 

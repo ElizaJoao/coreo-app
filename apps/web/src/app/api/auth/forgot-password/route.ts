@@ -38,9 +38,9 @@ export async function POST(request: Request) {
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   await resend.emails.send({
-    from: "Offbeat Move <onboarding@resend.dev>",
+    from: "Offbeat <onboarding@resend.dev>",
     to: email,
-    subject: "Reset your Offbeat Move password",
+    subject: "Reset your Offbeat password",
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto">
         <h2>Hi ${(user as { name: string }).name},</h2>

@@ -4,6 +4,67 @@
   @apply w-full max-w-2xl rounded-2xl border border-zinc-800 bg-[#0D0D0D] p-6;
 }
 
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.badgePro {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+
+.badgeMax {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: oklch(0.82 0.16 290);
+  background: oklch(0.55 0.22 290 / 0.15);
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+
+.verbalCue {
+  @apply mt-1 text-xs italic;
+  color: oklch(0.8 0.12 290);
+}
+
+.videoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+
+.videoLink:hover { opacity: 1; text-decoration: underline; }
+
+.upgradeNudge {
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: oklch(0.55 0.18 60 / 0.06);
+  border: 1px solid oklch(0.55 0.18 60 / 0.18);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+  text-align: center;
+}
+
 .header {}
 
 .name {

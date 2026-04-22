@@ -1,0 +1,96 @@
+{
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "signIn": "Sign in",
+    "getStarted": "Get started free"
+  },
+  "landing": {
+    "eyebrow": "AI-powered choreography",
+    "headline": "Choreographies, crafted by AI",
+    "headlineAccent": "crafted by AI",
+    "subtitle": "Describe your class and let Offbeat generate a complete move sequence — style, duration, difficulty, and music included.",
+    "ctaPrimary": "Get started free →",
+    "ctaSecondary": "Sign in"
+  },
+  "auth": {
+    "createAccount": "Create account",
+    "signIn": "Sign in",
+    "signupSubtitle": "Start building choreographies.",
+    "signinSubtitle": "Welcome back to Offbeat.",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "phone": "Phone",
+    "forgotPassword": "Forgot password?",
+    "alreadyHaveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "orSignUp": "or sign up"
+  },
+  "dashboard": {
+    "newChoreography": "New choreography",
+    "library": "Library",
+    "schedule": "Schedule",
+    "insights": "Insights",
+    "settings": "Settings",
+    "back": "← Back"
+  },
+  "editor": {
+    "addMove": "+ Add move",
+    "saveChanges": "Save changes",
+    "saving": "Saving…",
+    "saved": "✓ Saved",
+    "saveError": "Failed to save. Try again.",
+    "sequence": "Sequence",
+    "music": "Music",
+    "formations": "Formations",
+    "shareWithStudents": "🔗 Share with students",
+    "linkCopied": "✓ Link copied!",
+    "rehearsalMode": "▶ Rehearsal mode",
+    "playFormation": "▶ Play formation",
+    "previewAllMoves": "▶ Preview all moves",
+    "previewLocked": "🔒 Preview all moves — Pro feature",
+    "formationsLocked": "Drag-and-drop formations — Pro feature",
+    "upgradeToProCta": "Upgrade to Pro →"
+  },
+  "plans": {
+    "free": "Free",
+    "pro": "Pro",
+    "max": "Max",
+    "upgrade": "Upgrade",
+    "upgradeTip": "Upgrade to Pro for demo videos with every move"
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "close": "✕ Exit",
+    "pause": "⏸ Pause",
+    "resume": "▶ Resume",
+    "prev": "← Prev",
+    "next": "Next →",
+    "finish": "Finish",
+    "beatOn": "🔔 Beat on",
+    "beatOff": "🔕 Beat off",
+    "openOnYoutube": "▶ Open on YouTube"
+  },
+  "footer": {
+    "product": "Product",
+    "account": "Account",
+    "features": "Features",
+    "pricing": "Pricing",
+    "getStarted": "Get started",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "resetPassword": "Reset password",
+    "rights": "All rights reserved.",
+    "builtWith": "Built with Claude AI"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "pt": "Português",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
+}

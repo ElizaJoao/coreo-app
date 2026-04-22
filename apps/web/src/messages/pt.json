@@ -1,0 +1,96 @@
+{
+  "nav": {
+    "features": "Funcionalidades",
+    "pricing": "Preços",
+    "signIn": "Entrar",
+    "getStarted": "Começar grátis"
+  },
+  "landing": {
+    "eyebrow": "Coreografia com IA",
+    "headline": "Coreografias, criadas pela IA",
+    "headlineAccent": "criadas pela IA",
+    "subtitle": "Descreva a sua aula e deixe o Offbeat criar uma sequência de movimentos completa — estilo, duração, dificuldade e música incluídos.",
+    "ctaPrimary": "Começar grátis →",
+    "ctaSecondary": "Entrar"
+  },
+  "auth": {
+    "createAccount": "Criar conta",
+    "signIn": "Entrar",
+    "signupSubtitle": "Comece a criar coreografias.",
+    "signinSubtitle": "Bem-vindo de volta ao Offbeat.",
+    "name": "Nome",
+    "email": "E-mail",
+    "password": "Senha",
+    "phone": "Telemóvel",
+    "forgotPassword": "Esqueceu a senha?",
+    "alreadyHaveAccount": "Já tem conta?",
+    "noAccount": "Ainda não tem conta?",
+    "orSignUp": "ou registe-se"
+  },
+  "dashboard": {
+    "newChoreography": "Nova coreografia",
+    "library": "Biblioteca",
+    "schedule": "Agenda",
+    "insights": "Estatísticas",
+    "settings": "Definições",
+    "back": "← Voltar"
+  },
+  "editor": {
+    "addMove": "+ Adicionar movimento",
+    "saveChanges": "Guardar alterações",
+    "saving": "A guardar…",
+    "saved": "✓ Guardado",
+    "saveError": "Erro ao guardar. Tente novamente.",
+    "sequence": "Sequência",
+    "music": "Música",
+    "formations": "Formações",
+    "shareWithStudents": "🔗 Partilhar com alunos",
+    "linkCopied": "✓ Link copiado!",
+    "rehearsalMode": "▶ Modo ensaio",
+    "playFormation": "▶ Reproduzir formação",
+    "previewAllMoves": "▶ Pré-visualizar movimentos",
+    "previewLocked": "🔒 Pré-visualizar movimentos — funcionalidade Pro",
+    "formationsLocked": "Formações com arrastar e largar — funcionalidade Pro",
+    "upgradeToProCta": "Atualizar para Pro →"
+  },
+  "plans": {
+    "free": "Grátis",
+    "pro": "Pro",
+    "max": "Max",
+    "upgrade": "Atualizar",
+    "upgradeTip": "Atualize para Pro e obtenha vídeos demonstrativos para cada movimento"
+  },
+  "common": {
+    "loading": "A carregar…",
+    "error": "Ocorreu um erro",
+    "close": "✕ Sair",
+    "pause": "⏸ Pausar",
+    "resume": "▶ Continuar",
+    "prev": "← Anterior",
+    "next": "Próximo →",
+    "finish": "Concluir",
+    "beatOn": "🔔 Batida ativa",
+    "beatOff": "🔕 Batida desligada",
+    "openOnYoutube": "▶ Abrir no YouTube"
+  },
+  "footer": {
+    "product": "Produto",
+    "account": "Conta",
+    "features": "Funcionalidades",
+    "pricing": "Preços",
+    "getStarted": "Começar",
+    "signIn": "Entrar",
+    "createAccount": "Criar conta",
+    "resetPassword": "Repor senha",
+    "rights": "Todos os direitos reservados.",
+    "builtWith": "Criado com Claude AI"
+  },
+  "language": {
+    "label": "Idioma",
+    "en": "English",
+    "pt": "Português",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
+}

@@ -34,6 +34,7 @@ export type ChoreographyMove = {
   order: number;
   tag?: string;
   videoQuery?: string;  // pro+: YouTube search term for demo video
+  videoId?: string;     // pro+: resolved YouTube video ID (cached)
   verbalCue?: string;   // max: what instructor says during this move
 };
 

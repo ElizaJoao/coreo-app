@@ -1,0 +1,96 @@
+{
+  "nav": {
+    "features": "Funktionen",
+    "pricing": "Preise",
+    "signIn": "Anmelden",
+    "getStarted": "Kostenlos starten"
+  },
+  "landing": {
+    "eyebrow": "KI-gestützte Choreografie",
+    "headline": "Choreografien, erstellt von KI",
+    "headlineAccent": "erstellt von KI",
+    "subtitle": "Beschreiben Sie Ihre Stunde und lassen Sie Offbeat eine vollständige Bewegungssequenz erstellen — Stil, Dauer, Schwierigkeit und Musik inklusive.",
+    "ctaPrimary": "Kostenlos starten →",
+    "ctaSecondary": "Anmelden"
+  },
+  "auth": {
+    "createAccount": "Konto erstellen",
+    "signIn": "Anmelden",
+    "signupSubtitle": "Beginnen Sie mit der Erstellung von Choreografien.",
+    "signinSubtitle": "Willkommen zurück bei Offbeat.",
+    "name": "Name",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "phone": "Telefon",
+    "forgotPassword": "Passwort vergessen?",
+    "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+    "noAccount": "Noch kein Konto?",
+    "orSignUp": "oder registrieren"
+  },
+  "dashboard": {
+    "newChoreography": "Neue Choreografie",
+    "library": "Bibliothek",
+    "schedule": "Zeitplan",
+    "insights": "Statistiken",
+    "settings": "Einstellungen",
+    "back": "← Zurück"
+  },
+  "editor": {
+    "addMove": "+ Bewegung hinzufügen",
+    "saveChanges": "Änderungen speichern",
+    "saving": "Speichern…",
+    "saved": "✓ Gespeichert",
+    "saveError": "Speichern fehlgeschlagen. Erneut versuchen.",
+    "sequence": "Sequenz",
+    "music": "Musik",
+    "formations": "Formationen",
+    "shareWithStudents": "🔗 Mit Schülern teilen",
+    "linkCopied": "✓ Link kopiert!",
+    "rehearsalMode": "▶ Probenmodus",
+    "playFormation": "▶ Formation abspielen",
+    "previewAllMoves": "▶ Alle Bewegungen vorschau",
+    "previewLocked": "🔒 Vorschau — Pro-Funktion",
+    "formationsLocked": "Drag-and-Drop-Formationen — Pro-Funktion",
+    "upgradeToProCta": "Auf Pro upgraden →"
+  },
+  "plans": {
+    "free": "Kostenlos",
+    "pro": "Pro",
+    "max": "Max",
+    "upgrade": "Upgraden",
+    "upgradeTip": "Upgraden Sie auf Pro für Demo-Videos zu jeder Bewegung"
+  },
+  "common": {
+    "loading": "Wird geladen…",
+    "error": "Ein Fehler ist aufgetreten",
+    "close": "✕ Beenden",
+    "pause": "⏸ Pause",
+    "resume": "▶ Fortsetzen",
+    "prev": "← Zurück",
+    "next": "Weiter →",
+    "finish": "Fertig",
+    "beatOn": "🔔 Beat aktiv",
+    "beatOff": "🔕 Beat aus",
+    "openOnYoutube": "▶ Auf YouTube öffnen"
+  },
+  "footer": {
+    "product": "Produkt",
+    "account": "Konto",
+    "features": "Funktionen",
+    "pricing": "Preise",
+    "getStarted": "Starten",
+    "signIn": "Anmelden",
+    "createAccount": "Konto erstellen",
+    "resetPassword": "Passwort zurücksetzen",
+    "rights": "Alle Rechte vorbehalten.",
+    "builtWith": "Erstellt mit Claude AI"
+  },
+  "language": {
+    "label": "Sprache",
+    "en": "English",
+    "pt": "Português",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
+}

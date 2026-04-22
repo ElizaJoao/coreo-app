@@ -1,6 +1,7 @@
 import type { Plan } from "../constants/plans";
 import { IconHome, IconSpark, IconLibrary, IconCalendar, IconTrend, IconSettings, IconAdmin } from "./Icons";
 import { PlanBadge } from "./PlanBadge";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import styles from "./Sidebar.module.css";
 
 export type SidebarUser = {
@@ -131,6 +132,10 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSetPlan
           </button>
         </div>
       )}
+
+      <div className={styles.langRow}>
+        <LanguageSwitcher />
+      </div>
 
       <div className={styles.userPill}>
         <div className={styles.userAvatar}>{user.initials}</div>

@@ -1,0 +1,30 @@
+@reference "tailwindcss";
+
+.switcher {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: oklch(1 0 0 / 0.05);
+  border: 1px solid oklch(1 0 0 / 0.1);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.btn, .btnActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 7px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.btn { color: var(--text-4); }
+.btnActive { background: var(--accent); color: var(--accent-ink); }
+.btn:hover { background: oklch(1 0 0 / 0.08); color: var(--text-2); }
+
+.flag { font-size: 12px; line-height: 1; }
+.label { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; }

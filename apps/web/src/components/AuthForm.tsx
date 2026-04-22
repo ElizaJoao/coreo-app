@@ -56,7 +56,7 @@ export function AuthForm(props: AuthFormProps) {
     <form onSubmit={props.onSubmit} className={styles.form}>
       <h1 className={styles.title}>{isSignup ? "Create account" : "Sign in"}</h1>
       <p className={styles.subtitle}>
-        {isSignup ? "Start building choreographies." : "Welcome back to Offbeat Move."}
+        {isSignup ? "Start building choreographies." : "Welcome back to Offbeat."}
       </p>
 
       <div className={styles.fields}>

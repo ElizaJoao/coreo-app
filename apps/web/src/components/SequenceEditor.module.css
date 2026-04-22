@@ -158,6 +158,41 @@
   gap: 4px;
 }
 
+/* Plan badges */
+.planBadgeFree {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+
+.planBadgePro {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+
+.planBadgeMax {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: oklch(0.82 0.16 290);
+  background: oklch(0.55 0.22 290 / 0.15);
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+
 /* Pro/Max actions */
 .actionRow {
   display: flex;
@@ -204,4 +239,96 @@
 .rehearsalBtn:hover {
   background: oklch(0.55 0.18 280 / 0.22);
   border-color: oklch(0.55 0.18 280 / 0.5);
+}
+
+.previewBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.previewBtn:hover { opacity: 0.88; }
+
+.previewLocked {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px dashed var(--border-2);
+  border-radius: var(--radius-sm);
+  color: var(--text-4);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.previewLocked:hover { color: var(--text-2); border-color: var(--accent); }
+
+/* Formations teaser (Free plan) */
+.formationsTeaser {
+  position: relative;
+  display: block;
+  height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px dashed var(--border-2);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.formationsTeaserStage {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #0d1118 0%, #141c24 100%);
+  filter: blur(2px);
+}
+
+.formationsTeaserDot {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.35;
+  transform: translate(-50%, -50%);
+}
+
+.formationsTeaserOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: oklch(0 0 0 / 0.45);
+}
+
+.formationsTeaserIcon {
+  font-size: 20px;
+}
+
+.formationsTeaserText {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.formationsTeaserCta {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.02em;
 }

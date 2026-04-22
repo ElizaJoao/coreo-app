@@ -21,7 +21,7 @@ export function LandingHero({ loginHref, signupHref }: LandingHeroProps) {
       </h1>
 
       <p className={styles.subtitle}>
-        Describe your class and let Offbeat Move generate a complete move
+        Describe your class and let Offbeat generate a complete move
         sequence — style, duration, difficulty, and music included.
       </p>
 

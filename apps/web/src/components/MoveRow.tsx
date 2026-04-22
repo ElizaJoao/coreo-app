@@ -18,8 +18,13 @@ export function MoveRow(props: MoveRowProps) {
   const isPro = plan === "pro" || plan === "max";
   const isMax = plan === "max";
 
+  const rowClass = [
+    styles.row,
+    isMax ? styles.rowMax : isPro ? styles.rowPro : "",
+  ].filter(Boolean).join(" ");
+
   return (
-    <div className={styles.row}>
+    <div className={rowClass}>
       <div className={styles.orderCol}>
         <span className={styles.orderNum}>{move.order}</span>
         <div className={styles.arrows}>

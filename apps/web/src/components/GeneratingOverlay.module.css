@@ -54,11 +54,45 @@
   40%           { transform: translateY(-10px); opacity: 1; }
 }
 
+.headingRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .heading {
   font-size: 16px;
   font-weight: 600;
   color: var(--text);
   letter-spacing: -0.02em;
+}
+
+.badgePro {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+
+.badgeMax {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: oklch(0.82 0.16 290);
+  background: oklch(0.55 0.22 290 / 0.15);
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+
+.upgradeTip {
+  font-size: 11px;
+  color: var(--text-4);
+  margin-top: -4px;
 }
 
 .step {
