@@ -1,29 +1,147 @@
 @reference "tailwindcss";
 
 .section {
-  @apply flex min-h-screen flex-col items-center justify-center px-6 text-center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 92vh;
+  padding: 80px 24px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Radial glow behind the hero */
+.section::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  height: 500px;
+  background: radial-gradient(ellipse at center, oklch(0.82 0.17 85 / 0.07) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .eyebrow {
-  @apply mb-4 inline-block rounded-full bg-[#F5C842]/15 px-4 py-1 text-xs font-medium tracking-widest text-[#F5C842] uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 28px;
+  padding: 5px 14px;
+  border-radius: 99px;
+  background: var(--accent-soft);
+  border: 1px solid oklch(0.82 0.17 85 / 0.25);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.eyebrowDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
 }
 
 .title {
-  @apply m-0 text-5xl font-bold tracking-tight;
+  font-size: clamp(40px, 8vw, 72px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1.0;
+  color: var(--text);
+  margin: 0 0 24px;
+  max-width: 720px;
+  white-space: pre-line;
+}
+
+.titleAccent {
+  color: var(--accent);
 }
 
 .subtitle {
-  @apply mt-4 max-w-md text-base text-zinc-400;
+  font-size: clamp(15px, 2.5vw, 17px);
+  color: var(--text-3);
+  max-width: 480px;
+  line-height: 1.7;
+  margin: 0 0 40px;
 }
 
 .actions {
-  @apply mt-8 flex flex-wrap items-center justify-center gap-3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 56px;
 }
 
 .btnPrimary {
-  @apply rounded-xl bg-[#F5C842] px-6 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 13px 28px;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 4px 24px -4px oklch(0.82 0.17 85 / 0.4);
 }
 
+.btnPrimary:hover { opacity: 0.9; transform: translateY(-2px); }
+
 .btnSecondary {
-  @apply rounded-xl border border-zinc-700 px-6 py-2.5 text-sm text-zinc-200 transition-colors hover:border-zinc-500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--border-2);
+  color: var(--text-2);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 13px 24px;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btnSecondary:hover { border-color: var(--border-3); color: var(--text); }
+
+/* Social proof strip */
+.proof {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-4);
+}
+
+.proofDot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--border-2);
+}
+
+/* Divider */
+.divider {
+  width: 100%;
+  max-width: 900px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-2), transparent);
+  margin: 0 auto;
 }

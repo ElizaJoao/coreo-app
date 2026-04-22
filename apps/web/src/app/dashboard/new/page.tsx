@@ -1,6 +1,7 @@
 "use client";
 
 import { ChoreographyForm } from "../../../components/ChoreographyForm";
+import { GeneratingOverlay } from "../../../components/GeneratingOverlay";
 import { DANCE_STYLES, DIFFICULTIES, FITNESS_STYLES } from "../../../constants/choreography";
 import { useChoreographyForm } from "../../../hooks/useChoreographyForm";
 import { useChoreographyGenerator } from "../../../hooks/useChoreographyGenerator";
@@ -14,6 +15,7 @@ export default function NewChoreographyPage() {
 
   return (
     <main className={styles.main}>
+      {generator.isGenerating ? <GeneratingOverlay /> : null}
       <h1 className={styles.title}>New choreography</h1>
       <p className={styles.subtitle}>Fill in the details and let AI build your plan.</p>
 

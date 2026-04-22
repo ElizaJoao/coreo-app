@@ -6,4 +6,5 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   DASHBOARD_NEW: "/dashboard/new",
   DASHBOARD_ITEM: (id: string) => `/dashboard/${id}`,
+  DASHBOARD_UPGRADE: "/dashboard/upgrade",
 } as const;

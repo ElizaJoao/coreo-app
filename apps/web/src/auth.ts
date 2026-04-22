@@ -24,7 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const user = await verifyUserCredentials(email, password);
         if (!user) return null;
 
-        return { id: user.id, email: user.email, name: user.name };
+        return { id: user.id, email: user.email, name: user.name, plan: user.plan };
       },
     }),
   ],
@@ -33,6 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     jwt({ token, user }) {
       if (user?.id) token.sub = user.id;
       if (user?.name) token.name = user.name;
+      if ((user as { plan?: string })?.plan) token.plan = (user as { plan?: string }).plan;
       return token;
     },
     session({ session, token }) {
@@ -40,6 +41,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (typeof token.sub === "string") session.user.id = token.sub;
         if (typeof token.name === "string") session.user.name = token.name;
         if (typeof token.email === "string") session.user.email = token.email;
+        if (typeof token.plan === "string") (session.user as { plan?: string }).plan = token.plan;
       }
       return session;
     },

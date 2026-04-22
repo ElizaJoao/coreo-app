@@ -6,6 +6,7 @@ import { CreateCard } from "../../components/CreateCard";
 import { DayCell } from "../../components/DayCell";
 import { IconGrid, IconSpark } from "../../components/Icons";
 import { StatCard } from "../../components/StatCard";
+import { UpgradeBanner } from "../../components/UpgradeBanner";
 import { DANCE_STYLES } from "../../constants/choreography";
 import { DIFFICULTIES } from "../../constants/choreography";
 import { DASHBOARD_COPY } from "../../constants/ui";
@@ -15,7 +16,7 @@ import type { Choreography } from "../../types/choreography";
 import styles from "./page.module.css";
 
 type PageProps = {
-  searchParams: Promise<{ cat?: string; diff?: string }>;
+  searchParams: Promise<{ cat?: string; diff?: string; success?: string; plan?: string }>;
 };
 
 function getCategory(style: string): string {
@@ -83,6 +84,10 @@ export default async function DashboardPage({ searchParams }: PageProps) {
 
   return (
     <div className={styles.page}>
+      {params.success === "1" && params.plan && (
+        <UpgradeBanner plan={params.plan} />
+      )}
+
       {/* Hero header */}
       <div className={styles.pageHeader}>
         <div>

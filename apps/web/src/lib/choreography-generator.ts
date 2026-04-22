@@ -74,7 +74,7 @@ Design 8–14 moves that fit the total duration. Each move should have a realist
 
   const message = await client.messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 2048,
+    max_tokens: 4096,
     tools: [generateTool],
     tool_choice: { type: "tool", name: "create_choreography" },
     messages: [{ role: "user", content: prompt }],
