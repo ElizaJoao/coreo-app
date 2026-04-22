@@ -4,6 +4,22 @@ export type ChoreographyStyle = (typeof ALL_STYLES)[number];
 export type ChoreographyDifficulty = (typeof DIFFICULTIES)[number];
 export type ChoreographyDurationMinutes = (typeof DURATIONS)[number];
 
+export type Dancer = {
+  id: string;
+  name: string;
+  color: string;
+};
+
+export type DancerPosition = {
+  x: number; // 0–1 fraction of stage width
+  y: number; // 0–1 fraction of stage height
+};
+
+export type MoveFormation = {
+  moveId: string;
+  positions: Record<string, DancerPosition>; // dancerId → position
+};
+
 export type ChoreographyMusic = {
   title: string;
   artist: string;
@@ -24,6 +40,8 @@ export type ChoreographyMove = {
 export type Choreography = {
   id: string;
   name: string;
+  dancers?: Dancer[];
+  formations?: MoveFormation[];
   style: ChoreographyStyle;
   duration: ChoreographyDurationMinutes;
   targetAudience: string;

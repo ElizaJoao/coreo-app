@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import type { ChoreographyMove, ChoreographyMusic } from "../types/choreography";
+import type { ChoreographyMove, ChoreographyMusic, Dancer, DancerPosition } from "../types/choreography";
 import type { EditorStatus } from "../hooks/useChoreographyEditor";
 import type { Plan } from "../constants/plans";
 import { MoveRow } from "./MoveRow";
 import { MusicEditor } from "./MusicEditor";
 import { RehearsalMode } from "./RehearsalMode";
+import { FormationEditor } from "./FormationEditor";
+import { FormationPlayback } from "./FormationPlayback";
 import styles from "./SequenceEditor.module.css";
 
 export type SequenceEditorProps = {
@@ -27,6 +29,10 @@ export type SequenceEditorProps = {
   onClearMusic: () => void;
   status: EditorStatus;
   onSave: () => void;
+  dancers: Dancer[];
+  onDancersChange: (d: Dancer[]) => void;
+  getFormationForMove: (moveId: string) => Record<string, DancerPosition>;
+  onUpdatePosition: (moveId: string, dancerId: string, pos: DancerPosition) => void;
 };
 
 export function SequenceEditor(props: SequenceEditorProps) {
@@ -35,6 +41,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
   const isMax = plan === "max";
 
   const [rehearsalOpen, setRehearsalOpen] = useState(false);
+  const [formationPlaybackOpen, setFormationPlaybackOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const totalSec = props.moves.reduce((s, m) => s + m.duration, 0);
@@ -53,6 +60,15 @@ export function SequenceEditor(props: SequenceEditorProps) {
     <>
       {isMax && rehearsalOpen && (
         <RehearsalMode moves={props.moves} onClose={() => setRehearsalOpen(false)} />
+      )}
+      {isPro && formationPlaybackOpen && (
+        <FormationPlayback
+          moves={props.moves}
+          dancers={props.dancers}
+          getFormationForMove={props.getFormationForMove}
+          music={props.music}
+          onClose={() => setFormationPlaybackOpen(false)}
+        />
       )}
 
       <div className={styles.editor}>
@@ -89,6 +105,16 @@ export function SequenceEditor(props: SequenceEditorProps) {
                   onClick={() => setRehearsalOpen(true)}
                 >
                   ▶ Rehearsal mode
+                </button>
+              )}
+              {isPro && (
+                <button
+                  type="button"
+                  className={styles.rehearsalBtn}
+                  onClick={() => setFormationPlaybackOpen(true)}
+                  disabled={props.dancers.length === 0}
+                >
+                  ▶ Play formation
                 </button>
               )}
             </div>
@@ -135,6 +161,24 @@ export function SequenceEditor(props: SequenceEditorProps) {
             onClear={props.onClearMusic}
           />
         </div>
+
+        {/* Formations — Pro/Max */}
+        {isPro && (
+          <div className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>Formations</h2>
+              <div className={styles.sectionLine} />
+              <span className={styles.duration}>{props.dancers.length} dancer{props.dancers.length !== 1 ? "s" : ""}</span>
+            </div>
+            <FormationEditor
+              moves={props.moves}
+              dancers={props.dancers}
+              onDancersChange={props.onDancersChange}
+              getFormationForMove={props.getFormationForMove}
+              onUpdatePosition={props.onUpdatePosition}
+            />
+          </div>
+        )}
 
         {/* Save */}
         <div className={styles.saveRow}>
