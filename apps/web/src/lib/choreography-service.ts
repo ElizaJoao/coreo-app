@@ -1,4 +1,4 @@
-import type { Choreography, ChoreographyMove, ChoreographyMusic } from "../types/choreography";
+import type { Choreography, ChoreographyMove, ChoreographyMusic, Dancer, MoveFormation } from "../types/choreography";
 import { supabase } from "./supabase";
 
 type ChoreographyRow = {
@@ -12,6 +12,8 @@ type ChoreographyRow = {
   description: string | null;
   moves: ChoreographyMove[];
   music: ChoreographyMusic | null;
+  dancers: Dancer[];
+  formations: MoveFormation[];
   created_at: string;
   updated_at: string;
 };
@@ -27,6 +29,8 @@ function rowToChoreography(row: ChoreographyRow): Choreography {
     description: row.description ?? "",
     moves: row.moves,
     music: row.music ?? undefined,
+    dancers: row.dancers ?? [],
+    formations: row.formations ?? [],
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -73,6 +77,8 @@ export type UpdateChoreographyInput = {
   moves?: ChoreographyMove[];
   music?: ChoreographyMusic | null;
   description?: string;
+  dancers?: Dancer[];
+  formations?: MoveFormation[];
 };
 
 export async function updateChoreography(
@@ -85,6 +91,8 @@ export async function updateChoreography(
   if (input.moves !== undefined) patch.moves = input.moves;
   if (input.music !== undefined) patch.music = input.music;
   if (input.description !== undefined) patch.description = input.description;
+  if (input.dancers !== undefined) patch.dancers = input.dancers;
+  if (input.formations !== undefined) patch.formations = input.formations;
 
   const { data, error } = await supabase
     .from("choreographies")

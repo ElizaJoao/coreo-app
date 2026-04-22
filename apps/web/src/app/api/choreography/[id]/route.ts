@@ -2,13 +2,15 @@ import { NextResponse } from "next/server";
 
 import { auth } from "../../../../auth";
 import { updateChoreography } from "../../../../lib/choreography-service";
-import type { ChoreographyMove, ChoreographyMusic } from "../../../../types/choreography";
+import type { ChoreographyMove, ChoreographyMusic, Dancer, MoveFormation } from "../../../../types/choreography";
 
 type PatchBody = {
   name?: string;
   moves?: ChoreographyMove[];
   music?: ChoreographyMusic | null;
   description?: string;
+  dancers?: Dancer[];
+  formations?: MoveFormation[];
 };
 
 export async function PATCH(

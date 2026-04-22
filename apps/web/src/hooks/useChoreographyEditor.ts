@@ -1,8 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-
-import type { Choreography, ChoreographyMove, ChoreographyMusic } from "../types/choreography";
+import type { Choreography, ChoreographyMove, ChoreographyMusic, Dancer, MoveFormation, DancerPosition } from "../types/choreography";
 
 function reorder(moves: ChoreographyMove[], from: number, to: number): ChoreographyMove[] {
   const next = [...moves];
@@ -22,6 +21,8 @@ export function useChoreographyEditor(initial: Choreography) {
   const [moves, setMoves] = useState<ChoreographyMove[]>(initial.moves);
   const [music, setMusic] = useState<ChoreographyMusic | undefined>(initial.music);
   const [description, setDescription] = useState(initial.description);
+  const [dancers, setDancers] = useState<Dancer[]>(initial.dancers ?? []);
+  const [formations, setFormations] = useState<MoveFormation[]>(initial.formations ?? []);
   const [status, setStatus] = useState<EditorStatus>("idle");
 
   const updateMove = useCallback((id: string, patch: Partial<ChoreographyMove>) => {
@@ -42,6 +43,7 @@ export function useChoreographyEditor(initial: Choreography) {
 
   const deleteMove = useCallback((id: string) => {
     setMoves((prev) => prev.filter((m) => m.id !== id).map((m, i) => ({ ...m, order: i + 1 })));
+    setFormations((prev) => prev.filter((f) => f.moveId !== id));
   }, []);
 
   const addMove = useCallback(() => {
@@ -54,13 +56,37 @@ export function useChoreographyEditor(initial: Choreography) {
 
   const clearMusic = useCallback(() => setMusic(undefined), []);
 
+  const updateDancerPosition = useCallback((moveId: string, dancerId: string, pos: DancerPosition) => {
+    setFormations((prev) => {
+      const existing = prev.find((f) => f.moveId === moveId);
+      if (existing) {
+        return prev.map((f) =>
+          f.moveId === moveId
+            ? { ...f, positions: { ...f.positions, [dancerId]: pos } }
+            : f
+        );
+      }
+      return [...prev, { moveId, positions: { [dancerId]: pos } }];
+    });
+  }, []);
+
+  const getFormationForMove = useCallback((moveId: string): Record<string, DancerPosition> => {
+    // Inherit from previous move if current has no formation
+    const idx = moves.findIndex((m) => m.id === moveId);
+    for (let i = idx; i >= 0; i--) {
+      const f = formations.find((f) => f.moveId === moves[i].id);
+      if (f) return f.positions;
+    }
+    return {};
+  }, [moves, formations]);
+
   const save = useCallback(async () => {
     setStatus("saving");
     try {
       const res = await fetch(`/api/choreography/${initial.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, moves, music: music ?? null, description }),
+        body: JSON.stringify({ name, moves, music: music ?? null, description, dancers, formations }),
       });
       if (!res.ok) throw new Error("save failed");
       setStatus("saved");
@@ -68,13 +94,17 @@ export function useChoreographyEditor(initial: Choreography) {
     } catch {
       setStatus("error");
     }
-  }, [initial.id, name, moves, music, description]);
+  }, [initial.id, name, moves, music, description, dancers, formations]);
 
   return {
     name, setName,
     moves,
     music, updateMusic, clearMusic,
     description, setDescription,
+    dancers, setDancers,
+    formations,
+    updateDancerPosition,
+    getFormationForMove,
     status,
     updateMove, moveUp, moveDown, deleteMove, addMove,
     save,

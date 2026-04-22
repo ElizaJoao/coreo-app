@@ -1,0 +1,285 @@
+@reference "tailwindcss";
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Move tabs */
+.moveTabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.moveTabs::-webkit-scrollbar { display: none; }
+
+.moveTab, .moveTabActive {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-3);
+  transition: all 0.12s;
+  flex-shrink: 0;
+}
+
+.moveTabActive {
+  background: var(--surface-3);
+  border-color: var(--accent);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.moveTab:hover { color: var(--text-2); border-color: var(--border-2); }
+
+.moveTabNum {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.moveTabName {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Body layout */
+.body {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 14px;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  .body { grid-template-columns: 1fr; }
+}
+
+/* Stage */
+.stageWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stageLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-4);
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(180deg, #0e1117 0%, #141820 100%);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: crosshair;
+  user-select: none;
+}
+
+/* Grid lines */
+.stageLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: oklch(1 0 0 / 0.05);
+}
+
+.stageLineV {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: oklch(1 0 0 / 0.05);
+}
+
+.stageAudience {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: oklch(1 0 0 / 0.2);
+}
+
+/* Dancer token */
+.dancerToken {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #000;
+  cursor: grab;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.15);
+  transition: box-shadow 0.1s, transform 0.1s;
+  z-index: 10;
+}
+
+.dancerToken:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 0 3px rgba(255,255,255,0.3);
+  transform: translate(-50%, -50%) scale(1.08) !important;
+}
+
+.dancerTokenDragging {
+  cursor: grabbing;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.7), 0 0 0 3px rgba(255,255,255,0.4);
+  transform: translate(-50%, -50%) scale(1.15) !important;
+  z-index: 20;
+}
+
+.stageEmpty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: oklch(1 0 0 / 0.2);
+  pointer-events: none;
+}
+
+.copyBtn {
+  align-self: flex-start;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  color: var(--text-4);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.copyBtn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Dancer panel */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.panelTitle {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-4);
+}
+
+.dancerList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dancerRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dancerDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dancerName {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-2);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  padding: 2px 0;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.12s;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dancerName:hover { border-bottom-color: var(--border-2); }
+
+.dancerNameInput {
+  flex: 1;
+  background: var(--surface-3);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 13px;
+  padding: 2px 6px;
+  outline: none;
+  min-width: 0;
+}
+
+.dancerRemove {
+  background: transparent;
+  border: none;
+  color: var(--text-4);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: color 0.12s;
+}
+
+.dancerRemove:hover { color: var(--danger); }
+
+.addDancerBtn {
+  background: transparent;
+  border: 1px dashed var(--border-2);
+  border-radius: 6px;
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.addDancerBtn:hover { border-color: var(--accent); color: var(--accent); }
+.addDancerBtn:disabled { opacity: 0.3; cursor: default; }
+
+.hint {
+  font-size: 11px;
+  color: var(--text-4);
+  line-height: 1.5;
+}

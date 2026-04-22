@@ -29,6 +29,10 @@ export function ChoreographyEditor({ choreography, plan }: Props) {
       onClearMusic={editor.clearMusic}
       status={editor.status}
       onSave={editor.save}
+      dancers={editor.dancers}
+      onDancersChange={editor.setDancers}
+      getFormationForMove={editor.getFormationForMove}
+      onUpdatePosition={editor.updateDancerPosition}
     />
   );
 }
