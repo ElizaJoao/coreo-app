@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "../../../../auth";
-import { createCheckoutSession } from "../../../../lib/billing-service";
+import { createCheckoutSession, logPaymentEvent } from "../../../../lib/billing-service";
 import { ROUTES } from "../../../../constants/routes";
 
 export async function POST(request: Request) {
@@ -30,7 +30,16 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url });
   } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
     console.error("[billing/checkout]", err);
+    await logPaymentEvent({
+      userId: session.user.id,
+      userEmail: session.user.email ?? undefined,
+      eventType: "checkout.session.create_failed",
+      status: "error",
+      plan,
+      errorMessage: msg,
+    });
     return NextResponse.json({ error: "Failed to create checkout session" }, { status: 500 });
   }
 }

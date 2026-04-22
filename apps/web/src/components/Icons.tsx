@@ -93,3 +93,6 @@ export function IconCopy(p: IconProps) {
 export function IconZap(p: IconProps) {
   return <Icon {...p}><path d="m13 2-9 12h7l-1 8 9-12h-7z" /></Icon>;
 }
+export function IconAdmin(p: IconProps) {
+  return <Icon {...p}><path d="M12 2 3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7z" /><path d="m9 12 2 2 4-4" /></Icon>;
+}
