@@ -8,6 +8,7 @@ export type SidebarUser = {
   email: string;
   initials: string;
   plan: Plan;
+  isAdmin?: boolean;
 };
 
 export type SidebarNavItem = {
@@ -23,11 +24,14 @@ export type SidebarProps = {
   user: SidebarUser;
   libraryCount?: number;
   onNavigate: (route: string) => void;
+  onSetPlan?: (plan: Plan) => void;
+  settingPlan?: Plan | null;
 };
 
 const ICON_SIZE = 16;
+const ADMIN_PLANS: Plan[] = ["free", "pro", "max"];
 
-export function Sidebar({ activeRoute, user, libraryCount, onNavigate }: SidebarProps) {
+export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSetPlan, settingPlan }: SidebarProps) {
   const primary: SidebarNavItem[] = [
     { id: "dashboard",  label: "Dashboard",          route: "/dashboard",          icon: IconHome },
     { id: "new",        label: "New choreography",   route: "/dashboard/new",      icon: IconSpark },
@@ -84,6 +88,25 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate }: Sidebar
           </button>
         );
       })}
+
+      {user.isAdmin && onSetPlan && (
+        <div className={styles.adminCard}>
+          <div className={styles.adminLabel}>⚡ Admin · Preview plan</div>
+          <div className={styles.adminPlans}>
+            {ADMIN_PLANS.map((p) => (
+              <button
+                key={p}
+                type="button"
+                className={user.plan === p ? styles.adminPlanActive : styles.adminPlan}
+                onClick={() => user.plan !== p && onSetPlan(p)}
+                disabled={!!settingPlan || user.plan === p}
+              >
+                {settingPlan === p ? "…" : p.charAt(0).toUpperCase() + p.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {user.plan === "free" && (
         <div className={styles.upgradeCard}>
