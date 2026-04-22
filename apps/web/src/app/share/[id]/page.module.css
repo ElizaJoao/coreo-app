@@ -1,0 +1,173 @@
+@reference "tailwindcss";
+
+.main {
+  min-height: 100vh;
+  background: var(--bg);
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.description {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.6;
+  padding: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.musicCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.musicIcon {
+  font-size: 20px;
+  color: var(--accent);
+}
+
+.musicTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.musicArtist {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+.moveList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: move;
+}
+
+.moveItem {
+  counter-increment: move;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  padding-left: 52px;
+}
+
+.moveItem::before {
+  content: counter(move);
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-4);
+  font-variant-numeric: tabular-nums;
+}
+
+.moveHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.moveName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.moveDuration {
+  font-size: 12px;
+  color: var(--text-3);
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.moveDesc {
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+.videoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+
+.videoLink:hover { opacity: 1; text-decoration: underline; }
+
+.footer {
+  font-size: 12px;
+  color: var(--text-4);
+  text-align: center;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.footerLink {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.footerLink:hover { text-decoration: underline; }

@@ -3,12 +3,17 @@
 import { SequenceEditor } from "../../../components/SequenceEditor";
 import { useChoreographyEditor } from "../../../hooks/useChoreographyEditor";
 import type { Choreography } from "../../../types/choreography";
+import type { Plan } from "../../../constants/plans";
 
-export function ChoreographyEditor({ choreography }: { choreography: Choreography }) {
+type Props = { choreography: Choreography; plan: Plan };
+
+export function ChoreographyEditor({ choreography, plan }: Props) {
   const editor = useChoreographyEditor(choreography);
 
   return (
     <SequenceEditor
+      choreographyId={choreography.id}
+      plan={plan}
       name={editor.name}
       onNameChange={editor.setName}
       description={editor.description}

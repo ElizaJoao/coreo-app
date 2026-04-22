@@ -156,3 +156,43 @@
 
 .descInput:focus { color: var(--text-2); }
 .descInput::placeholder { color: var(--text-4); font-style: italic; }
+
+.verbalCue {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 6px 12px 8px;
+  background: oklch(0.55 0.18 280 / 0.08);
+  border-top: 1px solid oklch(0.55 0.18 280 / 0.15);
+}
+
+.verbalCueLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: oklch(0.72 0.18 280);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+.verbalCueText {
+  font-size: 12px;
+  color: oklch(0.8 0.12 280);
+  line-height: 1.45;
+  font-style: italic;
+}
+
+.videoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+
+.videoLink:hover { opacity: 1; text-decoration: underline; }

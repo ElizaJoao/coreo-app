@@ -17,6 +17,8 @@ export type ChoreographyMove = {
   description: string;
   order: number;
   tag?: string;
+  videoQuery?: string;  // pro+: YouTube search term for demo video
+  verbalCue?: string;   // max: what instructor says during this move
 };
 
 export type Choreography = {
