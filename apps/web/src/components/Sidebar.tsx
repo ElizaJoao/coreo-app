@@ -43,7 +43,7 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate }: Sidebar
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
-        <div className={styles.brandMark}>O</div>
+        <img src="/logo-mark.svg" alt="Offbeat" className={styles.brandMark} />
         <div>
           <div className={styles.brandName}>Offbeat</div>
           <div className={styles.brandSub}>MOVE · STUDIO</div>

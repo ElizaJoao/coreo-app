@@ -22,32 +22,10 @@
 }
 
 .brandMark {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: var(--accent);
-  display: grid;
-  place-items: center;
-  color: var(--accent-ink);
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: -0.02em;
-  position: relative;
-  overflow: hidden;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
-}
-
-.brandMark::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0 3px,
-    oklch(0 0 0 / 0.15) 3px 4px
-  );
-  mix-blend-mode: multiply;
-  opacity: 0.5;
+  display: block;
 }
 
 .brandName {

@@ -19,6 +19,11 @@ export const metadata: Metadata = {
   title: "Offbeat Move — AI Choreography Planner",
   description:
     "Generate complete choreography plans for your fitness or dance class in seconds.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
