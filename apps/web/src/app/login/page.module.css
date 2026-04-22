@@ -1,0 +1,44 @@
+@reference "tailwindcss";
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  padding: 24px;
+  gap: 16px;
+}
+
+.homeLink {
+  align-self: flex-start;
+  position: fixed;
+  top: 20px;
+  left: 24px;
+  font-size: 13px;
+  color: var(--text-3, #7a7a7a);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.homeLink:hover { color: var(--text, #f4f4f4); }
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.switchLink {
+  text-align: center;
+  font-size: 13px;
+  color: #a1a1aa;
+  margin: 0;
+}
+
+.link {
+  color: #F5C842;
+  text-decoration: underline;
+}

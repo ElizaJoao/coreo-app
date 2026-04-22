@@ -7,6 +7,6 @@ const { auth } = NextAuth(authConfig);
 export default auth;
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/((?!forgot-password|reset-password|api|_next|.*\\..*).*)"],
 };
 
