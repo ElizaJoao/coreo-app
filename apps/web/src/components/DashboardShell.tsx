@@ -24,6 +24,11 @@ function getCrumbs(pathname: string): { label: string }[] {
   if (pathname === "/dashboard/insights") return [{ label: "Dashboard" }, { label: "Insights" }];
   if (pathname === "/dashboard/settings") return [{ label: "Dashboard" }, { label: "Settings" }];
   if (pathname === "/dashboard/upgrade") return [{ label: "Dashboard" }, { label: "Upgrade" }];
+  if (pathname === "/dashboard/admin") return [{ label: "Dashboard" }, { label: "Admin" }];
+  if (pathname === "/dashboard/library") return [{ label: "Dashboard" }, { label: "Library" }];
+  if (pathname === "/dashboard/schedule") return [{ label: "Dashboard" }, { label: "Schedule" }];
+  if (pathname === "/dashboard/insights") return [{ label: "Dashboard" }, { label: "Insights" }];
+  if (pathname === "/dashboard/settings") return [{ label: "Dashboard" }, { label: "Settings" }];
   if (pathname.startsWith("/dashboard/")) return [{ label: "Dashboard" }, { label: "Choreography" }];
   return [{ label: "Dashboard" }];
 }

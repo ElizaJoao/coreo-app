@@ -94,6 +94,28 @@ export async function setUserPlan(userId: string, plan: Plan, subscriptionId?: s
   await supabase.from("users").update(patch).eq("id", userId);
 }
 
+export async function logPaymentEvent(opts: {
+  userId?: string;
+  userEmail?: string;
+  eventType: string;
+  status: "success" | "error" | "warning" | "info";
+  plan?: string;
+  amountCents?: number;
+  errorMessage?: string;
+  metadata?: Record<string, unknown>;
+}) {
+  await supabase.from("payment_logs").insert({
+    user_id: opts.userId ?? null,
+    user_email: opts.userEmail ?? null,
+    event_type: opts.eventType,
+    status: opts.status,
+    plan: opts.plan ?? null,
+    amount_cents: opts.amountCents ?? null,
+    error_message: opts.errorMessage ?? null,
+    metadata: opts.metadata ?? null,
+  });
+}
+
 export async function getUserByStripeCustomerId(customerId: string) {
   const col = customerIdColumn();
   const { data } = await supabase

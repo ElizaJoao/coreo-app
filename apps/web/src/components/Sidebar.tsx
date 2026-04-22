@@ -1,5 +1,5 @@
 import type { Plan } from "../constants/plans";
-import { IconHome, IconSpark, IconLibrary, IconCalendar, IconTrend, IconSettings } from "./Icons";
+import { IconHome, IconSpark, IconLibrary, IconCalendar, IconTrend, IconSettings, IconAdmin } from "./Icons";
 import { PlanBadge } from "./PlanBadge";
 import styles from "./Sidebar.module.css";
 
@@ -88,6 +88,20 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSetPlan
           </button>
         );
       })}
+
+      {user.isAdmin && (
+        <>
+          <div className={styles.groupLabel}>Admin</div>
+          <button
+            type="button"
+            className={activeRoute === "/dashboard/admin" ? styles.navItemActive : styles.navItem}
+            onClick={() => onNavigate("/dashboard/admin")}
+          >
+            <IconAdmin size={ICON_SIZE} className={styles.navIcon} />
+            <span>Metrics & logs</span>
+          </button>
+        </>
+      )}
 
       {user.isAdmin && onSetPlan && (
         <div className={styles.adminCard}>
