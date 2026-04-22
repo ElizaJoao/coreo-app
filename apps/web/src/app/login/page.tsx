@@ -4,19 +4,18 @@ import Link from "next/link";
 
 import { AuthForm } from "../../components/AuthForm";
 import { useAuthForm } from "../../hooks/useAuthForm";
+import styles from "./page.module.css";
 
 export default function LoginPage() {
   const form = useAuthForm("login");
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <div className="w-full max-w-md">
+    <main className={styles.page}>
+      <Link href="/" className={styles.homeLink}>← Back to home</Link>
+      <div className={styles.card}>
         <AuthForm
           mode="login"
-          values={{
-            email: form.values.email,
-            password: form.values.password,
-          }}
+          values={{ email: form.values.email, password: form.values.password }}
           errors={form.errors}
           isFormValid={form.isFormValid}
           isSubmitting={form.isSubmitting}
@@ -26,15 +25,11 @@ export default function LoginPage() {
           onPasswordBlur={form.touchPassword}
           onSubmit={form.handleSubmit}
         />
-
-        <p className="mt-4 text-center text-sm text-zinc-300">
+        <p className={styles.switchLink}>
           No account yet?{" "}
-          <Link href="/signup" className="text-[#F5C842] underline">
-            Create one
-          </Link>
+          <Link href="/signup" className={styles.link}>Create one</Link>
         </p>
       </div>
     </main>
   );
 }
-

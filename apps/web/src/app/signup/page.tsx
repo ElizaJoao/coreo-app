@@ -4,13 +4,15 @@ import Link from "next/link";
 
 import { AuthForm } from "../../components/AuthForm";
 import { useAuthForm } from "../../hooks/useAuthForm";
+import styles from "../login/page.module.css";
 
 export default function SignupPage() {
   const form = useAuthForm("signup");
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <div className="w-full max-w-md">
+    <main className={styles.page}>
+      <Link href="/" className={styles.homeLink}>← Back to home</Link>
+      <div className={styles.card}>
         <AuthForm
           mode="signup"
           values={form.values}
@@ -28,15 +30,11 @@ export default function SignupPage() {
           onPhoneBlur={form.touchPhone}
           onSubmit={form.handleSubmit}
         />
-
-        <p className="mt-4 text-center text-sm text-zinc-300">
+        <p className={styles.switchLink}>
           Already registered?{" "}
-          <Link href="/login" className="text-[#F5C842] underline">
-            Sign in
-          </Link>
+          <Link href="/login" className={styles.link}>Sign in</Link>
         </p>
       </div>
     </main>
   );
 }
-

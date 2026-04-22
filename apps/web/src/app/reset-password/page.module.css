@@ -1,0 +1,20 @@
+.passwordWrap {
+  position: relative;
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #7a7a7a;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.eyeBtn:hover { color: #f4f4f4; }
