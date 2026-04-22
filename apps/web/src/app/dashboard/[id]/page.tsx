@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { auth } from "../../../auth";
 import { ROUTES } from "../../../constants/routes";
 import { getChoreographyById } from "../../../lib/choreography-service";
+import { supabase } from "../../../lib/supabase";
+import type { Plan } from "../../../constants/plans";
 import { ChoreographyEditor } from "./ChoreographyEditor";
 import styles from "./page.module.css";
 
@@ -20,6 +22,13 @@ export default async function ChoreographyPage({ params }: Props) {
   const choreography = await getChoreographyById(id, session.user.id);
   if (!choreography) notFound();
 
+  const { data: userData } = await supabase
+    .from("users")
+    .select("plan")
+    .eq("id", session.user.id)
+    .single();
+  const plan = ((userData as { plan?: string } | null)?.plan ?? "free") as Plan;
+
   return (
     <main className={styles.main}>
       <div className={styles.topBar}>
@@ -30,7 +39,7 @@ export default async function ChoreographyPage({ params }: Props) {
           <span className={styles.badge}>{choreography.duration} min</span>
         </div>
       </div>
-      <ChoreographyEditor choreography={choreography} />
+      <ChoreographyEditor choreography={choreography} plan={plan} />
     </main>
   );
 }

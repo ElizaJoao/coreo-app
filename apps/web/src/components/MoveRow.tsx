@@ -10,10 +10,13 @@ export type MoveRowProps = {
   onMoveUp: () => void;
   onMoveDown: () => void;
   onDelete: () => void;
+  plan?: "free" | "pro" | "max";
 };
 
 export function MoveRow(props: MoveRowProps) {
-  const { move } = props;
+  const { move, plan = "free" } = props;
+  const isPro = plan === "pro" || plan === "max";
+  const isMax = plan === "max";
 
   return (
     <div className={styles.row}>
@@ -70,6 +73,24 @@ export function MoveRow(props: MoveRowProps) {
           placeholder="Instructor cue or description…"
           onChange={(e) => props.onUpdate({ description: e.target.value })}
         />
+
+        {isMax && move.verbalCue && (
+          <div className={styles.verbalCue}>
+            <span className={styles.verbalCueLabel}>💬 Say:</span>
+            <span className={styles.verbalCueText}>{move.verbalCue}</span>
+          </div>
+        )}
+
+        {isPro && move.videoQuery && (
+          <a
+            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(move.videoQuery)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.videoLink}
+          >
+            🎬 Watch demo
+          </a>
+        )}
       </div>
     </div>
   );

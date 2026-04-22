@@ -112,3 +112,14 @@ export async function getChoreographyById(
   if (error) return null;
   return rowToChoreography(data as ChoreographyRow);
 }
+
+export async function getChoreographyPublic(id: string): Promise<Choreography | null> {
+  const { data, error } = await supabase
+    .from("choreographies")
+    .select()
+    .eq("id", id)
+    .single();
+
+  if (error) return null;
+  return rowToChoreography(data as ChoreographyRow);
+}
