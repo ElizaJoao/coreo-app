@@ -1,13 +1,25 @@
+import { FeaturesSection } from "../components/FeaturesSection";
+import { LandingFooter } from "../components/LandingFooter";
 import { LandingHero } from "../components/LandingHero";
+import { LandingNav } from "../components/LandingNav";
 import { PricingSection } from "../components/PricingSection";
 import { ROUTES } from "../constants/routes";
+import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <main>
-      <LandingHero loginHref={ROUTES.LOGIN} signupHref={ROUTES.SIGNUP} />
-      <div style={{ height: 1, background: "linear-gradient(90deg,transparent,var(--border-2),transparent)", maxWidth: 900, margin: "0 auto" }} />
-      <PricingSection signupHref={ROUTES.SIGNUP} />
-    </main>
+    <>
+      <LandingNav />
+      <main className={styles.main}>
+        <LandingHero loginHref={ROUTES.LOGIN} signupHref={ROUTES.SIGNUP} />
+        <div className={styles.divider} />
+        <FeaturesSection />
+        <div className={styles.divider} />
+        <div id="pricing">
+          <PricingSection signupHref={ROUTES.SIGNUP} />
+        </div>
+      </main>
+      <LandingFooter />
+    </>
   );
 }

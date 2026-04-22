@@ -1,0 +1,17 @@
+@reference "tailwindcss";
+
+.main {
+  padding-top: 60px; /* height of the fixed nav */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.divider {
+  width: 100%;
+  max-width: 900px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-2), transparent);
+  margin: 0 auto;
+}
