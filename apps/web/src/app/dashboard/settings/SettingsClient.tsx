@@ -2,9 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { useLocale } from "next-intl";
 import type { Plan } from "../../../constants/plans";
 import { PLAN_META } from "../../../constants/plans";
 import styles from "./page.module.css";
+
+const LOCALES = [
+  { code: "en", flag: "🇬🇧", label: "English" },
+  { code: "pt", flag: "🇵🇹", label: "Português" },
+  { code: "es", flag: "🇪🇸", label: "Español" },
+  { code: "fr", flag: "🇫🇷", label: "Français" },
+  { code: "de", flag: "🇩🇪", label: "Deutsch" },
+];
 
 type Props = {
   name: string;
@@ -14,10 +24,12 @@ type Props = {
 
 export function SettingsClient({ name, email, plan }: Props) {
   const router = useRouter();
+  const locale = useLocale();
   const [displayName, setDisplayName] = useState(name);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
   const [portalLoading, setPortalLoading] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   async function handleSaveName(e: React.FormEvent) {
     e.preventDefault();
@@ -52,7 +64,18 @@ export function SettingsClient({ name, email, plan }: Props) {
     }
   }
 
+  function switchLocale(newLocale: string) {
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
+    window.location.reload();
+  }
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    await signOut({ callbackUrl: "/" });
+  }
+
   const planMeta = PLAN_META[plan];
+  const currentLocale = LOCALES.find((l) => l.code === locale) ?? LOCALES[0];
 
   return (
     <div className={styles.page}>
@@ -128,7 +151,7 @@ export function SettingsClient({ name, email, plan }: Props) {
           </div>
         </section>
 
-        {/* Password */}
+        {/* Security */}
         <section className={styles.section}>
           <div className={styles.sectionTitle}>Security</div>
           <div className={styles.card}>
@@ -138,6 +161,56 @@ export function SettingsClient({ name, email, plan }: Props) {
                 <div className={styles.securityDesc}>Send yourself a reset link to change your password.</div>
               </div>
               <a href="/forgot-password" className={styles.btnSecondary}>Change password</a>
+            </div>
+          </div>
+        </section>
+
+        {/* Language */}
+        <section className={styles.section}>
+          <div className={styles.sectionTitle}>Language</div>
+          <div className={styles.card}>
+            <div className={styles.securityRow}>
+              <div>
+                <div className={styles.securityLabel}>Display language</div>
+                <div className={styles.securityDesc}>Choose the language used throughout the app.</div>
+              </div>
+              <div className={styles.langSelectWrap}>
+                <span className={styles.langFlag}>{currentLocale.flag}</span>
+                <select
+                  className={styles.langSelect}
+                  value={locale}
+                  onChange={(e) => switchLocale(e.target.value)}
+                  aria-label="Select language"
+                >
+                  {LOCALES.map((l) => (
+                    <option key={l.code} value={l.code}>
+                      {l.flag} {l.label}
+                    </option>
+                  ))}
+                </select>
+                <span className={styles.langChevron}>▾</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Sign out */}
+        <section className={styles.section}>
+          <div className={styles.sectionTitle}>Session</div>
+          <div className={styles.card}>
+            <div className={styles.securityRow}>
+              <div>
+                <div className={styles.securityLabel}>Sign out</div>
+                <div className={styles.securityDesc}>Sign out of your account on this device.</div>
+              </div>
+              <button
+                type="button"
+                className={styles.btnDanger}
+                onClick={handleSignOut}
+                disabled={signingOut}
+              >
+                {signingOut ? "Signing out…" : "Sign out"}
+              </button>
             </div>
           </div>
         </section>

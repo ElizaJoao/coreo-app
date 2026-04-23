@@ -157,3 +157,65 @@
 
 .btnSecondary:hover { border-color: var(--border-3); color: var(--text); }
 .btnSecondary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btnDanger {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid oklch(0.72 0.19 25 / 0.35);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.btnDanger:hover { background: oklch(0.72 0.19 25 / 0.08); border-color: oklch(0.72 0.19 25 / 0.55); }
+.btnDanger:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Language select */
+.langSelectWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface-3);
+  border: 1px solid var(--border-2);
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.langSelectWrap:hover { border-color: var(--accent); }
+
+.langFlag { font-size: 16px; line-height: 1; pointer-events: none; }
+
+.langSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-inter);
+  padding: 0;
+  /* Overlay entire wrapper */
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+}
+
+.langChevron {
+  font-size: 10px;
+  color: var(--text-4);
+  pointer-events: none;
+}

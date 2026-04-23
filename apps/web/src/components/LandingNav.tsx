@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ROUTES } from "../constants/routes";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import styles from "./LandingNav.module.css";
 
 export function LandingNav() {
@@ -15,7 +14,6 @@ export function LandingNav() {
         <a href="#pricing" className={styles.link}>Pricing</a>
       </div>
       <div className={styles.actions}>
-        <LanguageSwitcher />
         <Link href={ROUTES.LOGIN} className={styles.btnSecondary}>Sign in</Link>
         <Link href={ROUTES.SIGNUP} className={styles.btnPrimary}>Get started free</Link>
       </div>
