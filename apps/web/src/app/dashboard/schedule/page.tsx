@@ -1,4 +1,5 @@
 import { auth } from "../../../auth";
+import { getTranslations } from "next-intl/server";
 import { getChoreographiesByUser } from "../../../lib/choreography-service";
 import Link from "next/link";
 import { ROUTES } from "../../../constants/routes";
@@ -20,6 +21,7 @@ function getWeeks(year: number, month: number) {
 }
 
 export default async function SchedulePage() {
+  const t = await getTranslations("schedule");
   const session = await auth();
   const userId = session?.user?.id;
   const choreos = userId ? await getChoreographiesByUser(userId) : [];
@@ -37,10 +39,10 @@ export default async function SchedulePage() {
     <div className={styles.page}>
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Schedule</h1>
+          <h1 className={styles.pageTitle}>{t("title")}</h1>
           <p className={styles.pageSub}>{MONTH_NAMES[month]} {year}</p>
         </div>
-        <Link href={ROUTES.DASHBOARD_NEW} className={styles.btnPrimary}>+ New class</Link>
+        <Link href={ROUTES.DASHBOARD_NEW} className={styles.btnPrimary}>{t("newClass")}</Link>
       </div>
 
       <div className={styles.layout}>
@@ -72,9 +74,9 @@ export default async function SchedulePage() {
 
         {/* Upcoming */}
         <div className={styles.sidebar}>
-          <div className={styles.sectionTitle}>Recently generated</div>
+          <div className={styles.sectionTitle}>{t("recentlyGenerated")}</div>
           {recentChoreos.length === 0 ? (
-            <div className={styles.empty}>No choreographies yet. <Link href={ROUTES.DASHBOARD_NEW} className={styles.emptyLink}>Generate one →</Link></div>
+            <div className={styles.empty}>{t("noChoreographies")} <Link href={ROUTES.DASHBOARD_NEW} className={styles.emptyLink}>{t("generateOne")}</Link></div>
           ) : (
             <div className={styles.classList}>
               {recentChoreos.map((c) => (
@@ -87,10 +89,8 @@ export default async function SchedulePage() {
             </div>
           )}
 
-          <div className={styles.sectionTitle} style={{ marginTop: 24 }}>Coming soon</div>
-          <div className={styles.comingSoon}>
-            Full class scheduling — pin choreographies to specific dates and get a weekly prep checklist.
-          </div>
+          <div className={styles.sectionTitle} style={{ marginTop: 24 }}>{t("comingSoon")}</div>
+          <div className={styles.comingSoon}>{t("comingSoonDesc")}</div>
         </div>
       </div>
     </div>

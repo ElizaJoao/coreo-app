@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { auth } from "../../../auth";
 import { supabase } from "../../../lib/supabase";
 import { ChoreographyCard } from "../../../components/ChoreographyCard";
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export default async function LibraryPage({ searchParams }: Props) {
+  const t = await getTranslations("library");
   const session = await auth();
   const userId = session?.user?.id;
   const [all, purchasedPacks] = await Promise.all([
@@ -72,62 +74,62 @@ export default async function LibraryPage({ searchParams }: Props) {
     <div className={styles.page}>
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Library</h1>
-          <p className={styles.pageSub}>{all.length} choreograph{all.length === 1 ? "y" : "ies"} saved</p>
+          <h1 className={styles.pageTitle}>{t("title")}</h1>
+          <p className={styles.pageSub}>{t("count", { count: all.length })}</p>
         </div>
-        <Link href={ROUTES.DASHBOARD_NEW} className={styles.btnPrimary}>+ Generate new</Link>
+        <Link href={ROUTES.DASHBOARD_NEW} className={styles.btnPrimary}>{t("generateNew")}</Link>
       </div>
 
       {plan === "free" && thisMonthCount >= 5 && (
         <div className={styles.upgradeBanner}>
-          <span>You&apos;ve used all 5 free choreographies this month.</span>
-          <Link href="/dashboard/upgrade" className={styles.upgradeBannerLink}>Upgrade to Pro for unlimited →</Link>
+          <span>{t("upgradeBanner")}</span>
+          <Link href="/dashboard/upgrade" className={styles.upgradeBannerLink}>{t("upgradeLink")}</Link>
         </div>
       )}
 
       <div className={styles.toolbar}>
         <div className={styles.filterGroup}>
-          <span className={styles.filterLabel}>Show</span>
+          <span className={styles.filterLabel}>{t("show")}</span>
           <div className={styles.chips}>
-            <Link href={href({ fav: undefined })} className={!showFav ? styles.chipActive : styles.chip}>All</Link>
-            <Link href={href({ fav: "1" })} className={showFav ? styles.chipActive : styles.chip}>♥ Favorites</Link>
+            <Link href={href({ fav: undefined })} className={!showFav ? styles.chipActive : styles.chip}>{t("all")}</Link>
+            <Link href={href({ fav: "1" })} className={showFav ? styles.chipActive : styles.chip}>{t("favorites")}</Link>
           </div>
         </div>
 
         <div className={styles.filterGroup}>
-          <span className={styles.filterLabel}>Style</span>
+          <span className={styles.filterLabel}>{t("styleFilter")}</span>
           <div className={styles.chips}>
             {(["All", ...ALL_STYLES] as string[]).map((s) => (
-              <Link key={s} href={href({ style: s })} className={style === s ? styles.chipActive : styles.chip}>{s}</Link>
+              <Link key={s} href={href({ style: s })} className={style === s ? styles.chipActive : styles.chip}>{s === "All" ? t("all") : s}</Link>
             ))}
           </div>
         </div>
 
         <div className={styles.filterGroup}>
-          <span className={styles.filterLabel}>Difficulty</span>
+          <span className={styles.filterLabel}>{t("diffFilter")}</span>
           <div className={styles.chips}>
             {(["All", ...DIFFICULTIES] as string[]).map((d) => (
-              <Link key={d} href={href({ diff: d })} className={diff === d ? styles.chipActive : styles.chip}>{d}</Link>
+              <Link key={d} href={href({ diff: d })} className={diff === d ? styles.chipActive : styles.chip}>{d === "All" ? t("all") : d}</Link>
             ))}
           </div>
         </div>
 
         {allTags.length > 0 && (
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Tags</span>
+            <span className={styles.filterLabel}>{t("tagsFilter")}</span>
             <div className={styles.chips}>
-              <Link href={href({ tag: undefined })} className={!activeTag ? styles.chipActive : styles.chip}>All</Link>
-              {allTags.map((t) => (
-                <Link key={t} href={href({ tag: t })} className={activeTag === t ? styles.chipActive : styles.chip}>{t}</Link>
+              <Link href={href({ tag: undefined })} className={!activeTag ? styles.chipActive : styles.chip}>{t("all")}</Link>
+              {allTags.map((tag) => (
+                <Link key={tag} href={href({ tag })} className={activeTag === tag ? styles.chipActive : styles.chip}>{tag}</Link>
               ))}
             </div>
           </div>
         )}
 
         <div className={styles.filterGroup}>
-          <span className={styles.filterLabel}>Sort</span>
+          <span className={styles.filterLabel}>{t("sortFilter")}</span>
           <div className={styles.chips}>
-            {([["newest", "Newest"], ["oldest", "Oldest"], ["longest", "Longest"], ["shortest", "Shortest"]] as [string, string][]).map(([val, label]) => (
+            {([["newest", t("newest")], ["oldest", t("oldest")], ["longest", t("longest")], ["shortest", t("shortest")]] as [string, string][]).map(([val, label]) => (
               <Link key={val} href={href({ sort: val })} className={sort === val ? styles.chipActive : styles.chip}>{label}</Link>
             ))}
           </div>
@@ -135,7 +137,7 @@ export default async function LibraryPage({ searchParams }: Props) {
       </div>
 
       {filtered.length === 0 && all.length > 0 ? (
-        <div className={styles.empty}>No choreographies match those filters.</div>
+        <div className={styles.empty}>{t("noMatches")}</div>
       ) : (
         <div className={styles.grid}>
           {filtered.map((c) => (
@@ -147,7 +149,7 @@ export default async function LibraryPage({ searchParams }: Props) {
 
       {purchasedPacks.length > 0 && (
         <div className={styles.purchasedSection}>
-          <h2 className={styles.sectionTitle}>Purchased packs ({purchasedPacks.length})</h2>
+          <h2 className={styles.sectionTitle}>{t("purchasedPacks", { count: purchasedPacks.length })}</h2>
           <div className={styles.grid}>
             {purchasedPacks.map((pack) => (
               <PackCard key={pack.id} pack={pack} />

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type {
   ChoreographyDifficulty,
   ChoreographyDurationMinutes,
@@ -40,32 +41,34 @@ export type ChoreographyFormProps = {
 };
 
 export function ChoreographyForm(props: ChoreographyFormProps) {
+  const t = useTranslations("form");
+
   return (
     <form onSubmit={props.onSubmit} className={styles.form}>
       <div className={styles.header}>
         <div className={styles.headerText}>
-          <h2 className={styles.title}>Create a choreography</h2>
-          <p className={styles.subtitle}>Pick a style, duration, and audience.</p>
+          <h2 className={styles.title}>{t("title")}</h2>
+          <p className={styles.subtitle}>{t("subtitle")}</p>
         </div>
-        <div className={styles.badge}>Coreo</div>
+        <div className={styles.badge}>Offbeat</div>
       </div>
 
       <div className={styles.fields}>
         <div className={styles.field}>
-          <label className={styles.label}>Style</label>
+          <label className={styles.label}>{t("style")}</label>
           <select
             value={props.style}
             onChange={(e) => props.onStyleChange(e.target.value as ChoreographyStyle)}
             className={styles.select}
           >
-            <optgroup label="Dance">
+            <optgroup label={t("danceGroup")}>
               {props.danceStyles.map((s) => (
                 <option key={s} value={s}>
                   {s}
                 </option>
               ))}
             </optgroup>
-            <optgroup label="Fitness">
+            <optgroup label={t("fitnessGroup")}>
               {props.fitnessStyles.map((s) => (
                 <option key={s} value={s}>
                   {s}
@@ -78,8 +81,8 @@ export function ChoreographyForm(props: ChoreographyFormProps) {
 
         <div className={styles.field}>
           <div className={styles.durationRow}>
-            <label className={styles.label}>Duration</label>
-            <span className={styles.durationValue}>{props.duration} min</span>
+            <label className={styles.label}>{t("duration")}</label>
+            <span className={styles.durationValue}>{props.duration} {t("durationUnit")}</span>
           </div>
           <input
             type="range"
@@ -96,11 +99,11 @@ export function ChoreographyForm(props: ChoreographyFormProps) {
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label}>Target audience</label>
+          <label className={styles.label}>{t("audience")}</label>
           <input
             value={props.targetAudience}
             onChange={(e) => props.onTargetAudienceChange(e.target.value)}
-            placeholder="e.g., Seniors, Beginners, HIIT lovers"
+            placeholder={t("audiencePlaceholder")}
             className={styles.input}
           />
           {props.targetAudienceError ? (
@@ -109,7 +112,7 @@ export function ChoreographyForm(props: ChoreographyFormProps) {
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label}>Difficulty</label>
+          <label className={styles.label}>{t("difficulty")}</label>
           <select
             value={props.difficulty}
             onChange={(e) => props.onDifficultyChange(e.target.value as ChoreographyDifficulty)}
@@ -127,12 +130,12 @@ export function ChoreographyForm(props: ChoreographyFormProps) {
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label}>Description</label>
+          <label className={styles.label}>{t("description")}</label>
           <textarea
             value={props.description}
             onChange={(e) => props.onDescriptionChange(e.target.value)}
             rows={8}
-            placeholder="Describe the vibe, goals, and any constraints…"
+            placeholder={t("descriptionPlaceholder")}
             className={styles.textarea}
           />
           {props.descriptionError ? (
@@ -147,7 +150,7 @@ export function ChoreographyForm(props: ChoreographyFormProps) {
           disabled={!props.isValid || props.isSubmitting}
           className={styles.submitBtn}
         >
-          {props.isSubmitting ? "Generating…" : "Generate"}
+          {props.isSubmitting ? t("generating") : t("generate")}
         </button>
       </div>
     </form>

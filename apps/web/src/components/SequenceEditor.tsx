@@ -115,7 +115,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
               className={styles.nameInput}
               value={props.name}
               onChange={(e) => props.onNameChange(e.target.value)}
-              placeholder="Choreography name"
+              placeholder={te("choreographyName")}
             />
             <span className={plan === "max" ? styles.planBadgeMax : plan === "pro" ? styles.planBadgePro : styles.planBadgeFree}>
               {plan === "max" ? tp("max") : plan === "pro" ? tp("pro") : tp("free")}
@@ -128,7 +128,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
             className={styles.descInput}
             value={props.description}
             onChange={(e) => props.onDescriptionChange(e.target.value)}
-            placeholder="Notes or description…"
+            placeholder={te("notesPlaceholder")}
             rows={2}
           />
           {/* Tags */}
@@ -159,7 +159,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
                   props.onTagsChange(props.tags.slice(0, -1));
                 }
               }}
-              placeholder={props.tags.length === 0 ? "Add tags (Enter to confirm)…" : ""}
+              placeholder={props.tags.length === 0 ? te("tagsPlaceholder") : ""}
             />
           </div>
 
@@ -257,7 +257,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>{te("formations")}</h2>
               <div className={styles.sectionLine} />
-              <span className={styles.duration}>{props.dancers.length} dancer{props.dancers.length !== 1 ? "s" : ""}</span>
+              <span className={styles.duration}>{props.dancers.length} {props.dancers.length !== 1 ? te("dancers") : te("dancer")}</span>
             </div>
             <FormationEditor
               moves={props.moves}

@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { Choreography } from "../types/choreography";
 import type { Plan } from "../constants/plans";
 import styles from "./ChoreographyResult.module.css";
@@ -8,6 +11,8 @@ export type ChoreographyResultProps = {
 };
 
 export function ChoreographyResult({ choreography, plan = "free" }: ChoreographyResultProps) {
+  const t = useTranslations("result");
+  const tp = useTranslations("plans");
   const isPro = plan === "pro" || plan === "max";
   const isMax = plan === "max";
 
@@ -18,7 +23,7 @@ export function ChoreographyResult({ choreography, plan = "free" }: Choreography
           <h2 className={styles.name}>{choreography.name}</h2>
           {plan !== "free" && (
             <span className={isMax ? styles.badgeMax : styles.badgePro}>
-              {isMax ? "Max" : "Pro"}
+              {isMax ? tp("max") : tp("pro")}
             </span>
           )}
         </div>
@@ -32,7 +37,7 @@ export function ChoreographyResult({ choreography, plan = "free" }: Choreography
 
       {choreography.music ? (
         <div className={styles.music}>
-          <p className={styles.musicLabel}>Suggested music</p>
+          <p className={styles.musicLabel}>{t("suggestedMusic")}</p>
           <p className={styles.musicTitle}>{choreography.music.title}</p>
           <p className={styles.musicSub}>
             {choreography.music.artist} · {choreography.music.bpm} BPM
@@ -41,7 +46,7 @@ export function ChoreographyResult({ choreography, plan = "free" }: Choreography
       ) : null}
 
       <div className={styles.movesSection}>
-        <p className={styles.movesTitle}>Sequence — {choreography.moves.length} moves</p>
+        <p className={styles.movesTitle}>{t("sequence")} — {choreography.moves.length} {t("moves")}</p>
         <div className={styles.moveList}>
           {choreography.moves.map((move) => (
             <div key={move.id} className={styles.move}>
@@ -60,7 +65,7 @@ export function ChoreographyResult({ choreography, plan = "free" }: Choreography
                     rel="noopener noreferrer"
                     className={styles.videoLink}
                   >
-                    ▶ Watch demo
+                    {t("watchDemo")}
                   </a>
                 )}
               </div>
@@ -70,9 +75,7 @@ export function ChoreographyResult({ choreography, plan = "free" }: Choreography
       </div>
 
       {!isPro && (
-        <div className={styles.upgradeNudge}>
-          ✨ Upgrade to Pro to get demo videos for every move
-        </div>
+        <div className={styles.upgradeNudge}>{t("upgradeTip")}</div>
       )}
     </div>
   );

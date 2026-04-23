@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { ChoreographyMove, ChoreographyMusic } from "../types/choreography";
 import styles from "./PublishPackModal.module.css";
 
@@ -37,6 +38,7 @@ export function PublishPackModal({
   onClose,
   onPublished,
 }: PublishPackModalProps) {
+  const t = useTranslations("publish");
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState("");
   const [coverColor, setCoverColor] = useState(COVER_COLORS[0]);
@@ -58,8 +60,8 @@ export function PublishPackModal({
   }
 
   async function handlePublish() {
-    if (!title.trim()) { setError("Pack title is required."); return; }
-    if (!description.trim()) { setError("Description is required."); return; }
+    if (!title.trim()) { setError(t("error")); return; }
+    if (!description.trim()) { setError(t("error")); return; }
     setPublishing(true);
     setError("");
 
@@ -84,10 +86,10 @@ export function PublishPackModal({
         }),
       });
       const data = await res.json() as { id?: string; error?: string };
-      if (!res.ok) { setError(data.error ?? "Failed to publish."); return; }
+      if (!res.ok) { setError(data.error ?? t("error")); return; }
       onPublished(data.id!);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("error"));
     } finally {
       setPublishing(false);
     }
@@ -97,39 +99,39 @@ export function PublishPackModal({
     <div className={styles.overlay} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className={styles.modal}>
         <div className={styles.modalHeader}>
-          <h2 className={styles.modalTitle}>Publish to Marketplace</h2>
+          <h2 className={styles.modalTitle}>{t("title")}</h2>
           <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close">✕</button>
         </div>
 
         <div className={styles.body}>
           {/* Title */}
           <div className={styles.field}>
-            <label className={styles.label}>Pack title</label>
+            <label className={styles.label}>{t("packTitle")}</label>
             <input
               className={styles.input}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               maxLength={80}
-              placeholder="e.g. Summer Zumba Series — 4 weeks"
+              placeholder={t("packTitlePlaceholder")}
             />
           </div>
 
           {/* Description */}
           <div className={styles.field}>
-            <label className={styles.label}>Description</label>
+            <label className={styles.label}>{t("description")}</label>
             <textarea
               className={styles.textarea}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               maxLength={500}
-              placeholder="What will buyers get? Who is this for? What makes it special?"
+              placeholder={t("descriptionPlaceholder")}
             />
           </div>
 
           {/* Cover color */}
           <div className={styles.field}>
-            <label className={styles.label}>Cover color</label>
+            <label className={styles.label}>{t("coverColor")}</label>
             <div className={styles.colorRow}>
               {COVER_COLORS.map((c) => (
                 <button
@@ -146,14 +148,14 @@ export function PublishPackModal({
 
           {/* Price */}
           <div className={styles.field}>
-            <label className={styles.label}>Price</label>
+            <label className={styles.label}>{t("price")}</label>
             <div className={styles.priceRow}>
               <button
                 type="button"
                 className={`${styles.priceOption} ${priceCents === 0 ? styles.priceOptionActive : ""}`}
                 onClick={() => setPriceCents(0)}
               >
-                Free
+                {t("free")}
               </button>
               {[499, 999, 1499, 1999, 2999].map((cents) => (
                 <button
@@ -170,7 +172,7 @@ export function PublishPackModal({
 
           {/* Preview moves */}
           <div className={styles.field}>
-            <label className={styles.label}>Preview moves (shown free, pick up to 3)</label>
+            <label className={styles.label}>{t("previewMoves")}</label>
             <div className={styles.moveList}>
               {moves.map((move, i) => (
                 <button
@@ -191,9 +193,9 @@ export function PublishPackModal({
         {error && <p className={styles.errorMsg}>{error}</p>}
 
         <div className={styles.footer}>
-          <button type="button" className={styles.cancelBtn} onClick={onClose}>Cancel</button>
+          <button type="button" className={styles.cancelBtn} onClick={onClose}>{t("cancel")}</button>
           <button type="button" className={styles.publishBtn} onClick={handlePublish} disabled={publishing}>
-            {publishing ? "Publishing…" : "Publish to Marketplace"}
+            {publishing ? t("publishing") : t("title")}
           </button>
         </div>
       </div>

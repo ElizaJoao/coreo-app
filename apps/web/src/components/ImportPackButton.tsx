@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import styles from "./ImportPackButton.module.css";
 
 export type ImportPackButtonProps = {
@@ -9,6 +10,7 @@ export type ImportPackButtonProps = {
 };
 
 export function ImportPackButton({ packId }: ImportPackButtonProps) {
+  const t = useTranslations("card");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -20,12 +22,12 @@ export function ImportPackButton({ packId }: ImportPackButtonProps) {
       const res = await fetch(`/api/marketplace/packs/${packId}/import`, { method: "POST" });
       const data = await res.json() as { choreographyId?: string; error?: string };
       if (!res.ok || !data.choreographyId) {
-        setError(data.error ?? "Import failed.");
+        setError(data.error ?? t("importError"));
         return;
       }
       router.push(`/dashboard/${data.choreographyId}`);
     } catch {
-      setError("Something went wrong.");
+      setError(t("importError"));
     } finally {
       setLoading(false);
     }
@@ -39,7 +41,7 @@ export function ImportPackButton({ packId }: ImportPackButtonProps) {
         onClick={handleImport}
         disabled={loading}
       >
-        {loading ? "Importing…" : "↓ Import to my library"}
+        {loading ? t("importing") : t("import")}
       </button>
       {error && <p className={styles.error}>{error}</p>}
     </div>

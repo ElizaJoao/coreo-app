@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getChoreographyPublic, incrementPlays } from "../../../lib/choreography-service";
 import styles from "./page.module.css";
 
 type Props = { params: Promise<{ id: string }> };
 
 export default async function SharePage({ params }: Props) {
+  const t = await getTranslations("share");
   const { id } = await params;
   const choreography = await getChoreographyPublic(id);
   if (!choreography) notFound();
@@ -72,10 +74,10 @@ export default async function SharePage({ params }: Props) {
 
       <div className={styles.ctaBanner}>
         <div className={styles.ctaText}>
-          <div className={styles.ctaTitle}>Made with Offbeat</div>
-          <div className={styles.ctaSub}>AI-powered choreography planning for fitness &amp; dance instructors</div>
+          <div className={styles.ctaTitle}>{t("madeWith")}</div>
+          <div className={styles.ctaSub}>{t("subtitle")}</div>
         </div>
-        <a href="/" className={styles.ctaBtn}>Try Offbeat free →</a>
+        <a href="/" className={styles.ctaBtn}>{t("tryFree")}</a>
       </div>
     </main>
   );

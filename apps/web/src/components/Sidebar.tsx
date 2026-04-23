@@ -165,7 +165,7 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSignOut
               onClick={() => { setDropdownOpen(false); onNavigate("/dashboard/settings"); }}
             >
               <span className={styles.dropdownIcon}>👤</span>
-              Profile
+              {t("profile")}
             </button>
             <div className={styles.dropdownDivider} />
             <button
@@ -174,7 +174,7 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSignOut
               onClick={() => { setDropdownOpen(false); onSignOut(); }}
             >
               <span className={styles.dropdownIcon}>→</span>
-              Sign out
+              {t("signOut")}
             </button>
           </div>
         )}

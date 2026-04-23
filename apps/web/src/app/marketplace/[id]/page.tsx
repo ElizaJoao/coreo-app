@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { auth } from "../../../auth";
 import { getPackById, getPackRatings, getMyPurchasedPackIds } from "../../../lib/marketplace-service";
 import { ImportPackButton } from "../../../components/ImportPackButton";
@@ -8,6 +9,8 @@ import styles from "./page.module.css";
 type Props = { params: Promise<{ id: string }> };
 
 export default async function PackDetailPage({ params }: Props) {
+  const t = await getTranslations("marketplace");
+  const tp = await getTranslations("plans");
   const { id } = await params;
   const session = await auth();
   const userId = session?.user?.id;
@@ -31,7 +34,7 @@ export default async function PackDetailPage({ params }: Props) {
   return (
     <main className={styles.page}>
       <div className={styles.back}>
-        <Link href="/marketplace" className={styles.backLink}>← Back to Marketplace</Link>
+        <Link href="/marketplace" className={styles.backLink}>{t("backTo")}</Link>
       </div>
 
       {/* Header */}
@@ -53,29 +56,29 @@ export default async function PackDetailPage({ params }: Props) {
 
         <div className={styles.purchaseBox}>
           <div className={styles.priceDisplay}>
-            {isFree ? <span className={styles.priceFree}>Free</span> : <span className={styles.pricePaid}>€{(pack.priceCents / 100).toFixed(2)}</span>}
+            {isFree ? <span className={styles.priceFree}>{tp("free")}</span> : <span className={styles.pricePaid}>€{(pack.priceCents / 100).toFixed(2)}</span>}
           </div>
           {avgRating && (
-            <div className={styles.ratingDisplay}>★ {avgRating} <span className={styles.ratingCount}>({pack.ratingCount} rating{pack.ratingCount !== 1 ? "s" : ""})</span></div>
+            <div className={styles.ratingDisplay}>★ {avgRating} <span className={styles.ratingCount}>({pack.ratingCount})</span></div>
           )}
           {pack.purchaseCount > 0 && (
-            <div className={styles.salesDisplay}>{pack.purchaseCount} instructor{pack.purchaseCount !== 1 ? "s" : ""} use this</div>
+            <div className={styles.salesDisplay}>{pack.purchaseCount} {pack.purchaseCount !== 1 ? t("instructors", { count: pack.purchaseCount }) : t("instructor", { count: 1 })} {t("useThis")}</div>
           )}
           {!hasPurchased && !isOwn && (
             <form action={`/api/marketplace/packs/${id}/purchase`} method="POST">
               <button type="submit" className={styles.buyBtn}>
-                {isFree ? "Add to library" : `Buy for €${(pack.priceCents / 100).toFixed(2)}`}
+                {isFree ? t("unlockAll") : `€${(pack.priceCents / 100).toFixed(2)}`}
               </button>
             </form>
           )}
           {hasPurchased && !isOwn && userId && (
             <>
-              <div className={styles.ownedBadge}>✓ In your library</div>
+              <div className={styles.ownedBadge}>{t("inLibrary")}</div>
               <ImportPackButton packId={id} />
             </>
           )}
           {isOwn && (
-            <div className={styles.ownedBadge}>Your pack</div>
+            <div className={styles.ownedBadge}>{t("yourPack")}</div>
           )}
         </div>
       </div>
@@ -93,7 +96,9 @@ export default async function PackDetailPage({ params }: Props) {
 
       {/* Moves */}
       <div className={styles.movesSection}>
-        <h2 className={styles.sectionTitle}>Moves{hasPurchased ? ` (${displayMoves.length})` : ` — preview (${displayMoves.length} of ${displayMoves.length + lockedCount})`}</h2>
+        <h2 className={styles.sectionTitle}>
+          {hasPurchased ? t("moves") : t("movesPreview")} ({displayMoves.length}{!hasPurchased && lockedCount > 0 ? ` of ${displayMoves.length + lockedCount}` : ""})
+        </h2>
         <ol className={styles.moveList}>
           {displayMoves.map((move, i) => (
             <li key={move.id} className={styles.moveItem}>
@@ -111,10 +116,10 @@ export default async function PackDetailPage({ params }: Props) {
           <div className={styles.lockedOverlay}>
             <div className={styles.lockedIcon}>🔒</div>
             <div className={styles.lockedText}>
-              {isFree ? "Add this pack to unlock all moves" : `Buy to unlock ${lockedCount} more move${lockedCount !== 1 ? "s" : ""}`}
+              {isFree ? t("unlockAll") : t("unlockMore", { count: lockedCount })}
             </div>
             {!userId && (
-              <Link href="/auth/signin" className={styles.lockedCta}>Sign in to add →</Link>
+              <Link href="/auth/signin" className={styles.lockedCta}>{t("signIn")}</Link>
             )}
           </div>
         )}
@@ -123,7 +128,7 @@ export default async function PackDetailPage({ params }: Props) {
       {/* Ratings */}
       {ratings.length > 0 && (
         <div className={styles.ratingsSection}>
-          <h2 className={styles.sectionTitle}>Reviews ({ratings.length})</h2>
+          <h2 className={styles.sectionTitle}>{t("reviews", { count: ratings.length })}</h2>
           <div className={styles.ratingsList}>
             {ratings.map((r) => (
               <div key={r.id} className={styles.ratingItem}>
@@ -141,7 +146,7 @@ export default async function PackDetailPage({ params }: Props) {
       {/* Creator */}
       {pack.creatorName && (
         <div className={styles.creatorCard}>
-          <div className={styles.creatorTitle}>About the creator</div>
+          <div className={styles.creatorTitle}>{t("aboutCreator")}</div>
           <Link href={`/marketplace/creator/${pack.userId}`} className={styles.creatorCardLink}>
             {pack.creatorName} →
           </Link>

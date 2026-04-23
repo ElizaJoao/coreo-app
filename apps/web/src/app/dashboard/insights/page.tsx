@@ -1,4 +1,5 @@
 import { auth } from "../../../auth";
+import { getTranslations } from "next-intl/server";
 import { getChoreographiesByUser } from "../../../lib/choreography-service";
 import styles from "./page.module.css";
 
@@ -7,6 +8,7 @@ function pct(n: number, total: number) {
 }
 
 export default async function InsightsPage() {
+  const t = await getTranslations("insights");
   const session = await auth();
   const userId = session?.user?.id;
   const choreos = userId ? await getChoreographiesByUser(userId) : [];
@@ -53,17 +55,17 @@ export default async function InsightsPage() {
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Insights</h1>
-        <p className={styles.pageSub}>Your choreography activity at a glance</p>
+        <h1 className={styles.pageTitle}>{t("title")}</h1>
+        <p className={styles.pageSub}>{t("subtitle")}</p>
       </div>
 
       {/* Summary stats */}
       <div className={styles.statGrid}>
         {[
-          { label: "Total choreographies", value: total },
-          { label: "Total class minutes", value: totalMin },
-          { label: "Total moves created", value: totalMoves },
-          { label: "Average BPM", value: avgBPM },
+          { label: t("totalChoreographies"), value: total },
+          { label: t("totalMinutes"), value: totalMin },
+          { label: t("totalMoves"), value: totalMoves },
+          { label: t("avgBpm"), value: avgBPM },
         ].map((s) => (
           <div key={s.label} className={styles.statCard}>
             <div className={styles.statValue}>{s.value}</div>
@@ -73,12 +75,12 @@ export default async function InsightsPage() {
       </div>
 
       {total === 0 ? (
-        <div className={styles.empty}>Generate your first choreography to see insights here.</div>
+        <div className={styles.empty}>{t("noInsights")}</div>
       ) : (
         <div className={styles.sections}>
           {/* Monthly activity */}
           <div className={styles.card}>
-            <div className={styles.cardTitle}>Generated per month</div>
+            <div className={styles.cardTitle}>{t("perMonth")}</div>
             <div className={styles.barChart}>
               {monthLabels.map((label, i) => (
                 <div key={label} className={styles.barCol}>
@@ -98,7 +100,7 @@ export default async function InsightsPage() {
           <div className={styles.twoCol}>
             {/* Style breakdown */}
             <div className={styles.card}>
-              <div className={styles.cardTitle}>Top styles</div>
+              <div className={styles.cardTitle}>{t("topStyles")}</div>
               <div className={styles.rowChart}>
                 {topStyles.map(([style, count]) => (
                   <div key={style} className={styles.rowItem}>
@@ -115,7 +117,7 @@ export default async function InsightsPage() {
             {/* Difficulty + duration */}
             <div className={styles.colStack}>
               <div className={styles.card}>
-                <div className={styles.cardTitle}>By difficulty</div>
+                <div className={styles.cardTitle}>{t("byDifficulty")}</div>
                 <div className={styles.rowChart}>
                   {Object.entries(diffCounts).map(([diff, count]) => (
                     <div key={diff} className={styles.rowItem}>
@@ -130,7 +132,7 @@ export default async function InsightsPage() {
               </div>
 
               <div className={styles.card}>
-                <div className={styles.cardTitle}>By duration</div>
+                <div className={styles.cardTitle}>{t("byDuration")}</div>
                 <div className={styles.rowChart}>
                   {Object.entries(durationBuckets).filter(([, v]) => v > 0).map(([dur, count]) => (
                     <div key={dur} className={styles.rowItem}>

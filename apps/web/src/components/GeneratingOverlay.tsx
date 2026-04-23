@@ -1,31 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import styles from "./GeneratingOverlay.module.css";
-
-const STEPS_FREE = [
-  "Analysing your parameters…",
-  "Writing move sequence…",
-  "Calculating timing and tempo…",
-  "Finalising choreography…",
-];
-
-const STEPS_PRO = [
-  "Analysing your parameters…",
-  "Designing the move sequence…",
-  "Finding demo videos for each move…",
-  "Calculating timing and tempo…",
-  "Polishing the details…",
-];
-
-const STEPS_MAX = [
-  "Analysing your parameters…",
-  "Designing the move sequence…",
-  "Writing verbal cues for each move…",
-  "Finding demo videos for each move…",
-  "Optimising for instructor delivery…",
-  "Finalising choreography…",
-];
 
 const STEP_DURATION = 1800;
 
@@ -34,10 +11,16 @@ export type GeneratingOverlayProps = {
 };
 
 export function GeneratingOverlay({ plan = "free" }: GeneratingOverlayProps) {
+  const t = useTranslations("generate");
+  const tp = useTranslations("plans");
   const [step, setStep] = useState(0);
   const [visible, setVisible] = useState(false);
 
-  const steps = plan === "max" ? STEPS_MAX : plan === "pro" ? STEPS_PRO : STEPS_FREE;
+  const stepsFree = [t("analysing"), t("writingFree"), t("calculatingTiming"), t("finalising")];
+  const stepsPro = [t("analysing"), t("designingPro"), t("findingVideos"), t("calculatingTiming"), t("polishing")];
+  const stepsMax = [t("analysing"), t("designingPro"), t("writingCues"), t("findingVideos"), t("optimising"), t("finalising")];
+
+  const steps = plan === "max" ? stepsMax : plan === "pro" ? stepsPro : stepsFree;
 
   useEffect(() => {
     setVisible(true);
@@ -57,10 +40,10 @@ export function GeneratingOverlay({ plan = "free" }: GeneratingOverlayProps) {
         </div>
 
         <div className={styles.headingRow}>
-          <p className={styles.heading}>Generating choreography</p>
+          <p className={styles.heading}>{t("title")}</p>
           {plan !== "free" && (
             <span className={plan === "max" ? styles.badgeMax : styles.badgePro}>
-              {plan === "max" ? "Max" : "Pro"}
+              {plan === "max" ? tp("max") : tp("pro")}
             </span>
           )}
         </div>
@@ -72,9 +55,7 @@ export function GeneratingOverlay({ plan = "free" }: GeneratingOverlayProps) {
         </div>
 
         {plan === "free" && (
-          <p className={styles.upgradeTip}>
-            Upgrade to Pro for demo videos with every move
-          </p>
+          <p className={styles.upgradeTip}>{t("upgradeTip")}</p>
         )}
       </div>
     </div>
