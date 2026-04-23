@@ -10,17 +10,18 @@ export default async function SettingsPage() {
 
   const { data } = await supabase
     .from("users")
-    .select("name, email, plan")
+    .select("name, email, plan, avatar_url")
     .eq("id", session.user.id)
     .single();
 
-  const row = data as { name?: string; email?: string; plan?: string } | null;
+  const row = data as { name?: string; email?: string; plan?: string; avatar_url?: string | null } | null;
 
   return (
     <SettingsClient
       name={row?.name ?? session.user.name ?? ""}
       email={row?.email ?? session.user.email ?? ""}
       plan={(row?.plan ?? "free") as Plan}
+      avatarUrl={row?.avatar_url ?? undefined}
     />
   );
 }

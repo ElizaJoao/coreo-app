@@ -24,15 +24,17 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   // Read plan and isAdmin fresh from DB on every render (avoids stale JWT)
   let plan: Plan = "free";
   let isAdmin = false;
+  let avatarUrl: string | undefined;
   if (userId) {
     const { data } = await supabase
       .from("users")
-      .select("plan, is_admin")
+      .select("plan, is_admin, avatar_url")
       .eq("id", userId)
       .single();
     if (data) {
       plan = ((data as { plan?: string }).plan ?? "free") as Plan;
       isAdmin = (data as { is_admin?: boolean }).is_admin ?? false;
+      avatarUrl = (data as { avatar_url?: string | null }).avatar_url ?? undefined;
     }
   }
 
@@ -40,7 +42,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   return (
     <DashboardShell
-      user={{ name, email, initials: getInitials(name), plan, isAdmin }}
+      user={{ name, email, initials: getInitials(name), plan, isAdmin, avatarUrl }}
       libraryCount={choreographies.length}
     >
       {children}

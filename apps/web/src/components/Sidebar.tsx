@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
 import type { Plan } from "../constants/plans";
 import { IconHome, IconSpark, IconLibrary, IconCalendar, IconTrend, IconSettings, IconAdmin } from "./Icons";
 import { PlanBadge } from "./PlanBadge";
@@ -9,6 +12,7 @@ export type SidebarUser = {
   initials: string;
   plan: Plan;
   isAdmin?: boolean;
+  avatarUrl?: string;
 };
 
 export type SidebarNavItem = {
@@ -24,6 +28,7 @@ export type SidebarProps = {
   user: SidebarUser;
   libraryCount?: number;
   onNavigate: (route: string) => void;
+  onSignOut: () => void;
   onSetPlan?: (plan: Plan) => void;
   settingPlan?: Plan | null;
 };
@@ -31,7 +36,22 @@ export type SidebarProps = {
 const ICON_SIZE = 16;
 const ADMIN_PLANS: Plan[] = ["free", "pro", "max"];
 
-export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSetPlan, settingPlan }: SidebarProps) {
+export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSignOut, onSetPlan, settingPlan }: SidebarProps) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const pillRef = useRef<HTMLButtonElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (pillRef.current && !pillRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [dropdownOpen]);
+
   const primary: SidebarNavItem[] = [
     { id: "dashboard",  label: "Dashboard",          route: "/dashboard",          icon: IconHome },
     { id: "new",        label: "New choreography",   route: "/dashboard/new",      icon: IconSpark },
@@ -132,15 +152,51 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSetPlan
         </div>
       )}
 
-      <div className={styles.userPill}>
-        <div className={styles.userAvatar}>{user.initials}</div>
-        <div className={styles.userMeta}>
-          <div className={styles.userNameRow}>
-            <span className={styles.userName}>{user.name}</span>
-            <PlanBadge plan={user.plan} />
+      {/* User pill — click to open dropdown */}
+      <div className={styles.userPillWrap}>
+        {dropdownOpen && (
+          <div className={styles.userDropdown}>
+            <button
+              type="button"
+              className={styles.dropdownItem}
+              onClick={() => { setDropdownOpen(false); onNavigate("/dashboard/settings"); }}
+            >
+              <span className={styles.dropdownIcon}>👤</span>
+              Profile
+            </button>
+            <div className={styles.dropdownDivider} />
+            <button
+              type="button"
+              className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
+              onClick={() => { setDropdownOpen(false); onSignOut(); }}
+            >
+              <span className={styles.dropdownIcon}>→</span>
+              Sign out
+            </button>
           </div>
-          <div className={styles.userEmail}>{user.email}</div>
-        </div>
+        )}
+
+        <button
+          ref={pillRef}
+          type="button"
+          className={styles.userPill}
+          onClick={() => setDropdownOpen((v) => !v)}
+          aria-expanded={dropdownOpen}
+        >
+          {user.avatarUrl ? (
+            <img src={user.avatarUrl} alt={user.name} className={styles.userAvatarImg} />
+          ) : (
+            <div className={styles.userAvatar}>{user.initials}</div>
+          )}
+          <div className={styles.userMeta}>
+            <div className={styles.userNameRow}>
+              <span className={styles.userName}>{user.name}</span>
+              <PlanBadge plan={user.plan} />
+            </div>
+            <div className={styles.userEmail}>{user.email}</div>
+          </div>
+          <span className={styles.pillChevron}>{dropdownOpen ? "▴" : "▾"}</span>
+        </button>
       </div>
     </aside>
   );

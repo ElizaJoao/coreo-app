@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useLocale } from "next-intl";
@@ -20,9 +20,10 @@ type Props = {
   name: string;
   email: string;
   plan: Plan;
+  avatarUrl?: string;
 };
 
-export function SettingsClient({ name, email, plan }: Props) {
+export function SettingsClient({ name, email, plan, avatarUrl: initialAvatarUrl }: Props) {
   const router = useRouter();
   const locale = useLocale();
   const [displayName, setDisplayName] = useState(name);
@@ -30,6 +31,10 @@ export function SettingsClient({ name, email, plan }: Props) {
   const [saveMsg, setSaveMsg] = useState("");
   const [portalLoading, setPortalLoading] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleSaveName(e: React.FormEvent) {
     e.preventDefault();
@@ -64,6 +69,41 @@ export function SettingsClient({ name, email, plan }: Props) {
     }
   }
 
+  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarUploading(true);
+    setAvatarError("");
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/user/avatar", { method: "POST", body: form });
+      const data = await res.json() as { avatarUrl?: string; error?: string };
+      if (!res.ok) { setAvatarError(data.error ?? "Upload failed."); return; }
+      setAvatarUrl(data.avatarUrl);
+      router.refresh();
+    } catch {
+      setAvatarError("Upload failed. Please try again.");
+    } finally {
+      setAvatarUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  async function handleAvatarDelete() {
+    setAvatarUploading(true);
+    setAvatarError("");
+    try {
+      await fetch("/api/user/avatar", { method: "DELETE" });
+      setAvatarUrl(undefined);
+      router.refresh();
+    } catch {
+      setAvatarError("Failed to remove photo.");
+    } finally {
+      setAvatarUploading(false);
+    }
+  }
+
   function switchLocale(newLocale: string) {
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
     window.location.reload();
@@ -84,6 +124,54 @@ export function SettingsClient({ name, email, plan }: Props) {
       </div>
 
       <div className={styles.sections}>
+        {/* Photo */}
+        <section className={styles.section}>
+          <div className={styles.sectionTitle}>Profile photo</div>
+          <div className={styles.card}>
+            <div className={styles.avatarRow}>
+              <div className={styles.avatarPreview}>
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Profile photo" className={styles.avatarImg} />
+                ) : (
+                  <div className={styles.avatarInitials}>
+                    {name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)}
+                  </div>
+                )}
+              </div>
+              <div className={styles.avatarActions}>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className={styles.fileInput}
+                  onChange={handleAvatarUpload}
+                  disabled={avatarUploading}
+                />
+                <button
+                  type="button"
+                  className={styles.btnPrimary}
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={avatarUploading}
+                >
+                  {avatarUploading ? "Uploading…" : avatarUrl ? "Change photo" : "Upload photo"}
+                </button>
+                {avatarUrl && (
+                  <button
+                    type="button"
+                    className={styles.btnDanger}
+                    onClick={handleAvatarDelete}
+                    disabled={avatarUploading}
+                  >
+                    Remove photo
+                  </button>
+                )}
+                <span className={styles.hint}>JPG, PNG, WebP or GIF · Max 5 MB</span>
+              </div>
+            </div>
+            {avatarError && <p className={styles.errorMsg}>{avatarError}</p>}
+          </div>
+        </section>
+
         {/* Profile */}
         <section className={styles.section}>
           <div className={styles.sectionTitle}>Profile</div>
