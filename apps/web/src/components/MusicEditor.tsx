@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 
 import { useMusicSearch } from "../hooks/useMusicSearch";
-import type { ChoreographyMusic } from "../types/choreography";
+import type { ChoreographyMusic, PlaylistTrack } from "../types/choreography";
 import styles from "./MusicEditor.module.css";
 
 export type MusicEditorProps = {
@@ -174,6 +174,33 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
           />
         </div>
       </div>
+
+      {/* Playlist suggestions from AI */}
+      {music?.playlist && music.playlist.length > 0 && (
+        <div className={styles.playlistSection}>
+          <div className={styles.playlistLabel}>Suggested playlist</div>
+          <div className={styles.playlistTracks}>
+            {music.playlist.map((track, i) => (
+              <div key={i} className={styles.playlistTrack}>
+                <div className={styles.playlistTrackNum}>{i + 1}</div>
+                <div className={styles.playlistTrackInfo}>
+                  <span className={styles.playlistTrackName}>{track.title}</span>
+                  <span className={styles.playlistTrackMeta}>{track.artist} · {track.bpm} BPM</span>
+                </div>
+                <button
+                  type="button"
+                  className={styles.playlistRemove}
+                  onClick={() => {
+                    const next = music.playlist!.filter((_, j) => j !== i);
+                    onUpdate({ playlist: next });
+                  }}
+                  aria-label="Remove track"
+                >×</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {music && (
         <button type="button" className={styles.clearBtn} onClick={onClear}>

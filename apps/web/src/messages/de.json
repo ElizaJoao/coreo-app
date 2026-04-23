@@ -28,15 +28,25 @@
     "orSignUp": "oder registrieren"
   },
   "dashboard": {
+    "dashboard": "Dashboard",
     "newChoreography": "Neue Choreografie",
     "library": "Bibliothek",
     "schedule": "Zeitplan",
     "insights": "Statistiken",
+    "marketplace": "Marktplatz",
     "settings": "Einstellungen",
-    "back": "← Zurück"
+    "back": "← Zurück",
+    "workspace": "Arbeitsbereich",
+    "account": "Konto",
+    "admin": "Admin",
+    "metricsLogs": "Metriken & Protokolle",
+    "upgradeTitle": "Auf Pro upgraden",
+    "upgradeDesc": "Unbegrenzte Choreografien & Musiksuche",
+    "viewPlans": "Pläne ansehen →"
   },
   "editor": {
     "addMove": "+ Bewegung hinzufügen",
+    "publishToMarketplace": "🛒 Im Marktplatz veröffentlichen",
     "saveChanges": "Änderungen speichern",
     "saving": "Speichern…",
     "saved": "✓ Gespeichert",

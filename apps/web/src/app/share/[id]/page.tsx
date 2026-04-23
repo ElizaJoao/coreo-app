@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getChoreographyPublic } from "../../../lib/choreography-service";
+import { getChoreographyPublic, incrementPlays } from "../../../lib/choreography-service";
 import styles from "./page.module.css";
 
 type Props = { params: Promise<{ id: string }> };
@@ -9,6 +9,9 @@ export default async function SharePage({ params }: Props) {
   const choreography = await getChoreographyPublic(id);
   if (!choreography) notFound();
 
+  // Fire-and-forget — don't block render
+  void incrementPlays(id);
+
   const totalSec = choreography.moves.reduce((s, m) => s + m.duration, 0);
   const totalMin = Math.floor(totalSec / 60);
   const remSec = totalSec % 60;
@@ -16,7 +19,7 @@ export default async function SharePage({ params }: Props) {
   return (
     <main className={styles.main}>
       <header className={styles.header}>
-        <img src="/logo-mark.svg" alt="Coreo" className={styles.logo} />
+        <img src="/logo-mark.svg" alt="Offbeat" className={styles.logo} />
         <div>
           <h1 className={styles.title}>{choreography.name}</h1>
           <div className={styles.meta}>
@@ -67,9 +70,13 @@ export default async function SharePage({ params }: Props) {
         ))}
       </ol>
 
-      <footer className={styles.footer}>
-        Created with <a href="/" className={styles.footerLink}>Coreo</a>
-      </footer>
+      <div className={styles.ctaBanner}>
+        <div className={styles.ctaText}>
+          <div className={styles.ctaTitle}>Made with Offbeat</div>
+          <div className={styles.ctaSub}>AI-powered choreography planning for fitness &amp; dance instructors</div>
+        </div>
+        <a href="/" className={styles.ctaBtn}>Try Offbeat free →</a>
+      </div>
     </main>
   );
 }

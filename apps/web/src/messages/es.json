@@ -28,15 +28,25 @@
     "orSignUp": "o regístrate"
   },
   "dashboard": {
+    "dashboard": "Panel",
     "newChoreography": "Nueva coreografía",
     "library": "Biblioteca",
     "schedule": "Agenda",
     "insights": "Estadísticas",
+    "marketplace": "Mercado",
     "settings": "Configuración",
-    "back": "← Volver"
+    "back": "← Volver",
+    "workspace": "Área de Trabajo",
+    "account": "Cuenta",
+    "admin": "Admin",
+    "metricsLogs": "Métricas y registros",
+    "upgradeTitle": "Actualizar a Pro",
+    "upgradeDesc": "Coreografías ilimitadas y búsqueda de música",
+    "viewPlans": "Ver planes →"
   },
   "editor": {
     "addMove": "+ Agregar movimiento",
+    "publishToMarketplace": "🛒 Publicar en Mercado",
     "saveChanges": "Guardar cambios",
     "saving": "Guardando…",
     "saved": "✓ Guardado",

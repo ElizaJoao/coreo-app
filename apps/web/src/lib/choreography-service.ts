@@ -16,6 +16,9 @@ type ChoreographyRow = {
   formations: MoveFormation[];
   created_at: string;
   updated_at: string;
+  is_favorite: boolean;
+  tags: string[];
+  plays: number;
 };
 
 function rowToChoreography(row: ChoreographyRow): Choreography {
@@ -33,6 +36,9 @@ function rowToChoreography(row: ChoreographyRow): Choreography {
     formations: row.formations ?? [],
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    isFavorite: row.is_favorite ?? false,
+    tags: row.tags ?? [],
+    plays: row.plays ?? 0,
   };
 }
 
@@ -79,6 +85,7 @@ export type UpdateChoreographyInput = {
   description?: string;
   dancers?: Dancer[];
   formations?: MoveFormation[];
+  tags?: string[];
 };
 
 export async function updateChoreography(
@@ -93,6 +100,7 @@ export async function updateChoreography(
   if (input.description !== undefined) patch.description = input.description;
   if (input.dancers !== undefined) patch.dancers = input.dancers;
   if (input.formations !== undefined) patch.formations = input.formations;
+  if (input.tags !== undefined) patch.tags = input.tags;
 
   const { data, error } = await supabase
     .from("choreographies")
@@ -119,6 +127,27 @@ export async function getChoreographyById(
 
   if (error) return null;
   return rowToChoreography(data as ChoreographyRow);
+}
+
+export async function toggleFavorite(id: string, userId: string): Promise<boolean> {
+  const { data: current } = await supabase
+    .from("choreographies")
+    .select("is_favorite")
+    .eq("id", id)
+    .eq("user_id", userId)
+    .single();
+
+  const next = !(current?.is_favorite ?? false);
+  await supabase
+    .from("choreographies")
+    .update({ is_favorite: next })
+    .eq("id", id)
+    .eq("user_id", userId);
+  return next;
+}
+
+export async function incrementPlays(id: string): Promise<void> {
+  await supabase.rpc("increment_plays", { row_id: id });
 }
 
 export async function getChoreographyPublic(id: string): Promise<Choreography | null> {

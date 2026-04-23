@@ -1,0 +1,126 @@
+@reference "tailwindcss";
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 0 0 80px;
+}
+
+.hero {
+  padding: 56px 32px 40px;
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  line-height: 1.1;
+  margin: 0 0 12px;
+}
+
+.heroSub {
+  font-size: 15px;
+  color: var(--text-3);
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+
+.heroCreate {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.heroCreate:hover { text-decoration: underline; }
+
+.layout {
+  display: flex;
+  gap: 28px;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.filterSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.filterTitle {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  padding: 0 8px 8px;
+}
+
+.filterItem, .filterItemActive {
+  display: block;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.1s, color 0.1s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filterItem { color: var(--text-2); }
+.filterItem:hover { background: var(--surface-2); color: var(--text); }
+
+.filterItemActive {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.main { flex: 1; min-width: 0; }
+
+.resultsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.resultCount {
+  font-size: 12px;
+  color: var(--text-4);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.empty {
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--text-4);
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; gap: 12px; }
+  .filterSection { flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .filterTitle { padding: 0 4px 0 0; }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { ChoreographyMove, ChoreographyMusic, Dancer, DancerPosition } from "../types/choreography";
 import type { EditorStatus } from "../hooks/useChoreographyEditor";
 import type { Plan } from "../constants/plans";
@@ -10,6 +11,7 @@ import { RehearsalMode } from "./RehearsalMode";
 import { FormationEditor } from "./FormationEditor";
 import { FormationPlayback } from "./FormationPlayback";
 import { PreviewPlayer } from "./PreviewPlayer";
+import { PublishPackModal } from "./PublishPackModal";
 import styles from "./SequenceEditor.module.css";
 
 export type SequenceEditorProps = {
@@ -19,6 +21,12 @@ export type SequenceEditorProps = {
   onNameChange: (v: string) => void;
   description: string;
   onDescriptionChange: (v: string) => void;
+  tags: string[];
+  onTagsChange: (tags: string[]) => void;
+  style: string;
+  difficulty: string;
+  duration: number;
+  targetAudience: string;
   moves: ChoreographyMove[];
   onUpdateMove: (id: string, patch: Partial<ChoreographyMove>) => void;
   onMoveUp: (index: number) => void;
@@ -40,8 +48,12 @@ export function SequenceEditor(props: SequenceEditorProps) {
   const { plan, choreographyId } = props;
   const isPro = plan === "pro" || plan === "max";
   const isMax = plan === "max";
+  const te = useTranslations("editor");
+  const tp = useTranslations("plans");
 
+  const [tagInput, setTagInput] = useState("");
   const [rehearsalOpen, setRehearsalOpen] = useState(false);
+  const [publishOpen, setPublishOpen] = useState(false);
   const [formationPlaybackOpen, setFormationPlaybackOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -72,6 +84,20 @@ export function SequenceEditor(props: SequenceEditorProps) {
           onClose={() => setFormationPlaybackOpen(false)}
         />
       )}
+      {isPro && publishOpen && (
+        <PublishPackModal
+          choreographyId={choreographyId}
+          initialTitle={props.name}
+          style={props.style}
+          difficulty={props.difficulty}
+          duration={props.duration}
+          targetAudience={props.targetAudience}
+          moves={props.moves}
+          music={props.music}
+          onClose={() => setPublishOpen(false)}
+          onPublished={() => { setPublishOpen(false); }}
+        />
+      )}
       {isPro && previewOpen && (
         <PreviewPlayer
           moves={props.moves}
@@ -92,7 +118,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
               placeholder="Choreography name"
             />
             <span className={plan === "max" ? styles.planBadgeMax : plan === "pro" ? styles.planBadgePro : styles.planBadgeFree}>
-              {plan === "max" ? "Max" : plan === "pro" ? "Pro" : "Free"}
+              {plan === "max" ? tp("max") : plan === "pro" ? tp("pro") : tp("free")}
             </span>
             <span className={styles.duration}>
               {totalMin}:{remSec.toString().padStart(2, "0")} total
@@ -105,19 +131,58 @@ export function SequenceEditor(props: SequenceEditorProps) {
             placeholder="Notes or description…"
             rows={2}
           />
+          {/* Tags */}
+          <div className={styles.tagEditor}>
+            {props.tags.map((tag) => (
+              <span key={tag} className={styles.tagChip}>
+                {tag}
+                <button
+                  type="button"
+                  className={styles.tagRemove}
+                  onClick={() => props.onTagsChange(props.tags.filter((t) => t !== tag))}
+                  aria-label={`Remove tag ${tag}`}
+                >×</button>
+              </span>
+            ))}
+            <input
+              className={styles.tagInput}
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if ((e.key === "Enter" || e.key === ",") && tagInput.trim()) {
+                  e.preventDefault();
+                  const next = tagInput.trim().replace(/,$/, "");
+                  if (next && !props.tags.includes(next)) props.onTagsChange([...props.tags, next]);
+                  setTagInput("");
+                }
+                if (e.key === "Backspace" && !tagInput && props.tags.length > 0) {
+                  props.onTagsChange(props.tags.slice(0, -1));
+                }
+              }}
+              placeholder={props.tags.length === 0 ? "Add tags (Enter to confirm)…" : ""}
+            />
+          </div>
+
           {/* Action buttons */}
           <div className={styles.actionRow}>
             {isPro ? (
               <>
                 <button type="button" className={styles.shareBtn} onClick={handleShare}>
-                  {copied ? "✓ Link copied!" : "🔗 Share with students"}
+                  {copied ? te("linkCopied") : te("shareWithStudents")}
+                </button>
+                <button
+                  type="button"
+                  className={styles.shareBtn}
+                  onClick={() => setPublishOpen(true)}
+                >
+                  {te("publishToMarketplace")}
                 </button>
                 <button
                   type="button"
                   className={styles.previewBtn}
                   onClick={() => setPreviewOpen(true)}
                 >
-                  ▶ Preview all moves
+                  {te("previewAllMoves")}
                 </button>
                 {isMax && (
                   <button
@@ -125,7 +190,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
                     className={styles.rehearsalBtn}
                     onClick={() => setRehearsalOpen(true)}
                   >
-                    ▶ Rehearsal mode
+                    {te("rehearsalMode")}
                   </button>
                 )}
                 <button
@@ -134,12 +199,12 @@ export function SequenceEditor(props: SequenceEditorProps) {
                   onClick={() => setFormationPlaybackOpen(true)}
                   disabled={props.dancers.length === 0}
                 >
-                  ▶ Play formation
+                  {te("playFormation")}
                 </button>
               </>
             ) : (
               <a href="/dashboard/upgrade" className={styles.previewLocked}>
-                🔒 Preview all moves — Pro feature
+                {te("previewLocked")}
               </a>
             )}
           </div>
@@ -148,7 +213,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
         {/* Move sequence */}
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Sequence</h2>
+            <h2 className={styles.sectionTitle}>{te("sequence")}</h2>
             <div className={styles.sectionLine} />
             <span className={styles.duration}>{props.moves.length} moves</span>
           </div>
@@ -169,14 +234,14 @@ export function SequenceEditor(props: SequenceEditorProps) {
             ))}
           </div>
           <button type="button" className={styles.addBtn} onClick={props.onAddMove}>
-            + Add move
+            {te("addMove")}
           </button>
         </div>
 
         {/* Music */}
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Music</h2>
+            <h2 className={styles.sectionTitle}>{te("music")}</h2>
             <div className={styles.sectionLine} />
           </div>
           <MusicEditor
@@ -190,7 +255,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
         {isPro ? (
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Formations</h2>
+              <h2 className={styles.sectionTitle}>{te("formations")}</h2>
               <div className={styles.sectionLine} />
               <span className={styles.duration}>{props.dancers.length} dancer{props.dancers.length !== 1 ? "s" : ""}</span>
             </div>
@@ -205,7 +270,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
         ) : (
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Formations</h2>
+              <h2 className={styles.sectionTitle}>{te("formations")}</h2>
               <div className={styles.sectionLine} />
             </div>
             <a href="/dashboard/upgrade" className={styles.formationsTeaser}>
@@ -216,8 +281,8 @@ export function SequenceEditor(props: SequenceEditorProps) {
               </div>
               <div className={styles.formationsTeaserOverlay}>
                 <span className={styles.formationsTeaserIcon}>🔒</span>
-                <span className={styles.formationsTeaserText}>Drag-and-drop formations — Pro feature</span>
-                <span className={styles.formationsTeaserCta}>Upgrade to Pro →</span>
+                <span className={styles.formationsTeaserText}>{te("formationsLocked")}</span>
+                <span className={styles.formationsTeaserCta}>{te("upgradeToProCta")}</span>
               </div>
             </a>
           </div>
@@ -226,10 +291,10 @@ export function SequenceEditor(props: SequenceEditorProps) {
         {/* Save */}
         <div className={styles.saveRow}>
           {props.status === "error" && (
-            <span className={styles.saveError}>Failed to save. Try again.</span>
+            <span className={styles.saveError}>{te("saveError")}</span>
           )}
           {props.status === "saved" && (
-            <span className={styles.saveSuccess}>✓ Saved</span>
+            <span className={styles.saveSuccess}>{te("saved")}</span>
           )}
           <button
             type="button"
@@ -237,7 +302,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
             onClick={props.onSave}
             disabled={props.status === "saving"}
           >
-            {props.status === "saving" ? "Saving…" : "Save changes"}
+            {props.status === "saving" ? te("saving") : te("saveChanges")}
           </button>
         </div>
       </div>

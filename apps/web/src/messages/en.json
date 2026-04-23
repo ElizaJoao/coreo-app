@@ -28,15 +28,25 @@
     "orSignUp": "or sign up"
   },
   "dashboard": {
+    "dashboard": "Dashboard",
     "newChoreography": "New choreography",
     "library": "Library",
     "schedule": "Schedule",
     "insights": "Insights",
+    "marketplace": "Marketplace",
     "settings": "Settings",
-    "back": "← Back"
+    "back": "← Back",
+    "workspace": "Workspace",
+    "account": "Account",
+    "admin": "Admin",
+    "metricsLogs": "Metrics & logs",
+    "upgradeTitle": "Upgrade to Pro",
+    "upgradeDesc": "Unlimited choreographies & music search",
+    "viewPlans": "View plans →"
   },
   "editor": {
     "addMove": "+ Add move",
+    "publishToMarketplace": "🛒 Publish to Marketplace",
     "saveChanges": "Save changes",
     "saving": "Saving…",
     "saved": "✓ Saved",

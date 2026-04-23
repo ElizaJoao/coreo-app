@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useLocale } from "next-intl";
@@ -21,9 +21,15 @@ type Props = {
   email: string;
   plan: Plan;
   avatarUrl?: string;
+  marketplaceEnabled: boolean;
+  creatorBio: string;
+  creatorModalities: string[];
+  hasPublishedPacks: boolean;
+  totalEarningsCents: number;
+  recentSales: { packTitle: string; priceCents: number; createdAt: string }[];
 };
 
-export function SettingsClient({ name, email, plan, avatarUrl: initialAvatarUrl }: Props) {
+export function SettingsClient({ name, email, plan, avatarUrl: initialAvatarUrl, marketplaceEnabled: initialMarketplaceEnabled, creatorBio: initialCreatorBio, creatorModalities: initialCreatorModalities, hasPublishedPacks, totalEarningsCents, recentSales }: Props) {
   const router = useRouter();
   const locale = useLocale();
   const [displayName, setDisplayName] = useState(name);
@@ -35,6 +41,24 @@ export function SettingsClient({ name, email, plan, avatarUrl: initialAvatarUrl 
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarError, setAvatarError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
+  const [marketplaceEnabled, setMarketplaceEnabled] = useState(initialMarketplaceEnabled);
+  const [creatorBio, setCreatorBio] = useState(initialCreatorBio);
+  const [creatorModalities, setCreatorModalities] = useState(initialCreatorModalities);
+  const [marketplaceSaving, setMarketplaceSaving] = useState(false);
+  const [marketplaceMsg, setMarketplaceMsg] = useState("");
+  const [enablingMarketplace, setEnablingMarketplace] = useState(false);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    }
+    if (langOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [langOpen]);
 
   async function handleSaveName(e: React.FormEvent) {
     e.preventDefault();
@@ -114,8 +138,48 @@ export function SettingsClient({ name, email, plan, avatarUrl: initialAvatarUrl 
     await signOut({ callbackUrl: "/" });
   }
 
+  async function handleEnableMarketplace() {
+    setEnablingMarketplace(true);
+    try {
+      const res = await fetch("/api/marketplace/creator/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ marketplace_enabled: true }),
+      });
+      if (res.ok) {
+        setMarketplaceEnabled(true);
+        router.refresh();
+      }
+    } finally {
+      setEnablingMarketplace(false);
+    }
+  }
+
+  async function handleSaveCreatorProfile(e: React.FormEvent) {
+    e.preventDefault();
+    setMarketplaceSaving(true);
+    setMarketplaceMsg("");
+    try {
+      const res = await fetch("/api/marketplace/creator/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ creator_bio: creatorBio, creator_modalities: creatorModalities }),
+      });
+      if (res.ok) {
+        setMarketplaceMsg("Saved!");
+        router.refresh();
+      } else {
+        setMarketplaceMsg("Failed to save.");
+      }
+    } finally {
+      setMarketplaceSaving(false);
+      setTimeout(() => setMarketplaceMsg(""), 3000);
+    }
+  }
+
   const planMeta = PLAN_META[plan];
   const currentLocale = LOCALES.find((l) => l.code === locale) ?? LOCALES[0];
+  const showMarketplaceSection = marketplaceEnabled || hasPublishedPacks;
 
   return (
     <div className={styles.page}>
@@ -262,25 +326,118 @@ export function SettingsClient({ name, email, plan, avatarUrl: initialAvatarUrl 
                 <div className={styles.securityLabel}>Display language</div>
                 <div className={styles.securityDesc}>Choose the language used throughout the app.</div>
               </div>
-              <div className={styles.langSelectWrap}>
-                <span className={styles.langFlag}>{currentLocale.flag}</span>
-                <select
-                  className={styles.langSelect}
-                  value={locale}
-                  onChange={(e) => switchLocale(e.target.value)}
-                  aria-label="Select language"
+              <div className={styles.langDropdownWrap} ref={langRef}>
+                <button
+                  type="button"
+                  className={styles.langTrigger}
+                  onClick={() => setLangOpen((o) => !o)}
+                  aria-haspopup="listbox"
+                  aria-expanded={langOpen}
                 >
-                  {LOCALES.map((l) => (
-                    <option key={l.code} value={l.code}>
-                      {l.flag} {l.label}
-                    </option>
-                  ))}
-                </select>
-                <span className={styles.langChevron}>▾</span>
+                  <span className={styles.langFlag}>{currentLocale.flag}</span>
+                  <span className={styles.langLabel}>{currentLocale.label}</span>
+                  <span className={styles.langChevron}>{langOpen ? "▴" : "▾"}</span>
+                </button>
+                {langOpen && (
+                  <ul className={styles.langMenu} role="listbox">
+                    {LOCALES.map((l) => (
+                      <li key={l.code} role="option" aria-selected={l.code === locale}>
+                        <button
+                          type="button"
+                          className={`${styles.langOption} ${l.code === locale ? styles.langOptionActive : ""}`}
+                          onClick={() => { switchLocale(l.code); setLangOpen(false); }}
+                        >
+                          <span>{l.flag}</span>
+                          <span>{l.label}</span>
+                          {l.code === locale && <span className={styles.langCheck}>✓</span>}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           </div>
         </section>
+
+        {/* Marketplace */}
+        {(showMarketplaceSection || plan !== "free") && (
+          <section className={styles.section}>
+            <div className={styles.sectionTitle}>Marketplace</div>
+            <div className={styles.card}>
+              {!marketplaceEnabled ? (
+                <div className={styles.securityRow}>
+                  <div>
+                    <div className={styles.securityLabel}>Sell on the Marketplace</div>
+                    <div className={styles.securityDesc}>Publish your choreographies and earn from other instructors.</div>
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.btnPrimary}
+                    onClick={handleEnableMarketplace}
+                    disabled={enablingMarketplace}
+                  >
+                    {enablingMarketplace ? "Enabling…" : "Enable selling"}
+                  </button>
+                </div>
+              ) : (
+                <>
+                  {(totalEarningsCents > 0 || recentSales.length > 0) && (
+                    <div className={styles.earningsBlock}>
+                      <div className={styles.earningsStat}>
+                        <span className={styles.earningsValue}>€{(totalEarningsCents / 100).toFixed(2)}</span>
+                        <span className={styles.earningsLabel}>Total earnings</span>
+                      </div>
+                      {recentSales.length > 0 && (
+                        <div className={styles.recentSales}>
+                          <div className={styles.recentSalesTitle}>Recent sales</div>
+                          {recentSales.map((sale, i) => (
+                            <div key={i} className={styles.saleRow}>
+                              <span className={styles.saleTitle}>{sale.packTitle}</span>
+                              <span className={styles.saleAmount}>+€{(sale.priceCents / 100).toFixed(2)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <form onSubmit={handleSaveCreatorProfile} className={styles.form}>
+                    <div className={styles.field}>
+                      <label className={styles.label}>Creator bio</label>
+                      <textarea
+                        className={styles.textarea}
+                        value={creatorBio}
+                        onChange={(e) => setCreatorBio(e.target.value)}
+                        placeholder="Tell instructors about your teaching style and experience…"
+                        rows={3}
+                        maxLength={400}
+                      />
+                    </div>
+                    <div className={styles.field}>
+                      <label className={styles.label}>Modalities</label>
+                      <input
+                        className={styles.input}
+                        value={creatorModalities.join(", ")}
+                        onChange={(e) => setCreatorModalities(e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
+                        placeholder="e.g. Zumba, Pilates, HIIT"
+                      />
+                      <span className={styles.hint}>Comma-separated list of your teaching specialities.</span>
+                    </div>
+                    <div className={styles.formFooter}>
+                      {marketplaceMsg && <span className={marketplaceMsg === "Saved!" ? styles.successMsg : styles.errorMsg}>{marketplaceMsg}</span>}
+                      <button type="submit" className={styles.btnPrimary} disabled={marketplaceSaving}>
+                        {marketplaceSaving ? "Saving…" : "Save creator profile"}
+                      </button>
+                    </div>
+                  </form>
+                  <div className={styles.stripeNote}>
+                    <span>💳 Payouts via Stripe Connect — coming soon.</span>
+                  </div>
+                </>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Sign out */}
         <section className={styles.section}>

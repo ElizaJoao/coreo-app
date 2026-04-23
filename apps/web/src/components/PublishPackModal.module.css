@@ -1,0 +1,218 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal {
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px -10px rgba(0,0,0,0.7);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.modalTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: var(--text-4);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.closeBtn:hover { color: var(--text); }
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-4);
+}
+
+.input, .textarea {
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: var(--font-inter);
+  width: 100%;
+}
+
+.input:focus, .textarea:focus { border-color: var(--accent); }
+.textarea { resize: vertical; min-height: 72px; }
+
+/* Color swatches */
+.colorRow {
+  display: flex;
+  gap: 8px;
+}
+
+.colorSwatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.colorSwatch:hover { transform: scale(1.15); }
+.colorSwatchActive { border-color: var(--text) !important; transform: scale(1.1); }
+
+/* Price options */
+.priceRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.priceOption {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.priceOption:hover { border-color: var(--border-2); color: var(--text); }
+.priceOptionActive { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+/* Move list */
+.moveList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.moveOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.12s;
+  text-align: left;
+}
+
+.moveOption:hover { border-color: var(--border-2); color: var(--text); }
+.moveOptionActive { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+.moveNum {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-4);
+  min-width: 16px;
+  text-align: center;
+}
+
+.moveOptionActive .moveNum { color: var(--accent); }
+
+.moveName { flex: 1; }
+.moveCheck { font-size: 12px; color: var(--accent); }
+
+/* Footer */
+.errorMsg {
+  font-size: 12px;
+  color: var(--danger);
+  padding: 0 24px;
+  margin: 0;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.cancelBtn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border-2);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.cancelBtn:hover { border-color: var(--border-3); color: var(--text); }
+
+.publishBtn {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.publishBtn:hover { opacity: 0.88; }
+.publishBtn:disabled { opacity: 0.4; cursor: not-allowed; }

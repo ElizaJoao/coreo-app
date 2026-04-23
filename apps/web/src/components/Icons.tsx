@@ -96,3 +96,6 @@ export function IconZap(p: IconProps) {
 export function IconAdmin(p: IconProps) {
   return <Icon {...p}><path d="M12 2 3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7z" /><path d="m9 12 2 2 4-4" /></Icon>;
 }
+export function IconShop(p: IconProps) {
+  return <Icon {...p}><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></Icon>;
+}

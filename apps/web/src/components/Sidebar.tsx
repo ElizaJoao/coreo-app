@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import type { Plan } from "../constants/plans";
-import { IconHome, IconSpark, IconLibrary, IconCalendar, IconTrend, IconSettings, IconAdmin } from "./Icons";
+import { IconHome, IconSpark, IconLibrary, IconCalendar, IconTrend, IconSettings, IconAdmin, IconShop } from "./Icons";
 import { PlanBadge } from "./PlanBadge";
 import styles from "./Sidebar.module.css";
 
@@ -37,6 +38,7 @@ const ICON_SIZE = 16;
 const ADMIN_PLANS: Plan[] = ["free", "pro", "max"];
 
 export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSignOut, onSetPlan, settingPlan }: SidebarProps) {
+  const t = useTranslations("dashboard");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pillRef = useRef<HTMLButtonElement>(null);
 
@@ -53,15 +55,16 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSignOut
   }, [dropdownOpen]);
 
   const primary: SidebarNavItem[] = [
-    { id: "dashboard",  label: "Dashboard",          route: "/dashboard",          icon: IconHome },
-    { id: "new",        label: "New choreography",   route: "/dashboard/new",      icon: IconSpark },
-    { id: "library",    label: "Library",            route: "/dashboard/library",  icon: IconLibrary, count: libraryCount },
-    { id: "schedule",   label: "Schedule",           route: "/dashboard/schedule", icon: IconCalendar },
-    { id: "insights",   label: "Insights",           route: "/dashboard/insights", icon: IconTrend },
+    { id: "dashboard",   label: t("dashboard"),       route: "/dashboard",          icon: IconHome },
+    { id: "new",         label: t("newChoreography"), route: "/dashboard/new",      icon: IconSpark },
+    { id: "library",     label: t("library"),         route: "/dashboard/library",  icon: IconLibrary, count: libraryCount },
+    { id: "schedule",    label: t("schedule"),        route: "/dashboard/schedule", icon: IconCalendar },
+    { id: "insights",    label: t("insights"),        route: "/dashboard/insights", icon: IconTrend },
+    { id: "marketplace", label: t("marketplace"),     route: "/marketplace",        icon: IconShop },
   ];
 
   const secondary: SidebarNavItem[] = [
-    { id: "settings", label: "Settings", route: "/dashboard/settings", icon: IconSettings },
+    { id: "settings", label: t("settings"), route: "/dashboard/settings", icon: IconSettings },
   ];
 
   return (
@@ -74,7 +77,7 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSignOut
         </div>
       </div>
 
-      <div className={styles.groupLabel}>Workspace</div>
+      <div className={styles.groupLabel}>{t("workspace")}</div>
       {primary.map((item) => {
         const Icon = item.icon;
         const active = activeRoute === item.route || (item.route !== "/dashboard" && activeRoute.startsWith(item.route));
@@ -92,7 +95,7 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSignOut
         );
       })}
 
-      <div className={styles.groupLabel}>Account</div>
+      <div className={styles.groupLabel}>{t("account")}</div>
       {secondary.map((item) => {
         const Icon = item.icon;
         const active = activeRoute === item.route;
@@ -111,14 +114,14 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSignOut
 
       {user.isAdmin && (
         <>
-          <div className={styles.groupLabel}>Admin</div>
+          <div className={styles.groupLabel}>{t("admin")}</div>
           <button
             type="button"
             className={activeRoute === "/dashboard/admin" ? styles.navItemActive : styles.navItem}
             onClick={() => onNavigate("/dashboard/admin")}
           >
             <IconAdmin size={ICON_SIZE} className={styles.navIcon} />
-            <span>Metrics & logs</span>
+            <span>{t("metricsLogs")}</span>
           </button>
         </>
       )}
@@ -144,10 +147,10 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSignOut
 
       {user.plan === "free" && (
         <div className={styles.upgradeCard}>
-          <div className={styles.upgradeTitle}>Upgrade to Pro</div>
-          <div className={styles.upgradeDesc}>Unlimited choreographies & music search</div>
+          <div className={styles.upgradeTitle}>{t("upgradeTitle")}</div>
+          <div className={styles.upgradeDesc}>{t("upgradeDesc")}</div>
           <button type="button" className={styles.upgradeBtn} onClick={() => onNavigate("/dashboard/upgrade")}>
-            View plans →
+            {t("viewPlans")}
           </button>
         </div>
       )}

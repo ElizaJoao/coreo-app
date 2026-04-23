@@ -65,6 +65,56 @@
 
 .descInput::placeholder { color: var(--text-4); }
 
+/* Tag editor */
+.tagEditor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  margin-top: 8px;
+}
+
+.tagChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--surface-3);
+  color: var(--text-2);
+  border: 1px solid var(--border-2);
+}
+
+.tagRemove {
+  background: none;
+  border: none;
+  color: var(--text-4);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+
+.tagRemove:hover { color: var(--danger); }
+
+.tagInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 12px;
+  font-family: var(--font-inter);
+  min-width: 140px;
+  flex: 1;
+}
+
+.tagInput::placeholder { color: var(--text-4); }
+
 /* Sections */
 .section {
   display: flex;

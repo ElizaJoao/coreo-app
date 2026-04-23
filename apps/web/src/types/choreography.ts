@@ -20,10 +20,17 @@ export type MoveFormation = {
   positions: Record<string, DancerPosition>; // dancerId → position
 };
 
+export type PlaylistTrack = {
+  title: string;
+  artist: string;
+  bpm: number;
+};
+
 export type ChoreographyMusic = {
   title: string;
   artist: string;
   bpm: number;
+  playlist?: PlaylistTrack[];
 };
 
 export type ChoreographyMove = {
@@ -54,5 +61,7 @@ export type Choreography = {
   updatedAt: string;
   plays?: number;
   lastUsed?: string;
+  isFavorite: boolean;
+  tags: string[];
 };
 

@@ -40,6 +40,8 @@ export async function POST(request: Request) {
     description: description ?? "",
     moves: generated.moves,
     music: generated.music,
+    tags: [],
+    isFavorite: false,
   });
 
   return NextResponse.json(choreography);
