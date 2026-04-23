@@ -131,7 +131,11 @@ export function SettingsClient({ name, email, plan, avatarUrl: initialAvatarUrl,
 
   function switchLocale(newLocale: string) {
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
-    window.location.reload();
+    fetch("/api/user/update", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ locale: newLocale }),
+    }).finally(() => window.location.reload());
   }
 
   async function handleSignOut() {

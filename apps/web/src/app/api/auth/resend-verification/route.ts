@@ -36,8 +36,11 @@ export async function POST(request: Request) {
       codeHash,
     });
 
+    const cookieHeader = request.headers.get("cookie") ?? "";
+    const localeCookie = cookieHeader.match(/NEXT_LOCALE=([a-z]{2})/)?.[1] ?? "en";
+
     if (pending.method === "email") {
-      await sendEmailCode(pending.email, pending.name, code);
+      await sendEmailCode(pending.email, pending.name, code, localeCookie);
     } else {
       await sendSmsCode(pending.phone!, code);
     }
