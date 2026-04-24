@@ -1,344 +1,11 @@
 @reference "tailwindcss";
 
-.container {
-  padding: 32px 28px 80px;
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.backLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--text-3);
-  font-size: 13px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  margin-left: -8px;
-  margin-bottom: 14px;
-  transition: background 120ms, color 120ms;
-}
-
-.backLink:hover {
-  background: var(--surface-2);
-  color: var(--text);
-}
-
-/* 2-column grid */
-.grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 20px;
-  align-items: start;
-}
-
-/* ── Track shell ── */
-.trackShell {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  overflow: hidden;
-}
-
-.trackHead {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.trackHeadLeft { min-width: 0; }
-
-.trackEyebrow {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 8px;
-}
-
-.trackTitle {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  margin: 0;
-  color: var(--text);
-}
-
-.trackBadges {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-/* ── Transport ── */
-.transport {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 24px;
-  background: var(--surface-2);
-  border-bottom: 1px solid var(--border);
-}
-
-.playBtn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--accent-ink);
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  transition: transform 120ms;
-  border: none;
-  cursor: pointer;
-}
-
-.playBtn:hover { transform: scale(1.06); }
-
-.transportTime {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-2);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-}
-
-.timeCurrent { color: var(--text); font-weight: 500; }
-.timeSep { color: var(--text-4); }
-
-.progressBar {
-  flex: 1;
-  height: 6px;
-  background: var(--surface-3);
-  border-radius: 99px;
-  overflow: hidden;
-  cursor: pointer;
-  position: relative;
-}
-
-.progressFill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent), oklch(0.82 0.18 125));
-  border-radius: 99px;
-  transition: width 80ms linear;
-}
-
-.movePill {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-3);
-  padding: 4px 8px;
-  background: var(--surface-3);
-  border-radius: 6px;
-  white-space: nowrap;
-}
-
-/* ── Moves list ── */
-.movesList {
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.moveRow {
-  display: grid;
-  grid-template-columns: 40px 1fr auto;
-  align-items: center;
-  gap: 16px;
-  padding: var(--row-pad-y) var(--row-pad-x);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background 120ms;
-  text-align: left;
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: inherit;
-}
-
-.moveRow:hover { background: var(--surface-2); }
-
-.moveRowActive { background: var(--accent-soft); }
-.moveRowActive:hover { background: var(--accent-soft-2); }
-
-.moveRowPlayed .ordChip { color: var(--text-4); }
-
-.ordChip {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--surface-3);
-  display: grid;
-  place-items: center;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  transition: all 120ms;
-  flex-shrink: 0;
-  color: var(--text-2);
-}
-
-.ordChipActive {
-  background: var(--accent);
-  color: var(--accent-ink);
-}
-
-.moveInfo { min-width: 0; }
-
-.moveName {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  margin-bottom: 2px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text);
-}
-
-.moveTag {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-3);
-  font-weight: 600;
-}
-
-.moveDesc {
-  font-size: 12.5px;
-  color: var(--text-3);
-  line-height: 1.45;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.moveDur {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-2);
-  font-variant-numeric: tabular-nums;
-  padding: 4px 8px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.moveDurActive {
-  background: var(--surface);
-  border-color: var(--border-2);
-  color: var(--text);
-}
-
-/* ── Side panels ── */
-.sidePanel {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  position: sticky;
-  top: 80px;
-}
-
-/* Music panel */
-.musicPanel {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  overflow: hidden;
-}
-
-.musicHead {
-  padding: 18px 20px 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.musicEyebrow {
-  font-size: 10.5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--accent);
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.musicTitle {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--text);
-}
-
-.musicArtist {
-  font-size: 13px;
-  color: var(--text-3);
-  margin-top: 2px;
-}
-
-.musicMeta {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.musicMetaCell {
-  padding: 14px 20px;
-  border-right: 1px solid var(--border);
-}
-
-.musicMetaCell:last-child { border-right: none; }
-
-.musicMetaLabel {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-3);
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.musicMetaValue {
-  font-size: 18px;
-  font-weight: 700;
-  font-family: var(--font-mono);
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
-}
-
-.musicMetaValueSm {
-  font-size: 13px;
-  font-family: inherit;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-}
-
-/* Waveform */
-.waveform {
+/* Shared waveform strip */
+.waveStrip {
   display: flex;
   align-items: center;
   gap: 2px;
-  height: 70px;
-  padding: 14px 20px;
-  border-top: 1px solid var(--border);
-  background: var(--surface-2);
+  width: 100%;
 }
 
 .waveBar {
@@ -346,68 +13,648 @@
   background: var(--border-3);
   border-radius: 2px;
   min-width: 2px;
-  transition: background 120ms;
+  transition: background 80ms;
 }
-
 .waveBarPlayed { background: var(--accent); }
 .waveBarCursor { background: var(--text); }
 
-/* Notes + cue panels */
-.notesPanel {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  padding: 18px 20px;
-}
+/* ═══════════════════════════════════════════════════════════════════════════
+   01 · Cinematic mode
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-.panelTitle {
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-3);
-  margin: 0 0 10px 0;
-}
-
-.panelBody {
-  font-size: 13px;
-  color: var(--text-2);
-  line-height: 1.55;
-  margin: 0;
-}
-
-/* Cue list */
-.cueList {
+.cinematic {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  height: 100%;
+  background: #080808;
+  overflow: hidden;
 }
 
-.cueItem {
+/* Top bar */
+.cinTop {
   display: flex;
-  gap: 10px;
-  align-items: baseline;
-  font-size: 12.5px;
-  color: var(--text-2);
-  padding: 7px 0;
-  border-bottom: 1px dashed var(--border);
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  flex-shrink: 0;
+  z-index: 2;
 }
 
-.cueItem:last-child { border-bottom: none; }
+.cinTopLeft {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
 
-.cueTime {
+.cinNowPlaying {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-4);
+}
+
+.cinTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+
+.cinTopRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cinUpNext {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+.cinUpNextLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-4);
+}
+
+.cinUpNextName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.cinUpNextDur {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-4);
+}
+
+/* Stage area */
+.cinStage {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.cinStageSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Text overlay */
+.cinOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 32px;
+  background: linear-gradient(to top, rgba(8,8,8,0.92) 60%, transparent);
+  pointer-events: none;
+}
+
+.cinMoveMeta {
+  margin-bottom: 8px;
+}
+
+.cinMoveTag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.cinMoveName {
+  font-size: clamp(40px, 5vw, 72px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin: 0 0 8px 0;
+  line-height: 1;
+}
+
+.cinMoveDesc {
+  font-size: 15px;
+  color: var(--text-3);
+  margin: 0 0 14px 0;
+  line-height: 1.4;
+  max-width: 520px;
+}
+
+.cinCue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--text-2);
+  font-style: italic;
+}
+
+.cinCueIcon {
+  color: var(--accent);
+  font-style: normal;
+}
+
+/* Bottom: time + waveform + transport */
+.cinBottom {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.cinTime {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.cinWaveWrap {
+  flex: 1;
+  cursor: pointer;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.cinTransport {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.cinPlayBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 100ms;
+}
+.cinPlayBtn:hover { transform: scale(1.06); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   02 · Classic mode
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.classic {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.classicHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--surface);
+}
+
+.classicHeadLeft {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.classicNowPlaying {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.classicTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.classicFindBtn {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 120ms;
+}
+.classicFindBtn:hover { background: var(--surface-3); color: var(--text); }
+
+/* Main: stage + list */
+.classicMain {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Overhead stage */
+.classicStageWrap {
+  flex: 0 0 60%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+.classicStageCrumb {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  padding: 10px 14px 6px;
+  flex-shrink: 0;
+}
+
+.classicStageSvg {
+  flex: 1;
+  width: 100%;
+  display: block;
+  min-height: 0;
+}
+
+.classicMoveInfo {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.classicMoveName {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.classicMoveDesc {
+  font-size: 12px;
+  color: var(--text-3);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.classicMoveDur {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+/* Move list */
+.classicMoveList {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+}
+
+.classicMoveRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 100ms;
+  text-align: left;
+  width: 100%;
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  color: inherit;
+}
+.classicMoveRow:hover { background: var(--surface-2); }
+
+.classicMoveRowActive { background: var(--accent-soft); }
+.classicMoveRowActive:hover { background: var(--accent-soft-2); }
+
+.classicMoveRowPlayed { opacity: 0.5; }
+
+.classicMoveOrd {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  background: var(--surface-3);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+.classicMoveOrdActive {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.classicMoveText { flex: 1; min-width: 0; }
+
+.classicMoveRowName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.classicMoveRowDesc {
+  font-size: 11px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.classicMoveDurChip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+
+/* Bottom transport */
+.classicBottom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.classicPlayBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 100ms;
+}
+.classicPlayBtn:hover { transform: scale(1.05); }
+
+.classicTimeDisp {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.classicTimeCur { color: var(--text); font-weight: 600; }
+.classicTimeSep { color: var(--text-4); }
+
+.classicWaveWrap {
+  flex: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  height: 36px;
+}
+
+.classicTrackInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.classicTrackName {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.classicTrackDot { color: var(--text-4); font-size: 12px; }
+.classicTrackBpm {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   03 · Rehearsal Ring mode
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.rehearsal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #080808;
+  overflow: hidden;
+}
+
+.rehHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.rehBadge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+
+.rehTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+
+.rehBpm { flex-shrink: 0; }
+
+/* Content */
+.rehContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow: hidden;
+  padding: 32px 40px;
+}
+
+/* Left info */
+.rehInfo {
+  flex: 1;
+  min-width: 0;
+  padding-right: 40px;
+}
+
+.rehMoveIndicator {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  margin-bottom: 12px;
+}
+
+.rehMoveName {
+  font-size: clamp(36px, 4.5vw, 60px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin: 0 0 10px 0;
+  line-height: 1;
+}
+
+.rehMoveDesc {
+  font-size: 14px;
+  color: var(--text-3);
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+  max-width: 400px;
+}
+
+.rehCue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--text-2);
+  font-style: italic;
+  margin-bottom: 20px;
+}
+.rehCueIcon { color: var(--accent); font-style: normal; }
+
+.rehNext {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+.rehNextLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-4);
+}
+.rehNextName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.rehNextDur {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-4);
-  flex-shrink: 0;
-  width: 46px;
 }
 
-@media (max-width: 960px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  .sidePanel {
-    position: static;
-  }
+.rehTransport {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rehPrevBtn, .rehNextBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 120ms;
+}
+.rehPrevBtn:hover, .rehNextBtn:hover {
+  background: var(--surface-3);
+  color: var(--text);
+  border-color: var(--border-2);
+}
+
+.rehPlayBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 100ms;
+  box-shadow: 0 4px 16px -4px var(--accent);
+}
+.rehPlayBtn:hover { transform: scale(1.06); }
+
+/* Right: ring */
+.rehRingWrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rehRingSvg {
+  display: block;
 }
