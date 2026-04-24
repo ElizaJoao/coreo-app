@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import type { ChoreographyMove, ChoreographyMusic } from "../types/choreography";
 import type { Plan } from "../constants/plans";
 import { usePreviewPlayer, PREVIEW_SPEEDS } from "../hooks/usePreviewPlayer";
+import { StickFigureCanvas } from "./StickFigureCanvas";
 import styles from "./PreviewPlayer.module.css";
 
 type Props = {
@@ -149,10 +150,12 @@ export function PreviewPlayer({ moves, music, plan, onClose }: Props) {
               </div>
             )
           ) : (
-            <div className={styles.videoPlaceholder}>
-              <span className={styles.videoPlaceholderIcon}>🎬</span>
-              <span>No demo video for this move</span>
-            </div>
+            <StickFigureCanvas
+              key={current?.id}
+              moveName={current?.name ?? ""}
+              bpm={music?.bpm}
+              className={styles.stickFigure}
+            />
           )}
         </div>
       </div>
