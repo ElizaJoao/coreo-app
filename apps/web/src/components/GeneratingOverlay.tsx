@@ -1,62 +1,85 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
 import styles from "./GeneratingOverlay.module.css";
 
-const STEP_DURATION = 1800;
+const GEN_STEPS = [
+  "Reading your brief",
+  "Structuring the sequence",
+  "Matching tempo to audience",
+  "Picking a soundtrack",
+] as const;
+
+const STEP_TIMERS_MS = [700, 1500, 2400] as const;
+
+function IconCheck() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="2 9 6 13 14 3" />
+    </svg>
+  );
+}
 
 export type GeneratingOverlayProps = {
   plan?: "free" | "pro" | "max";
+  style?: string;
+  bpm?: number;
 };
 
-export function GeneratingOverlay({ plan = "free" }: GeneratingOverlayProps) {
-  const t = useTranslations("generate");
-  const tp = useTranslations("plans");
+export function GeneratingOverlay({ plan = "free", style, bpm }: GeneratingOverlayProps) {
   const [step, setStep] = useState(0);
-  const [visible, setVisible] = useState(false);
-
-  const stepsFree = [t("analysing"), t("writingFree"), t("calculatingTiming"), t("finalising")];
-  const stepsPro = [t("analysing"), t("designingPro"), t("findingVideos"), t("calculatingTiming"), t("polishing")];
-  const stepsMax = [t("analysing"), t("designingPro"), t("writingCues"), t("findingVideos"), t("optimising"), t("finalising")];
-
-  const steps = plan === "max" ? stepsMax : plan === "pro" ? stepsPro : stepsFree;
 
   useEffect(() => {
-    setVisible(true);
-    const id = setInterval(() => {
-      setStep((s) => (s < steps.length - 1 ? s + 1 : s));
-    }, STEP_DURATION);
-    return () => clearInterval(id);
-  }, [steps.length]);
+    const timers = STEP_TIMERS_MS.map((ms, i) =>
+      setTimeout(() => setStep(i + 1), ms)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  const title = style ? `Composing your ${style} set` : "Composing your set";
+  const sub = bpm
+    ? `Building at ${bpm} BPM · drawing from 10k patterns`
+    : "Drawing from 10k patterns";
 
   return (
-    <div className={`${styles.overlay} ${visible ? styles.overlayVisible : ""}`}>
+    <div className={styles.overlay}>
       <div className={styles.card}>
-        <div className={styles.iconRing}>
-          <span className={styles.iconDot} />
-          <span className={styles.iconDot} />
-          <span className={styles.iconDot} />
+        <div className={styles.waveform}>
+          {Array.from({ length: 22 }, (_, i) => (
+            <div
+              key={i}
+              className={styles.bar}
+              style={{ animationDelay: `${i * 40}ms` }}
+            />
+          ))}
         </div>
 
-        <div className={styles.headingRow}>
-          <p className={styles.heading}>{t("title")}</p>
-          {plan !== "free" && (
-            <span className={plan === "max" ? styles.badgeMax : styles.badgePro}>
-              {plan === "max" ? tp("max") : tp("pro")}
-            </span>
-          )}
+        <p className={styles.title}>{title}</p>
+        <p className={styles.sub}>{sub}</p>
+
+        <div className={styles.steps}>
+          {GEN_STEPS.map((s, i) => {
+            const done = i < step;
+            const active = i === step;
+            return (
+              <div
+                key={i}
+                className={`${styles.step} ${done ? styles.stepDone : ""} ${active ? styles.stepActive : ""}`}
+              >
+                <div className={styles.stepIcon}>
+                  {done ? (
+                    <IconCheck />
+                  ) : active ? (
+                    <span className={styles.activeDot} />
+                  ) : (
+                    <span className={styles.idleDot} />
+                  )}
+                </div>
+                <span>{s}</span>
+              </div>
+            );
+          })}
         </div>
-
-        <p key={step} className={styles.step}>{steps[step]}</p>
-
-        <div className={styles.bar}>
-          <div className={styles.barFill} />
-        </div>
-
-        {plan === "free" && (
-          <p className={styles.upgradeTip}>{t("upgradeTip")}</p>
-        )}
       </div>
     </div>
   );
