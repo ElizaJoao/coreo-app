@@ -171,7 +171,9 @@
     "watchDemo": "🎬 Voir la démo",
     "deleteMove": "Supprimer le mouvement",
     "moveUp": "Monter",
-    "moveDown": "Descendre"
+    "moveDown": "Descendre",
+    "animate": "▶ Aperçu",
+    "close": "Fermer"
   },
   "music": {
     "testAudio": "🔊 Tester l'audio (cliquer pour un bip)",

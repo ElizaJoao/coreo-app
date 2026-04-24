@@ -230,6 +230,7 @@ export function SequenceEditor(props: SequenceEditorProps) {
                 onMoveDown={() => props.onMoveDown(i)}
                 onDelete={() => props.onDeleteMove(move.id)}
                 plan={plan}
+                bpm={props.music?.bpm}
               />
             ))}
           </div>

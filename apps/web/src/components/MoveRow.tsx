@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { ChoreographyMove } from "../types/choreography";
+import { MoveDemoModal } from "./MoveDemoModal";
 import styles from "./MoveRow.module.css";
 
 export type MoveRowProps = {
@@ -14,13 +16,15 @@ export type MoveRowProps = {
   onMoveDown: () => void;
   onDelete: () => void;
   plan?: "free" | "pro" | "max";
+  bpm?: number;
 };
 
 export function MoveRow(props: MoveRowProps) {
-  const { move, plan = "free" } = props;
+  const { move, plan = "free", bpm } = props;
   const t = useTranslations("move");
   const isPro = plan === "pro" || plan === "max";
   const isMax = plan === "max";
+  const [demoOpen, setDemoOpen] = useState(false);
 
   const rowClass = [
     styles.row,
@@ -28,6 +32,10 @@ export function MoveRow(props: MoveRowProps) {
   ].filter(Boolean).join(" ");
 
   return (
+    <>
+    {demoOpen && (
+      <MoveDemoModal move={move} bpm={bpm} onClose={() => setDemoOpen(false)} />
+    )}
     <div className={rowClass}>
       <div className={styles.orderCol}>
         <span className={styles.orderNum}>{move.order}</span>
@@ -90,17 +98,27 @@ export function MoveRow(props: MoveRowProps) {
           </div>
         )}
 
-        {isPro && move.videoQuery && (
-          <a
-            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(move.videoQuery)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.videoLink}
+        <div className={styles.actionRow}>
+          <button
+            type="button"
+            className={styles.animateBtn}
+            onClick={() => setDemoOpen(true)}
           >
-            {t("watchDemo")}
-          </a>
-        )}
+            {t("animate")}
+          </button>
+          {isPro && move.videoQuery && (
+            <a
+              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(move.videoQuery)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.videoLink}
+            >
+              {t("watchDemo")}
+            </a>
+          )}
+        </div>
       </div>
     </div>
+    </>
   );
 }
