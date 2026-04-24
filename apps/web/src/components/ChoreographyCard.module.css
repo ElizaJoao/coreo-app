@@ -4,15 +4,12 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--surface);
-  padding: 18px;
   position: relative;
   overflow: hidden;
   transition: border-color 160ms, transform 160ms, box-shadow 160ms;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   min-height: 200px;
-  text-decoration: none;
 }
 
 .card:hover {
@@ -21,12 +18,23 @@
   box-shadow: var(--shadow-card-hover);
 }
 
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 18px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 12px;
+  /* leave room for favorite button */
+  padding-right: 24px;
 }
 
 .headerText {
@@ -71,4 +79,33 @@
 .plays {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/* Tag row — below the card link */
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.tagChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--surface-2);
+  color: var(--text-3);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  transition: border-color 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+
+.tagChip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }

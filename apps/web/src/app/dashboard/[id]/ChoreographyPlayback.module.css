@@ -1,0 +1,413 @@
+@reference "tailwindcss";
+
+.container {
+  padding: 32px 28px 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-3);
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-left: -8px;
+  margin-bottom: 14px;
+  transition: background 120ms, color 120ms;
+}
+
+.backLink:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* 2-column grid */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── Track shell ── */
+.trackShell {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.trackHead {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.trackHeadLeft { min-width: 0; }
+
+.trackEyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.trackTitle {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--text);
+}
+
+.trackBadges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* ── Transport ── */
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 24px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.playBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: transform 120ms;
+  border: none;
+  cursor: pointer;
+}
+
+.playBtn:hover { transform: scale(1.06); }
+
+.transportTime {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.timeCurrent { color: var(--text); font-weight: 500; }
+.timeSep { color: var(--text-4); }
+
+.progressBar {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: 99px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), oklch(0.82 0.18 125));
+  border-radius: 99px;
+  transition: width 80ms linear;
+}
+
+.movePill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  padding: 4px 8px;
+  background: var(--surface-3);
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* ── Moves list ── */
+.movesList {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.moveRow {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: var(--row-pad-y) var(--row-pad-x);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 120ms;
+  text-align: left;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: inherit;
+}
+
+.moveRow:hover { background: var(--surface-2); }
+
+.moveRowActive { background: var(--accent-soft); }
+.moveRowActive:hover { background: var(--accent-soft-2); }
+
+.moveRowPlayed .ordChip { color: var(--text-4); }
+
+.ordChip {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--surface-3);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition: all 120ms;
+  flex-shrink: 0;
+  color: var(--text-2);
+}
+
+.ordChipActive {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.moveInfo { min-width: 0; }
+
+.moveName {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+}
+
+.moveTag {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+.moveDesc {
+  font-size: 12.5px;
+  color: var(--text-3);
+  line-height: 1.45;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.moveDur {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+  padding: 4px 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.moveDurActive {
+  background: var(--surface);
+  border-color: var(--border-2);
+  color: var(--text);
+}
+
+/* ── Side panels ── */
+.sidePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 80px;
+}
+
+/* Music panel */
+.musicPanel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.musicHead {
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.musicEyebrow {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.musicTitle {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.musicArtist {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+.musicMeta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.musicMetaCell {
+  padding: 14px 20px;
+  border-right: 1px solid var(--border);
+}
+
+.musicMetaCell:last-child { border-right: none; }
+
+.musicMetaLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.musicMetaValue {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.musicMetaValueSm {
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+/* Waveform */
+.waveform {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 70px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.waveBar {
+  flex: 1;
+  background: var(--border-3);
+  border-radius: 2px;
+  min-width: 2px;
+  transition: background 120ms;
+}
+
+.waveBarPlayed { background: var(--accent); }
+.waveBarCursor { background: var(--text); }
+
+/* Notes + cue panels */
+.notesPanel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: 18px 20px;
+}
+
+.panelTitle {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  margin: 0 0 10px 0;
+}
+
+.panelBody {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Cue list */
+.cueList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cueItem {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 12.5px;
+  color: var(--text-2);
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.cueItem:last-child { border-bottom: none; }
+
+.cueTime {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-4);
+  flex-shrink: 0;
+  width: 46px;
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .sidePanel {
+    position: static;
+  }
+}

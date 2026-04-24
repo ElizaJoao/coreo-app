@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-
+import { useTranslations } from "next-intl";
 import { useMusicSearch } from "../hooks/useMusicSearch";
-import type { ChoreographyMusic } from "../types/choreography";
+import type { ChoreographyMusic, PlaylistTrack } from "../types/choreography";
 import styles from "./MusicEditor.module.css";
 
 export type MusicEditorProps = {
@@ -13,6 +13,7 @@ export type MusicEditorProps = {
 };
 
 export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
+  const t = useTranslations("music");
   const { query, setQuery, results, isSearching } = useMusicSearch();
   const [playingId, setPlayingId] = useState<number | null>(null);
   const [audioError, setAudioError] = useState(false);
@@ -88,7 +89,7 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
 
       {/* Audio test */}
       <button type="button" onClick={testBeep} className={styles.clearBtn} style={{marginBottom: 4}}>
-        🔊 Test audio (click for beep)
+        {t("testAudio")}
       </button>
 
       {/* Search */}
@@ -99,14 +100,14 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
             className={styles.searchInput}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for a song…"
+            placeholder={t("searchPlaceholder")}
           />
           {isSearching && <span className={styles.searchSpinner} />}
         </div>
       </div>
 
       {audioError && (
-        <p className={styles.audioError}>Preview unavailable for this track.</p>
+        <p className={styles.audioError}>{t("previewUnavailable")}</p>
       )}
 
       {/* Results */}
@@ -135,7 +136,7 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
                 className={styles.selectBtn}
                 onClick={() => selectTrack(r.trackName, r.artistName)}
               >
-                Select
+                {t("select")}
               </button>
             </li>
           ))}
@@ -145,25 +146,25 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
       {/* Manual fields */}
       <div className={styles.fields}>
         <div className={styles.field}>
-          <label className={styles.label}>Song title</label>
+          <label className={styles.label}>{t("songTitle")}</label>
           <input
             className={styles.input}
             value={m.title}
-            placeholder="e.g. Blinding Lights"
+            placeholder={t("songPlaceholder")}
             onChange={(e) => onUpdate({ title: e.target.value })}
           />
         </div>
         <div className={styles.field}>
-          <label className={styles.label}>Artist</label>
+          <label className={styles.label}>{t("artist")}</label>
           <input
             className={styles.input}
             value={m.artist}
-            placeholder="e.g. The Weeknd"
+            placeholder={t("artistPlaceholder")}
             onChange={(e) => onUpdate({ artist: e.target.value })}
           />
         </div>
         <div className={styles.fieldSmall}>
-          <label className={styles.label}>BPM</label>
+          <label className={styles.label}>{t("bpm")}</label>
           <input
             type="number"
             className={styles.input}
@@ -175,9 +176,36 @@ export function MusicEditor({ music, onUpdate, onClear }: MusicEditorProps) {
         </div>
       </div>
 
+      {/* Playlist suggestions from AI */}
+      {music?.playlist && music.playlist.length > 0 && (
+        <div className={styles.playlistSection}>
+          <div className={styles.playlistLabel}>{t("suggestedPlaylist")}</div>
+          <div className={styles.playlistTracks}>
+            {music.playlist.map((track, i) => (
+              <div key={i} className={styles.playlistTrack}>
+                <div className={styles.playlistTrackNum}>{i + 1}</div>
+                <div className={styles.playlistTrackInfo}>
+                  <span className={styles.playlistTrackName}>{track.title}</span>
+                  <span className={styles.playlistTrackMeta}>{track.artist} · {track.bpm} BPM</span>
+                </div>
+                <button
+                  type="button"
+                  className={styles.playlistRemove}
+                  onClick={() => {
+                    const next = music.playlist!.filter((_, j) => j !== i);
+                    onUpdate({ playlist: next });
+                  }}
+                  aria-label="Remove track"
+                >×</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {music && (
         <button type="button" className={styles.clearBtn} onClick={onClear}>
-          Remove music
+          {t("removeMusic")}
         </button>
       )}
     </div>

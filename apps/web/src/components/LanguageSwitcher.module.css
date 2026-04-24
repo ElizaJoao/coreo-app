@@ -1,0 +1,52 @@
+@reference "tailwindcss";
+
+.wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: oklch(1 0 0 / 0.05);
+  border: 1px solid oklch(1 0 0 / 0.12);
+  border-radius: 8px;
+  padding: 5px 10px 5px 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.wrapper:hover {
+  background: oklch(1 0 0 / 0.09);
+  border-color: oklch(1 0 0 / 0.22);
+}
+
+.currentFlag {
+  font-size: 14px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.select {
+  /* Reset native select */
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-inter);
+  padding: 0;
+  /* Make it cover the whole wrapper for the click target */
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+}
+
+.chevron {
+  font-size: 10px;
+  color: var(--text-4);
+  pointer-events: none;
+  line-height: 1;
+}

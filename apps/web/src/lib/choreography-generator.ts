@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 
 import type { ChoreographyMove, ChoreographyMusic } from "../types/choreography";
 import type { Plan } from "../constants/plans";
+import { STYLE_CONTEXT } from "../constants/choreography";
 
 const client = new Anthropic();
 
@@ -65,11 +66,24 @@ function buildTool(plan: Plan): Anthropic.Tool {
         },
         music: {
           type: "object",
-          description: "Optional music suggestion.",
+          description: "Music suggestion for the class. Include a playlist of 3–5 recommended tracks that fit the style and energy arc. The first track is the primary suggestion.",
           properties: {
-            title: { type: "string" },
-            artist: { type: "string" },
-            bpm: { type: "number" },
+            title: { type: "string", description: "Primary track title" },
+            artist: { type: "string", description: "Primary track artist" },
+            bpm: { type: "number", description: "Primary track BPM" },
+            playlist: {
+              type: "array",
+              description: "3–5 recommended tracks in order (first = primary). Mix energy levels to match the class arc.",
+              items: {
+                type: "object",
+                properties: {
+                  title: { type: "string" },
+                  artist: { type: "string" },
+                  bpm: { type: "number" },
+                },
+                required: ["title", "artist", "bpm"],
+              },
+            },
           },
           required: ["title", "artist", "bpm"],
         },
@@ -83,7 +97,7 @@ function buildPrompt(input: GenerateInput): string {
   const { style, duration, difficulty, targetAudience, description, plan = "free" } = input;
   const durationSec = duration * 60;
 
-  const base = `You are an expert fitness and dance choreographer.
+  let base = `You are an expert fitness and dance choreographer.
 
 Create a complete choreography plan for a ${style} class:
 - Duration: ${duration} minutes (${durationSec} seconds total)
@@ -92,6 +106,16 @@ Create a complete choreography plan for a ${style} class:
 ${description ? `- Notes from instructor: ${description}` : ""}
 
 Design 8–14 moves that fit the total duration. Each move should have a realistic duration in seconds so they sum to approximately ${durationSec}s. Include a warm-up and cool-down. Suggest fitting music.`;
+
+  const styleCtx = STYLE_CONTEXT[style];
+  if (styleCtx) {
+    base += `
+
+Style-specific guidance for ${style}:
+- BPM range: ${styleCtx.bpmRange[0]}–${styleCtx.bpmRange[1]}
+- Class structure: ${styleCtx.structure}
+- Vocabulary and cues: ${styleCtx.vocabulary}${styleCtx.language ? `\n- Use instructor cues in ${styleCtx.language === "pt" ? "Portuguese" : styleCtx.language}.` : ""}`;
+  }
 
   if (plan === "pro") {
     return `${base}
@@ -114,8 +138,12 @@ export async function generateChoreography(
   input: GenerateInput,
 ): Promise<GeneratedChoreography> {
   const plan = input.plan ?? "free";
+  // Free plan: cap class duration at 45 minutes
+  const effectiveInput = plan === "free" && input.duration > 45
+    ? { ...input, duration: 45 }
+    : input;
   const tool = buildTool(plan);
-  const prompt = buildPrompt(input);
+  const prompt = buildPrompt(effectiveInput);
 
   const message = await client.messages.create({
     model: "claude-sonnet-4-6",

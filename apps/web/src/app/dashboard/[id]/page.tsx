@@ -1,11 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { auth } from "../../../auth";
-import { ROUTES } from "../../../constants/routes";
 import { getChoreographyById } from "../../../lib/choreography-service";
 import { supabase } from "../../../lib/supabase";
 import type { Plan } from "../../../constants/plans";
+import { ChoreographyPlayback } from "./ChoreographyPlayback";
 import { ChoreographyEditor } from "./ChoreographyEditor";
 import styles from "./page.module.css";
 
@@ -30,16 +29,17 @@ export default async function ChoreographyPage({ params }: Props) {
   const plan = ((userData as { plan?: string } | null)?.plan ?? "free") as Plan;
 
   return (
-    <main className={styles.main}>
-      <div className={styles.topBar}>
-        <Link href={ROUTES.DASHBOARD} className={styles.backLink}>← Back</Link>
-        <div className={styles.badges}>
-          <span className={styles.badge}>{choreography.style}</span>
-          <span className={styles.badge}>{choreography.difficulty}</span>
-          <span className={styles.badge}>{choreography.duration} min</span>
+    <div className={styles.detailPage}>
+      {/* Playback / track view */}
+      <ChoreographyPlayback choreography={choreography} />
+
+      {/* Sequence editor — edit moves, music, formations */}
+      <div className={styles.editorSection}>
+        <div className={styles.editorDivider}>
+          <span className={styles.editorDividerLabel}>Edit sequence</span>
         </div>
+        <ChoreographyEditor choreography={choreography} plan={plan} />
       </div>
-      <ChoreographyEditor choreography={choreography} plan={plan} />
-    </main>
+    </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 import { ROUTES } from "../constants/routes";
 import type { Plan } from "../constants/plans";
@@ -63,6 +64,7 @@ export function DashboardShell({ children, user, libraryCount }: DashboardShellP
         user={currentUser}
         libraryCount={libraryCount}
         onNavigate={(route) => router.push(route)}
+        onSignOut={() => signOut({ callbackUrl: "/" })}
         onSetPlan={currentUser.isAdmin ? handleSetPlan : undefined}
         settingPlan={settingPlan}
       />

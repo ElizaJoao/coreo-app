@@ -46,6 +46,31 @@
 
 .btnPrimary:hover { opacity: 0.88; }
 
+.upgradeBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  background: oklch(0.82 0.17 85 / 0.08);
+  border: 1px solid oklch(0.82 0.17 85 / 0.25);
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.upgradeBannerLink {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.upgradeBannerLink:hover { text-decoration: underline; }
+
 .toolbar {
   display: flex;
   flex-direction: column;
@@ -117,4 +142,21 @@
   padding: 64px 24px;
   color: var(--text-4);
   font-size: 14px;
+}
+
+.purchasedSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin: 0;
 }

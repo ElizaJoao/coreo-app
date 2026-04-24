@@ -27,6 +27,12 @@ export function ChoreographyEditor({ choreography, plan }: Props) {
       music={editor.music}
       onUpdateMusic={editor.updateMusic}
       onClearMusic={editor.clearMusic}
+      tags={editor.tags}
+      onTagsChange={editor.setTags}
+      style={choreography.style}
+      difficulty={choreography.difficulty}
+      duration={choreography.duration}
+      targetAudience={choreography.targetAudience}
       status={editor.status}
       onSave={editor.save}
       dancers={editor.dancers}

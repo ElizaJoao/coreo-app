@@ -8,7 +8,7 @@ export function LandingFooter() {
       <div className={styles.inner}>
         <div className={styles.brand}>
           <img src="/logo-mark.svg" alt="" className={styles.mark} />
-          <span className={styles.brandName}>Offbeat Move</span>
+          <span className={styles.brandName}>Offbeat</span>
         </div>
 
         <div className={styles.cols}>
@@ -28,7 +28,7 @@ export function LandingFooter() {
       </div>
 
       <div className={styles.bottom}>
-        <span>© {new Date().getFullYear()} Offbeat Move. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} Offbeat. All rights reserved.</span>
         <span className={styles.bottomDot} />
         <span>Built with Claude AI</span>
       </div>

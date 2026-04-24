@@ -11,6 +11,7 @@ type PatchBody = {
   description?: string;
   dancers?: Dancer[];
   formations?: MoveFormation[];
+  tags?: string[];
 };
 
 export async function PATCH(

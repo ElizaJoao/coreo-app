@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import type { ChoreographyMove, Dancer, DancerPosition } from "../types/choreography";
 import styles from "./FormationEditor.module.css";
 
@@ -34,6 +35,7 @@ type Props = {
 };
 
 export function FormationEditor({ moves, dancers, onDancersChange, getFormationForMove, onUpdatePosition }: Props) {
+  const t = useTranslations("formation");
   const stageRef = useRef<HTMLDivElement>(null);
   const [activeMoveIdx, setActiveMoveIdx] = useState(0);
   const [dragging, setDragging] = useState<string | null>(null);
@@ -98,7 +100,7 @@ export function FormationEditor({ moves, dancers, onDancersChange, getFormationF
       <div className={styles.body}>
         {/* Stage */}
         <div className={styles.stageWrap}>
-          <div className={styles.stageLabel}>Stage (top-down view)</div>
+          <div className={styles.stageLabel}>{t("stage")}</div>
           <div
             ref={stageRef}
             className={styles.stage}
@@ -111,7 +113,7 @@ export function FormationEditor({ moves, dancers, onDancersChange, getFormationF
             <div className={styles.stageLine} style={{ top: "66.6%" }} />
             <div className={styles.stageLineV} style={{ left: "33.3%" }} />
             <div className={styles.stageLineV} style={{ left: "66.6%" }} />
-            <div className={styles.stageAudience}>Audience</div>
+            <div className={styles.stageAudience}>{t("audience")}</div>
 
             {/* Dancers */}
             {dancers.map((dancer) => {
@@ -134,20 +136,20 @@ export function FormationEditor({ moves, dancers, onDancersChange, getFormationF
             })}
 
             {dancers.length === 0 && (
-              <div className={styles.stageEmpty}>Add dancers to start</div>
+              <div className={styles.stageEmpty}>{t("addDancers")}</div>
             )}
           </div>
 
           {activeMoveIdx > 0 && (
             <button type="button" className={styles.copyBtn} onClick={copyFromPrev}>
-              ↑ Copy from previous move
+              {t("copyFromPrev")}
             </button>
           )}
         </div>
 
         {/* Dancer panel */}
         <div className={styles.panel}>
-          <div className={styles.panelTitle}>Dancers</div>
+          <div className={styles.panelTitle}>{t("dancers")}</div>
 
           <div className={styles.dancerList}>
             {dancers.map((dancer) => (
@@ -187,13 +189,10 @@ export function FormationEditor({ moves, dancers, onDancersChange, getFormationF
             onClick={addDancer}
             disabled={dancers.length >= 10}
           >
-            + Add dancer
+            {t("addDancer")}
           </button>
 
-          <div className={styles.hint}>
-            Drag dancers on the stage to set their position for each move.
-            Click a name to rename.
-          </div>
+          <div className={styles.hint}>{t("hint")}</div>
         </div>
       </div>
     </div>

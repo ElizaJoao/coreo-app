@@ -1,4 +1,9 @@
+"use client";
+
+import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { ChoreographyMove } from "../types/choreography";
+import { MoveDemoModal } from "./MoveDemoModal";
 import styles from "./MoveRow.module.css";
 
 export type MoveRowProps = {
@@ -11,15 +16,27 @@ export type MoveRowProps = {
   onMoveDown: () => void;
   onDelete: () => void;
   plan?: "free" | "pro" | "max";
+  bpm?: number;
 };
 
 export function MoveRow(props: MoveRowProps) {
-  const { move, plan = "free" } = props;
+  const { move, plan = "free", bpm } = props;
+  const t = useTranslations("move");
   const isPro = plan === "pro" || plan === "max";
   const isMax = plan === "max";
+  const [demoOpen, setDemoOpen] = useState(false);
+
+  const rowClass = [
+    styles.row,
+    isMax ? styles.rowMax : isPro ? styles.rowPro : "",
+  ].filter(Boolean).join(" ");
 
   return (
-    <div className={styles.row}>
+    <>
+    {demoOpen && (
+      <MoveDemoModal move={move} bpm={bpm} onClose={() => setDemoOpen(false)} />
+    )}
+    <div className={rowClass}>
       <div className={styles.orderCol}>
         <span className={styles.orderNum}>{move.order}</span>
         <div className={styles.arrows}>
@@ -28,14 +45,14 @@ export function MoveRow(props: MoveRowProps) {
             className={styles.arrowBtn}
             onClick={props.onMoveUp}
             disabled={props.isFirst}
-            aria-label="Move up"
+            aria-label={t("moveUp")}
           >▲</button>
           <button
             type="button"
             className={styles.arrowBtn}
             onClick={props.onMoveDown}
             disabled={props.isLast}
-            aria-label="Move down"
+            aria-label={t("moveDown")}
           >▼</button>
         </div>
       </div>
@@ -46,7 +63,7 @@ export function MoveRow(props: MoveRowProps) {
             className={styles.nameInput}
             value={move.name}
             onChange={(e) => props.onUpdate({ name: e.target.value })}
-            placeholder="Move name"
+            placeholder={t("namePlaceholder")}
           />
           <div className={styles.durationField}>
             <input
@@ -57,41 +74,51 @@ export function MoveRow(props: MoveRowProps) {
               max={600}
               onChange={(e) => props.onUpdate({ duration: Number(e.target.value) })}
             />
-            <span className={styles.durationUnit}>s</span>
+            <span className={styles.durationUnit}>{t("seconds")}</span>
           </div>
           <button
             type="button"
             className={styles.deleteBtn}
             onClick={props.onDelete}
-            aria-label="Delete move"
+            aria-label={t("deleteMove")}
           >✕</button>
         </div>
         <textarea
           className={styles.descInput}
           value={move.description}
           rows={2}
-          placeholder="Instructor cue or description…"
+          placeholder={t("cuePlaceholder")}
           onChange={(e) => props.onUpdate({ description: e.target.value })}
         />
 
         {isMax && move.verbalCue && (
           <div className={styles.verbalCue}>
-            <span className={styles.verbalCueLabel}>💬 Say:</span>
+            <span className={styles.verbalCueLabel}>{t("say")}</span>
             <span className={styles.verbalCueText}>{move.verbalCue}</span>
           </div>
         )}
 
-        {isPro && move.videoQuery && (
-          <a
-            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(move.videoQuery)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.videoLink}
+        <div className={styles.actionRow}>
+          <button
+            type="button"
+            className={styles.animateBtn}
+            onClick={() => setDemoOpen(true)}
           >
-            🎬 Watch demo
-          </a>
-        )}
+            {t("animate")}
+          </button>
+          {isPro && move.videoQuery && (
+            <a
+              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(move.videoQuery)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.videoLink}
+            >
+              {t("watchDemo")}
+            </a>
+          )}
+        </div>
       </div>
     </div>
+    </>
   );
 }

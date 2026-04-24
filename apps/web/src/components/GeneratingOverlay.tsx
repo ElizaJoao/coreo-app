@@ -1,44 +1,84 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import styles from "./GeneratingOverlay.module.css";
 
-const STEPS = [
-  "Analyzing your style…",
-  "Designing the move sequence…",
-  "Calculating timing and tempo…",
-  "Selecting fitting music…",
-  "Polishing the details…",
-  "Almost there…",
-];
+const GEN_STEPS = [
+  "Reading your brief",
+  "Structuring the sequence",
+  "Matching tempo to audience",
+  "Picking a soundtrack",
+] as const;
 
-const STEP_DURATION = 1800;
+const STEP_TIMERS_MS = [700, 1500, 2400] as const;
 
-export function GeneratingOverlay() {
+function IconCheck() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="2 9 6 13 14 3" />
+    </svg>
+  );
+}
+
+export type GeneratingOverlayProps = {
+  plan?: "free" | "pro" | "max";
+  style?: string;
+  bpm?: number;
+};
+
+export function GeneratingOverlay({ plan = "free", style, bpm }: GeneratingOverlayProps) {
   const [step, setStep] = useState(0);
-  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    setVisible(true);
-    const id = setInterval(() => {
-      setStep((s) => (s < STEPS.length - 1 ? s + 1 : s));
-    }, STEP_DURATION);
-    return () => clearInterval(id);
+    const timers = STEP_TIMERS_MS.map((ms, i) =>
+      setTimeout(() => setStep(i + 1), ms)
+    );
+    return () => timers.forEach(clearTimeout);
   }, []);
 
+  const title = style ? `Composing your ${style} set` : "Composing your set";
+  const sub = bpm
+    ? `Building at ${bpm} BPM · drawing from 10k patterns`
+    : "Drawing from 10k patterns";
+
   return (
-    <div className={`${styles.overlay} ${visible ? styles.overlayVisible : ""}`}>
+    <div className={styles.overlay}>
       <div className={styles.card}>
-        <div className={styles.iconRing}>
-          <span className={styles.iconDot} />
-          <span className={styles.iconDot} />
-          <span className={styles.iconDot} />
+        <div className={styles.waveform}>
+          {Array.from({ length: 22 }, (_, i) => (
+            <div
+              key={i}
+              className={styles.bar}
+              style={{ animationDelay: `${i * 40}ms` }}
+            />
+          ))}
         </div>
-        <p className={styles.heading}>Generating choreography</p>
-        <p key={step} className={styles.step}>{STEPS[step]}</p>
-        <div className={styles.bar}>
-          <div className={styles.barFill} />
+
+        <p className={styles.title}>{title}</p>
+        <p className={styles.sub}>{sub}</p>
+
+        <div className={styles.steps}>
+          {GEN_STEPS.map((s, i) => {
+            const done = i < step;
+            const active = i === step;
+            return (
+              <div
+                key={i}
+                className={`${styles.step} ${done ? styles.stepDone : ""} ${active ? styles.stepActive : ""}`}
+              >
+                <div className={styles.stepIcon}>
+                  {done ? (
+                    <IconCheck />
+                  ) : active ? (
+                    <span className={styles.activeDot} />
+                  ) : (
+                    <span className={styles.idleDot} />
+                  )}
+                </div>
+                <span>{s}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

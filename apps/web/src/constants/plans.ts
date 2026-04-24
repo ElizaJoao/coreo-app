@@ -17,9 +17,10 @@ export const PLAN_META: Record<Plan, PlanMeta> = {
     id: "free",
     name: "Free",
     price: 0,
-    description: "Perfect for trying it out.",
+    description: "5 choreographies/month · Up to 45 min classes",
     features: [
       "5 choreographies / month",
+      "Up to 45 min class duration",
       "AI move sequence generation",
       "Music suggestions (title, artist, BPM)",
       "Drag-and-drop sequence editor",

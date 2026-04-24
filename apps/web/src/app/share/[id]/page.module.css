@@ -156,18 +156,50 @@
 
 .videoLink:hover { opacity: 1; text-decoration: underline; }
 
-.footer {
-  font-size: 12px;
-  color: var(--text-4);
-  text-align: center;
+.ctaBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px 24px;
+  background: var(--accent-soft);
+  border: 1px solid oklch(0.82 0.17 85 / 0.25);
+  border-radius: var(--radius-md);
   margin-top: auto;
-  padding-top: 24px;
 }
 
-.footerLink {
+.ctaText {
+  min-width: 0;
+}
+
+.ctaTitle {
+  font-size: 15px;
+  font-weight: 700;
   color: var(--accent);
-  text-decoration: none;
-  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-.footerLink:hover { text-decoration: underline; }
+.ctaSub {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.ctaBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--accent);
+  color: var(--accent-ink);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.ctaBtn:hover { opacity: 0.88; }

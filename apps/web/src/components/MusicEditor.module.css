@@ -203,3 +203,82 @@
 }
 
 .clearBtn:hover { color: var(--danger); }
+
+/* Playlist */
+.playlistSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.playlistLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-4);
+}
+
+.playlistTracks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.playlistTrack {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.playlistTrackNum {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-4);
+  font-variant-numeric: tabular-nums;
+  min-width: 14px;
+  text-align: center;
+}
+
+.playlistTrackInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.playlistTrackName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playlistTrackMeta {
+  font-size: 11px;
+  color: var(--text-4);
+}
+
+.playlistRemove {
+  background: none;
+  border: none;
+  color: var(--text-4);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 2px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.playlistRemove:hover { color: var(--danger); }

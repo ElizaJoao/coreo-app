@@ -20,10 +20,17 @@ export type MoveFormation = {
   positions: Record<string, DancerPosition>; // dancerId → position
 };
 
+export type PlaylistTrack = {
+  title: string;
+  artist: string;
+  bpm: number;
+};
+
 export type ChoreographyMusic = {
   title: string;
   artist: string;
   bpm: number;
+  playlist?: PlaylistTrack[];
 };
 
 export type ChoreographyMove = {
@@ -34,6 +41,7 @@ export type ChoreographyMove = {
   order: number;
   tag?: string;
   videoQuery?: string;  // pro+: YouTube search term for demo video
+  videoId?: string;     // pro+: resolved YouTube video ID (cached)
   verbalCue?: string;   // max: what instructor says during this move
 };
 
@@ -53,5 +61,7 @@ export type Choreography = {
   updatedAt: string;
   plays?: number;
   lastUsed?: string;
+  isFavorite: boolean;
+  tags: string[];
 };
 

@@ -23,6 +23,7 @@ export function useChoreographyEditor(initial: Choreography) {
   const [description, setDescription] = useState(initial.description);
   const [dancers, setDancers] = useState<Dancer[]>(initial.dancers ?? []);
   const [formations, setFormations] = useState<MoveFormation[]>(initial.formations ?? []);
+  const [tags, setTags] = useState<string[]>(initial.tags ?? []);
   const [status, setStatus] = useState<EditorStatus>("idle");
 
   const updateMove = useCallback((id: string, patch: Partial<ChoreographyMove>) => {
@@ -86,7 +87,7 @@ export function useChoreographyEditor(initial: Choreography) {
       const res = await fetch(`/api/choreography/${initial.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, moves, music: music ?? null, description, dancers, formations }),
+        body: JSON.stringify({ name, moves, music: music ?? null, description, dancers, formations, tags }),
       });
       if (!res.ok) throw new Error("save failed");
       setStatus("saved");
@@ -94,13 +95,14 @@ export function useChoreographyEditor(initial: Choreography) {
     } catch {
       setStatus("error");
     }
-  }, [initial.id, name, moves, music, description, dancers, formations]);
+  }, [initial.id, name, moves, music, description, dancers, formations, tags]);
 
   return {
     name, setName,
     moves,
     music, updateMusic, clearMusic,
     description, setDescription,
+    tags, setTags,
     dancers, setDancers,
     formations,
     updateDancerPosition,

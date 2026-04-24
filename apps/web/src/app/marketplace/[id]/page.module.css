@@ -1,0 +1,290 @@
+@reference "tailwindcss";
+
+.page {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.back { }
+.backLink {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-3);
+  text-decoration: none;
+  transition: color 0.12s;
+}
+.backLink:hover { color: var(--text); }
+
+/* Header */
+.header {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 24px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+}
+
+.headerMeta { flex: 1; min-width: 0; }
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 3px 9px;
+  color: var(--text-3);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+
+.creatorLink {
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+.creatorLink:hover { text-decoration: underline; }
+
+.description {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin: 10px 0 0;
+}
+
+/* Purchase box */
+.purchaseBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  min-width: 130px;
+}
+
+.priceFree {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+
+.pricePaid {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.ratingDisplay {
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.ratingCount {
+  font-weight: 400;
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+.salesDisplay {
+  font-size: 11px;
+  color: var(--text-4);
+}
+
+.buyBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+.buyBtn:hover { opacity: 0.88; }
+
+.ownedBadge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--success, #22c55e);
+  background: oklch(0.6 0.18 145 / 0.1);
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+
+/* Music card */
+.musicCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.musicIcon { font-size: 20px; color: var(--accent); }
+.musicTitle { font-size: 14px; font-weight: 600; color: var(--text); }
+.musicArtist { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+/* Moves */
+.movesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.moveList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.moveItem {
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.moveHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.moveNum {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-4);
+  min-width: 16px;
+}
+
+.moveName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+}
+
+.moveDuration {
+  font-size: 11px;
+  color: var(--text-4);
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+
+.moveDesc {
+  font-size: 12px;
+  color: var(--text-3);
+  margin: 0;
+  padding-left: 26px;
+}
+
+.lockedOverlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px;
+  background: var(--surface-2);
+  border: 1px dashed var(--border-2);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.lockedIcon { font-size: 24px; }
+.lockedText { font-size: 14px; color: var(--text-2); font-weight: 500; }
+.lockedCta { font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; }
+.lockedCta:hover { text-decoration: underline; }
+
+/* Ratings */
+.ratingsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ratingsList { display: flex; flex-direction: column; gap: 8px; }
+
+.ratingItem {
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ratingHeader { display: flex; align-items: center; gap: 10px; }
+.ratingStars { color: var(--accent); font-size: 13px; }
+.ratingReviewer { font-size: 12px; color: var(--text-4); }
+.ratingReview { font-size: 13px; color: var(--text-2); margin: 0; }
+
+/* Creator card */
+.creatorCard {
+  padding: 16px 20px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.creatorTitle { font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+
+.creatorCardLink {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.creatorCardLink:hover { text-decoration: underline; }

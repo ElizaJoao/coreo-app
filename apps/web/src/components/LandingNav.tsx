@@ -7,7 +7,7 @@ export function LandingNav() {
     <nav className={styles.nav}>
       <Link href="/" className={styles.brand}>
         <img src="/logo-mark.svg" alt="" className={styles.mark} />
-        <span className={styles.brandName}>Offbeat Move</span>
+        <span className={styles.brandName}>Offbeat</span>
       </Link>
       <div className={styles.links}>
         <a href="#features" className={styles.link}>Features</a>
