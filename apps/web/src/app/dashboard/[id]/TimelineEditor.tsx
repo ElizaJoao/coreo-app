@@ -315,7 +315,7 @@ export function TimelineEditor({ choreography, plan }: Props) {
       {/* ── Body: stage + side panel ────────────────────────────────────── */}
       <div className={styles.body}>
         {/* Stage */}
-        <div className={styles.stageWrap}>
+        <div className={styles.stageWrap} data-tour="stage">
           <div className={styles.stageLabels}>
             <span className={styles.stageCrumb}>{stageLabel}</span>
             {activeMove?.tag && (
@@ -498,7 +498,7 @@ export function TimelineEditor({ choreography, plan }: Props) {
         </div>
 
         {/* Music multi-track row */}
-        <div className={`${styles.tlRow} ${styles.tlRowMusic}`}>
+        <div className={`${styles.tlRow} ${styles.tlRowMusic}`} data-tour="music-row">
           <div className={styles.tlLabel}>MUSIC</div>
           <div className={styles.musicTrackWrap} ref={musicWrapRef}>
             {/* Waveform background (seekable) */}
@@ -670,7 +670,7 @@ export function TimelineEditor({ choreography, plan }: Props) {
         })()}
 
         {/* Moves clips row */}
-        <div className={`${styles.tlRow} ${styles.tlRowMoves}`}>
+        <div className={`${styles.tlRow} ${styles.tlRowMoves}`} data-tour="moves-row">
           <div className={styles.tlLabel}>MOVES</div>
           <div className={styles.movesTrack}>
             {editor.moves.map((move, i) => {
