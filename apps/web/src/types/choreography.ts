@@ -26,11 +26,23 @@ export type PlaylistTrack = {
   bpm: number;
 };
 
+export type MusicTrack = {
+  id: string;
+  title: string;
+  artist: string;
+  bpm: number;
+  startSec: number;
+  endSec: number;
+  previewUrl?: string;
+  color?: string;
+};
+
 export type ChoreographyMusic = {
   title: string;
   artist: string;
   bpm: number;
   playlist?: PlaylistTrack[];
+  tracks?: MusicTrack[];
 };
 
 export type ChoreographyMove = {

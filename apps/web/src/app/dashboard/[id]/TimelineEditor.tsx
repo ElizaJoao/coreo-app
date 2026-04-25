@@ -6,7 +6,7 @@ import { ROUTES } from "../../../constants/routes";
 import { useChoreographyEditor } from "../../../hooks/useChoreographyEditor";
 import { useChoreographyPlayback } from "../../../hooks/useChoreographyPlayback";
 import { Spinner } from "../../../components/Spinner";
-import type { Choreography, Dancer, DancerPosition } from "../../../types/choreography";
+import type { Choreography, Dancer, DancerPosition, MusicTrack } from "../../../types/choreography";
 import type { Plan } from "../../../constants/plans";
 import styles from "./TimelineEditor.module.css";
 
@@ -48,6 +48,7 @@ function StageFigure({ color = "#555" }: { color?: string }) {
 
 const DEFAULT_DANCER_NAMES = ["Alex", "Sam", "Jordan", "Morgan", "Taylor", "Casey", "Riley", "Drew"];
 const DEFAULT_DANCER_COLORS = ["#e85d5d","#5d9be8","#5de87a","#e8c45d","#c45de8","#5de8d4","#e8875d","#9b5de8"];
+const TRACK_COLORS = ["#e85d5d","#5d9be8","#5de87a","#e8c45d","#c45de8","#5de8d4"];
 
 type Props = { choreography: Choreography; plan: Plan };
 
@@ -57,9 +58,13 @@ export function TimelineEditor({ choreography, plan }: Props) {
   const [suggestionDone, setSuggestionDone] = useState(false);
   const [dragging, setDragging] = useState<{ dancerId: string } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  // ── Multi-track audio ──────────────────────────────────────────────────────
+  const [mainPreviewUrl, setMainPreviewUrl] = useState<string | null>(null);
+  // Map trackId → { audio, previewUrl }
+  const trackAudios = useRef<Map<string, HTMLAudioElement>>(new Map());
+  const lastPlayingTrackId = useRef<string | null>(null);
 
+  // Lookup iTunes preview for the primary music
   useEffect(() => {
     const m = editor.music;
     if (!m?.title || !m?.artist) return;
@@ -68,26 +73,103 @@ export function TimelineEditor({ choreography, plan }: Props) {
     fetch(`https://itunes.apple.com/search?term=${q}&media=music&entity=song&limit=3`)
       .then(r => r.json())
       .then((d: { results: Array<{ previewUrl?: string }> }) => {
-        if (!cancelled) setPreviewUrl(d.results?.[0]?.previewUrl ?? null);
+        if (!cancelled) setMainPreviewUrl(d.results?.[0]?.previewUrl ?? null);
       })
       .catch(() => {});
     return () => { cancelled = true; };
   }, [editor.music?.title, editor.music?.artist]);
 
-  useEffect(() => {
-    if (!previewUrl) return;
-    const audio = new Audio(previewUrl);
-    audioRef.current = audio;
-    return () => { audio.pause(); audioRef.current = null; };
-  }, [previewUrl]);
+  // Derive active track: check named tracks first, fall back to main
+  const musicTracks = editor.music?.tracks ?? [];
+  const activeNamedTrack = musicTracks.find(t => pb.elapsed >= t.startSec && pb.elapsed < t.endSec);
+  const activeTrackId = activeNamedTrack ? activeNamedTrack.id : "main";
+  const activePreviewUrl = activeNamedTrack?.previewUrl ?? mainPreviewUrl;
 
+  // Switch audio when active track changes
   useEffect(() => {
-    if (!audioRef.current) return;
-    if (pb.playing) audioRef.current.play().catch(() => {});
-    else audioRef.current.pause();
+    if (activeTrackId === lastPlayingTrackId.current) return;
+    // Pause the previous track
+    if (lastPlayingTrackId.current) {
+      trackAudios.current.get(lastPlayingTrackId.current)?.pause();
+    }
+    lastPlayingTrackId.current = activeTrackId;
+
+    if (!pb.playing || !activePreviewUrl) return;
+    let audio = trackAudios.current.get(activeTrackId);
+    if (!audio) {
+      audio = new Audio(activePreviewUrl);
+      trackAudios.current.set(activeTrackId, audio);
+    }
+    audio.play().catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTrackId]);
+
+  // Play/pause all when playing state changes
+  useEffect(() => {
+    const audio = trackAudios.current.get(lastPlayingTrackId.current ?? "main");
+    if (!audio && !activePreviewUrl) return;
+    if (pb.playing) {
+      const a = audio ?? (() => {
+        if (!activePreviewUrl) return null;
+        const newAudio = new Audio(activePreviewUrl);
+        trackAudios.current.set(activeTrackId, newAudio);
+        lastPlayingTrackId.current = activeTrackId;
+        return newAudio;
+      })();
+      a?.play().catch(() => {});
+    } else {
+      trackAudios.current.forEach(a => a.pause());
+    }
   }, [pb.playing]);
 
-  useEffect(() => () => { audioRef.current?.pause(); }, []);
+  // Cleanup on unmount
+  useEffect(() => () => { trackAudios.current.forEach(a => a.pause()); }, []);
+
+  // ── Add Track state ────────────────────────────────────────────────────────
+  const [addingTrack, setAddingTrack] = useState(false);
+  const [trackQuery, setTrackQuery] = useState("");
+  const [trackResults, setTrackResults] = useState<Array<{ trackId: number; trackName: string; artistName: string; previewUrl?: string; artworkUrl60?: string }>>([]);
+  const [trackSearching, setTrackSearching] = useState(false);
+  const [trackStartSec, setTrackStartSec] = useState(0);
+  const trackSearchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function handleTrackQueryChange(q: string) {
+    setTrackQuery(q);
+    if (trackSearchTimer.current) clearTimeout(trackSearchTimer.current);
+    if (!q.trim()) { setTrackResults([]); return; }
+    trackSearchTimer.current = setTimeout(async () => {
+      setTrackSearching(true);
+      try {
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&entity=song&limit=5`);
+        const data = await res.json() as { results: typeof trackResults };
+        setTrackResults(data.results ?? []);
+      } catch { setTrackResults([]); }
+      finally { setTrackSearching(false); }
+    }, 500);
+  }
+
+  function addTrack(result: typeof trackResults[0]) {
+    const id = `track-${Date.now()}`;
+    const endSec = Math.min(trackStartSec + 30, pb.totalSec);
+    const newTrack: MusicTrack = {
+      id,
+      title: result.trackName,
+      artist: result.artistName,
+      bpm: bpm,
+      startSec: trackStartSec,
+      endSec,
+      previewUrl: result.previewUrl,
+      color: TRACK_COLORS[musicTracks.length % TRACK_COLORS.length],
+    };
+    editor.updateMusic({ tracks: [...musicTracks, newTrack] });
+    setAddingTrack(false);
+    setTrackQuery("");
+    setTrackResults([]);
+    // Pre-load audio for the new track
+    if (result.previewUrl) {
+      trackAudios.current.set(id, new Audio(result.previewUrl));
+    }
+  }
 
   const bpm = editor.music?.bpm ?? 120;
   const activeMove = editor.moves[pb.activeMoveIndex];
@@ -353,32 +435,120 @@ export function TimelineEditor({ choreography, plan }: Props) {
           <span className={styles.zoomChip}>100%</span>
         </div>
 
-        {/* Music waveform row */}
-        <div className={styles.tlRow}>
+        {/* Music multi-track row */}
+        <div className={`${styles.tlRow} ${styles.tlRowMusic}`}>
           <div className={styles.tlLabel}>MUSIC</div>
-          <div
-            className={styles.tlContent}
-            onClick={handleProgressClick}
-            role="slider"
-            aria-label="Seek"
-            aria-valuenow={pb.elapsed}
-            aria-valuemin={0}
-            aria-valuemax={pb.totalSec}
-          >
-            {waveformBars.map((h, i) => {
-              const played = i / waveformBars.length < pb.progress;
-              const cursor = Math.abs(i / waveformBars.length - pb.progress) < 0.008;
+          <div className={styles.musicTrackWrap}>
+            {/* Waveform background (seekable) */}
+            <div
+              className={styles.tlContent}
+              onClick={handleProgressClick}
+              role="slider"
+              aria-label="Seek"
+              aria-valuenow={pb.elapsed}
+              aria-valuemin={0}
+              aria-valuemax={pb.totalSec}
+            >
+              {waveformBars.map((h, i) => {
+                const played = i / waveformBars.length < pb.progress;
+                const cursor = Math.abs(i / waveformBars.length - pb.progress) < 0.008;
+                return (
+                  <div
+                    key={i}
+                    className={`${styles.tlBar} ${cursor ? styles.tlBarCursor : played ? styles.tlBarPlayed : ""}`}
+                    style={{ height: `${h * 100}%` }}
+                  />
+                );
+              })}
+              <div className={styles.tlPlayhead} style={{ left: `${pb.progress * 100}%` }} />
+            </div>
+            {/* Track blocks overlaid */}
+            {musicTracks.map((track) => {
+              const left = pb.totalSec > 0 ? (track.startSec / pb.totalSec) * 100 : 0;
+              const width = pb.totalSec > 0 ? ((track.endSec - track.startSec) / pb.totalSec) * 100 : 2;
+              const color = track.color ?? "#e8c45d";
+              const isActive = activeNamedTrack?.id === track.id;
               return (
                 <div
-                  key={i}
-                  className={`${styles.tlBar} ${cursor ? styles.tlBarCursor : played ? styles.tlBarPlayed : ""}`}
-                  style={{ height: `${h * 100}%` }}
-                />
+                  key={track.id}
+                  className={`${styles.trackBlock} ${isActive ? styles.trackBlockActive : ""}`}
+                  style={{ left: `${left}%`, width: `${Math.max(width, 1)}%`, borderColor: color, background: `${color}22` }}
+                  title={`${track.title} — ${track.artist} · ${track.startSec}s–${track.endSec}s · click to remove`}
+                  onClick={(e) => { e.stopPropagation(); editor.updateMusic({ tracks: musicTracks.filter(t => t.id !== track.id) }); }}
+                >
+                  <span className={styles.trackBlockLabel} style={{ color }}>
+                    {track.title}
+                  </span>
+                </div>
               );
             })}
-            <div className={styles.tlPlayhead} style={{ left: `${pb.progress * 100}%` }} />
+            {/* Add track button */}
+            <button
+              type="button"
+              className={styles.addTrackBtn}
+              onClick={() => { setTrackStartSec(Math.floor(pb.elapsed)); setAddingTrack(true); }}
+              title="Add music track at current position"
+            >
+              + Track
+            </button>
           </div>
         </div>
+
+        {/* Add Track panel */}
+        {addingTrack && (
+          <div className={styles.addTrackPanel}>
+            <div className={styles.addTrackHead}>
+              <span className={styles.addTrackTitle}>Add track starting at {fmtSec(trackStartSec)}</span>
+              <button type="button" className={styles.addTrackClose} onClick={() => setAddingTrack(false)}>×</button>
+            </div>
+            <div className={styles.addTrackBody}>
+              <div className={styles.addTrackSearch}>
+                <input
+                  className={styles.addTrackInput}
+                  value={trackQuery}
+                  onChange={(e) => handleTrackQueryChange(e.target.value)}
+                  placeholder='Search by song or artist — e.g. "Dua Lipa"'
+                  autoFocus
+                />
+                {trackSearching && <span className={styles.addTrackSpinner}>…</span>}
+              </div>
+              <div className={styles.addTrackDurRow}>
+                <span className={styles.addTrackDurLabel}>Start:</span>
+                <input
+                  type="number"
+                  className={styles.addTrackSecInput}
+                  value={trackStartSec}
+                  min={0}
+                  max={pb.totalSec}
+                  onChange={(e) => setTrackStartSec(Math.max(0, Number(e.target.value)))}
+                />
+                <span className={styles.addTrackDurLabel}>s</span>
+              </div>
+              {trackResults.length > 0 && (
+                <div className={styles.addTrackResults}>
+                  {trackResults.map((r) => (
+                    <button
+                      key={r.trackId}
+                      type="button"
+                      className={styles.addTrackResult}
+                      onClick={() => addTrack(r)}
+                    >
+                      {r.artworkUrl60 && <img src={r.artworkUrl60} alt="" className={styles.addTrackArt} />}
+                      <div className={styles.addTrackInfo}>
+                        <div className={styles.addTrackName}>{r.trackName}</div>
+                        <div className={styles.addTrackArtist}>{r.artistName}</div>
+                      </div>
+                      {r.previewUrl && <span className={styles.addTrackPreviewBadge}>30s preview</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {trackQuery && !trackSearching && trackResults.length === 0 && (
+                <div className={styles.addTrackEmpty}>No results — try another search</div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Moves clips row */}
         <div className={`${styles.tlRow} ${styles.tlRowMoves}`}>
