@@ -5,12 +5,12 @@ import styles from "./GeneratingOverlay.module.css";
 
 const GEN_STEPS = [
   "Reading your brief",
-  "Structuring the sequence",
-  "Matching tempo to audience",
-  "Picking a soundtrack",
+  "Mapping moves to your style",
+  "Calibrating tempo and flow",
+  "Finalising the sequence",
 ] as const;
 
-const STEP_TIMERS_MS = [700, 1500, 2400] as const;
+const STEP_TIMERS_MS = [2000, 5000, 9000] as const;
 
 function IconCheck() {
   return (
