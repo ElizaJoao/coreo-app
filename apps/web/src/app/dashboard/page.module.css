@@ -146,64 +146,116 @@
   padding-bottom: 4px;
 }
 
-/* Filters */
-.filters {
+/* Recent list */
+.recentList {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface);
 }
 
-.chip {
-  padding: 6px 12px;
-  border-radius: 99px;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--text-2);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: all 120ms;
-  display: inline-flex;
+.recentRow {
+  display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
   text-decoration: none;
+  transition: background 100ms;
+  cursor: pointer;
+}
+.recentRow:last-child { border-bottom: none; }
+.recentRow:hover { background: var(--surface-2); }
+.recentRow:hover .recentOpen { opacity: 1; transform: translateX(0); }
+
+.recentAccent {
+  width: 4px;
+  height: 36px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.recentMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.recentName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.recentStyle {
+  font-size: 11.5px;
+  color: var(--text-4);
+  font-weight: 500;
+}
+
+.recentChips {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.recentChip {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 7px;
   white-space: nowrap;
 }
 
-.chip:hover {
-  border-color: var(--border-2);
-  color: var(--text);
+.recentDate {
+  font-size: 11.5px;
+  color: var(--text-4);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 68px;
+  text-align: right;
 }
 
-.chipActive {
-  composes: chip;
-  background: var(--accent);
-  color: var(--accent-ink);
-  border-color: transparent;
+.recentOpen {
+  font-size: 12px;
   font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 100ms, transform 100ms;
 }
 
-.filterDivider {
-  width: 1px;
-  height: 20px;
-  background: var(--border);
-  margin: 0 4px;
+/* Empty state */
+.emptyRecent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 48px 24px;
+  border: 1px dashed var(--border-2);
+  border-radius: 14px;
+  background: var(--surface);
 }
 
-/* Card grid */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 14px;
-  margin-top: 18px;
-}
-
-.gridList {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-  margin-top: 18px;
+.emptyRecentText {
+  font-size: 14px;
+  color: var(--text-3);
+  margin: 0;
 }
 
 @media (max-width: 960px) {
