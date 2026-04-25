@@ -1,0 +1,684 @@
+@reference "tailwindcss";
+
+/* Root */
+.root {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 24px;
+  height: 56px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+}
+
+.weekNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navBtn {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  font-size: 16px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 100ms;
+  line-height: 1;
+}
+.navBtn:hover {
+  background: var(--surface-2);
+  border-color: var(--border-2);
+  color: var(--text);
+}
+
+.weekLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.todayBtn {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: none;
+  border-radius: 6px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: filter 100ms;
+}
+.todayBtn:hover { filter: brightness(1.08); }
+
+.addClassBtn {
+  padding: 7px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: filter 120ms, transform 120ms;
+}
+.addClassBtn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+/* ── Body ────────────────────────────────────────────────────────────────── */
+.body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Week grid ───────────────────────────────────────────────────────────── */
+.weekGrid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  min-width: 0;
+  overflow-x: auto;
+  border-right: 1px solid var(--border);
+}
+
+.dayCol {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  min-width: 130px;
+}
+.dayCol:last-child { border-right: none; }
+
+.dayColToday {
+  background: oklch(0.82 0.17 85 / 0.03);
+}
+
+.dayHead {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.dayName {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.dayNum {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-2);
+  line-height: 1;
+}
+
+.dayNumToday {
+  color: var(--accent);
+}
+
+.daySlots {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 8px 4px;
+  overflow-y: auto;
+  overflow-x: visible;
+}
+
+.emptyDay {
+  font-size: 11px;
+  color: var(--text-4);
+  text-align: center;
+  padding: 16px 0;
+}
+
+/* Slot card */
+.slotCard {
+  border-radius: 7px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 8px 9px;
+  position: relative;
+  overflow: visible;
+}
+
+.slotTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3px;
+}
+
+.slotTime {
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--text-3);
+}
+
+.slotRemove {
+  font-size: 14px;
+  color: var(--text-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 100ms, color 100ms;
+}
+.slotCard:hover .slotRemove { opacity: 1; }
+.slotRemove:hover { color: var(--text-2); }
+
+.slotTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slotMeta {
+  font-size: 10px;
+  color: var(--text-4);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Choreo pill (assigned) */
+.choreoPill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--accent-soft);
+  border-radius: 5px;
+  padding: 3px 6px 3px 8px;
+}
+
+.choreoName {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--accent);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.choreoUnpin {
+  font-size: 13px;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.6;
+  transition: opacity 100ms;
+  flex-shrink: 0;
+}
+.choreoUnpin:hover { opacity: 1; }
+
+/* Pin area */
+.pinArea {
+  position: relative;
+}
+
+.pinBtn {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--text-3);
+  background: none;
+  border: 1px dashed var(--border-2);
+  border-radius: 5px;
+  padding: 3px 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: all 100ms;
+}
+.pinBtn:hover {
+  border-color: var(--border-3);
+  color: var(--text-2);
+  background: var(--surface-3);
+}
+
+.pinDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  min-width: 200px;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  z-index: 50;
+  overflow: hidden;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.pinGroup {
+  padding: 4px 0;
+}
+
+.pinGroupLabel {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  padding: 6px 12px 3px;
+}
+
+.pinOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 80ms;
+}
+.pinOption:hover { background: var(--surface-2); }
+
+.pinOptionName {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pinOptionMeta {
+  font-size: 10px;
+  color: var(--text-4);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.pinEmpty {
+  font-size: 12px;
+  color: var(--text-3);
+  padding: 12px;
+  text-align: center;
+}
+
+/* Add slot button */
+.addSlotBtn {
+  flex-shrink: 0;
+  margin: 4px 8px 8px;
+  padding: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-4);
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 100ms;
+}
+.addSlotBtn:hover {
+  border-color: var(--border-3);
+  color: var(--text-2);
+  background: var(--surface-2);
+}
+
+/* ── Prep Checklist ──────────────────────────────────────────────────────── */
+.checklist {
+  width: 268px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.checklistHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.checklistTitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.checklistProg {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.checklistEmpty {
+  font-size: 12px;
+  color: var(--text-3);
+  padding: 20px 16px;
+  line-height: 1.6;
+}
+
+.checklistList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.checklistDay {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  padding: 10px 16px 4px;
+}
+
+.checklistItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 16px;
+  transition: background 80ms;
+}
+.checklistItem:hover { background: var(--surface-2); }
+
+.checklistItemDone .checklistClass { color: var(--text-2); }
+
+.checklistDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+  transition: background 200ms;
+}
+
+.checklistInfo { flex: 1; min-width: 0; }
+
+.checklistClass {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.checklistChoreo {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.checklistNeed {
+  font-size: 11px;
+  color: oklch(0.75 0.12 60);
+}
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: grid;
+  place-items: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modalTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.modalClose {
+  font-size: 20px;
+  color: var(--text-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 100ms;
+}
+.modalClose:hover { color: var(--text); }
+
+.modalBody {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.fieldLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.fieldInput {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-2);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 100ms;
+}
+.fieldInput:focus { border-color: var(--accent); }
+.fieldInput::placeholder { color: var(--text-4); }
+
+.fieldSelect {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-2);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 100ms;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='%23888' d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+.fieldSelect:focus { border-color: var(--accent); }
+
+/* Day picker */
+.dayPicker {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.dayPickerBtn {
+  padding: 7px 0;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all 100ms;
+}
+.dayPickerBtn:hover {
+  background: var(--surface-3);
+  border-color: var(--border-2);
+  color: var(--text-2);
+}
+.dayPickerBtnActive {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Color picker */
+.colorPicker {
+  display: flex;
+  gap: 8px;
+}
+
+.colorSwatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 100ms, border-color 100ms;
+}
+.colorSwatch:hover { transform: scale(1.1); }
+.colorSwatchActive {
+  border-color: white;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+}
+
+/* Modal footer */
+.modalFoot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.cancelBtn {
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-3);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 100ms;
+}
+.cancelBtn:hover {
+  background: var(--surface-2);
+  border-color: var(--border-2);
+  color: var(--text);
+}
+
+.confirmBtn {
+  padding: 7px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: filter 120ms;
+}
+.confirmBtn:hover:not(:disabled) { filter: brightness(1.06); }
+.confirmBtn:disabled { opacity: 0.5; cursor: not-allowed; }
