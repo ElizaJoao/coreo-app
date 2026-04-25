@@ -189,11 +189,14 @@ export function NewChoreographyClient({ plan }: { plan: Plan }) {
       `${dancers.length} dancers, starting in ${formation} formation.`,
     ].filter(Boolean);
 
-    generator.generate({
-      ...form.values,
-      targetAudience: form.values.targetAudience.trim() || "General",
-      description: descParts.join(" "),
-    });
+    generator.generate(
+      {
+        ...form.values,
+        targetAudience: form.values.targetAudience.trim() || "General",
+        description: descParts.join(" "),
+      },
+      dancers,
+    );
   }
 
   const canAdvance =

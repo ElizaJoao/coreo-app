@@ -59,6 +59,7 @@ export async function createChoreography(input: CreateChoreographyInput): Promis
       description: input.description ?? null,
       moves: input.moves,
       music: input.music ?? null,
+      dancers: input.dancers ?? [],
     })
     .select()
     .single();
