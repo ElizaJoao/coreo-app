@@ -54,6 +54,28 @@ function StageFigure({ color = "#555", scale = 1 }: { color?: string; scale?: nu
   );
 }
 
+// Returns a {x,y} position (0–1 fractions) for a dancer based on move index.
+// Cycles through 5 distinct formations so figures move every time the active move changes.
+function getPresetPosition(dancerIdx: number, moveIdx: number, total: number): { x: number; y: number } {
+  const n = Math.max(total, 1);
+  const presets = [
+    // Line across centre
+    (i: number) => ({ x: (i + 1) / (n + 1), y: 0.5 }),
+    // Two staggered rows
+    (i: number) => ({ x: (Math.floor(i / 2) + 1) / (Math.ceil(n / 2) + 1), y: i % 2 === 0 ? 0.32 : 0.68 }),
+    // V-shape pointing upstage
+    (i: number) => ({ x: (i + 1) / (n + 1), y: 0.5 - Math.abs(i - (n - 1) / 2) * 0.2 }),
+    // Circle
+    (i: number) => ({
+      x: 0.5 + 0.32 * Math.cos((i / n) * Math.PI * 2 - Math.PI / 2),
+      y: 0.5 + 0.28 * Math.sin((i / n) * Math.PI * 2 - Math.PI / 2),
+    }),
+    // Diagonal sweep
+    (i: number) => ({ x: 0.15 + (i / Math.max(n - 1, 1)) * 0.7, y: 0.25 + (i / Math.max(n - 1, 1)) * 0.5 }),
+  ];
+  return presets[moveIdx % presets.length](dancerIdx);
+}
+
 // Overhead colored dancer blob (Classic + Rehearsal)
 function DancerBlob({
   x, y, color, label, r = 22,
@@ -159,13 +181,12 @@ function CinematicView({
           {[-2, -1, 0, 1, 2].map((n) => (
             <line key={n} x1={400 + n * 100} y1={330} x2={400 + n * 65} y2={400} stroke="#1e1e1e" strokeWidth="1" />
           ))}
-          {/* Default 3 figures or dancer-count figures, animated by formation */}
+          {/* Figures animated by formation data, or preset per move so they always move */}
           {(dancers.length > 0 ? dancers.slice(0, 5) : [null, null, null] as null[]).map((d, i, arr) => {
-            const count = arr.length;
-            const defaultX = (800 / (count + 1)) * (i + 1);
             const formPos = d ? activeFormation?.positions[d.id] : undefined;
-            const x = formPos ? 80 + formPos.x * 640 : defaultX;
-            const yBase = formPos ? 180 + formPos.y * 120 : 240;
+            const preset = getPresetPosition(i, activeMoveIndex, arr.length);
+            const x = formPos ? 80 + formPos.x * 640 : 80 + preset.x * 640;
+            const yBase = formPos ? 180 + formPos.y * 100 : 200 + preset.y * 80;
             return (
               <g key={i} style={{ transform: `translate(${x}px, ${yBase}px)`, transition: "transform 0.75s ease" }}>
                 <StageFigure color={d ? d.color : "#5a5a5a"} scale={1.1} />
@@ -239,13 +260,7 @@ function ClassicView({
     seek(totalSec * ((e.clientX - rect.left) / rect.width));
   }
 
-  // Spread dancers in a scattered oval formation for overhead view
   const stageW = 560, stageH = 380;
-  const defaultPositions = [
-    [0.28, 0.35], [0.55, 0.22], [0.72, 0.4],
-    [0.18, 0.6], [0.45, 0.72], [0.68, 0.62],
-    [0.35, 0.5], [0.6, 0.5],
-  ];
 
   return (
     <div className={styles.classic}>
@@ -272,15 +287,15 @@ function ClassicView({
             </defs>
             <rect width={stageW} height={stageH} fill="#0d0d0d" />
             <ellipse cx={stageW / 2} cy={stageH / 2} rx={stageW * 0.46} ry={stageH * 0.44} fill="url(#cls-floor)" stroke="#222" strokeWidth="1" />
-            {/* Dancer blobs — position driven by formation data, animated via CSS transition */}
+            {/* Dancer blobs — position from formation data, or auto-preset per move so they always move */}
             {(dancers.length > 0 ? dancers : Array.from({ length: 6 }, (_, i) => ({
               id: `ph-${i}`, name: ["Ana", "Bruno", "Clara", "Diego", "Elena", "Faris"][i],
               color: ["#e85d5d", "#5d9be8", "#5de87a", "#e8c45d", "#c45de8", "#5de8d4"][i],
-            }))).map((d, i) => {
-              const [defaultXf, defaultYf] = defaultPositions[i % defaultPositions.length];
+            }))).map((d, i, arr) => {
               const formPos = activeFormation?.positions[d.id];
-              const x = formPos ? stageW * formPos.x : stageW * defaultXf;
-              const y = formPos ? stageH * formPos.y : stageH * defaultYf;
+              const preset = getPresetPosition(i, activeMoveIndex, arr.length);
+              const x = formPos ? stageW * formPos.x : stageW * preset.x;
+              const y = formPos ? stageH * formPos.y : stageH * preset.y;
               return (
                 <DancerBlob
                   key={d.id}
