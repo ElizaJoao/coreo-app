@@ -11,6 +11,7 @@ export function LandingNav() {
       </Link>
       <div className={styles.links}>
         <a href="#features" className={styles.link}>Features</a>
+        <a href="#marketplace" className={styles.link}>Marketplace</a>
         <a href="#pricing" className={styles.link}>Pricing</a>
       </div>
       <div className={styles.actions}>

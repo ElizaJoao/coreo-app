@@ -102,42 +102,33 @@ export function TimelineEditor({ choreography, plan }: Props) {
   const activeTrackId = activeNamedTrack ? activeNamedTrack.id : "main";
   const activePreviewUrl = activeNamedTrack?.previewUrl ?? mainPreviewUrl;
 
-  // Switch audio when active track changes
+  // Unified audio management — handles play/pause, URL loading, and track switching.
+  // loop=true makes the 30-second iTunes preview repeat for the full class duration.
   useEffect(() => {
-    if (activeTrackId === lastPlayingTrackId.current) return;
-    // Pause the previous track
-    if (lastPlayingTrackId.current) {
-      trackAudios.current.get(lastPlayingTrackId.current)?.pause();
+    if (!pb.playing) {
+      trackAudios.current.forEach((a) => a.pause());
+      return;
     }
-    lastPlayingTrackId.current = activeTrackId;
+    if (!activePreviewUrl) return;
 
-    if (!pb.playing || !activePreviewUrl) return;
+    // Pause any track that is no longer active
+    trackAudios.current.forEach((a, id) => {
+      if (id !== activeTrackId) a.pause();
+    });
+
     let audio = trackAudios.current.get(activeTrackId);
     if (!audio) {
       audio = new Audio(activePreviewUrl);
+      audio.loop = true;
       trackAudios.current.set(activeTrackId, audio);
     }
-    audio.play().catch(() => {});
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTrackId]);
+    lastPlayingTrackId.current = activeTrackId;
 
-  // Play/pause all when playing state changes
-  useEffect(() => {
-    const audio = trackAudios.current.get(lastPlayingTrackId.current ?? "main");
-    if (!audio && !activePreviewUrl) return;
-    if (pb.playing) {
-      const a = audio ?? (() => {
-        if (!activePreviewUrl) return null;
-        const newAudio = new Audio(activePreviewUrl);
-        trackAudios.current.set(activeTrackId, newAudio);
-        lastPlayingTrackId.current = activeTrackId;
-        return newAudio;
-      })();
-      a?.play().catch(() => {});
-    } else {
-      trackAudios.current.forEach(a => a.pause());
+    if (audio.paused) {
+      audio.play().catch(() => {});
     }
-  }, [pb.playing]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pb.playing, activePreviewUrl, activeTrackId]);
 
   // Cleanup on unmount
   useEffect(() => () => { trackAudios.current.forEach(a => a.pause()); }, []);
