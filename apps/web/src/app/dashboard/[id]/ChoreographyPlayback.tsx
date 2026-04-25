@@ -507,7 +507,6 @@ export function ChoreographyPlayback({ choreography, mode }: Props) {
   useEffect(() => {
     if (!previewUrl) return;
     const audio = new Audio(previewUrl);
-    audio.loop = true;
     audioRef.current = audio;
     return () => { audio.pause(); audioRef.current = null; };
   }, [previewUrl]);

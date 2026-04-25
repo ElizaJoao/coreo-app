@@ -159,6 +159,7 @@
   height: 100%;
   display: block;
 }
+.stageDragging { cursor: grabbing; }
 
 /* Side panel */
 .sidePanel {
@@ -234,6 +235,23 @@
   color: var(--text);
   flex: 1;
 }
+
+.dancerNameInput {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 2px 4px;
+  border-radius: 5px;
+  min-width: 0;
+  transition: background 100ms;
+  font-family: inherit;
+}
+.dancerNameInput:hover { background: var(--surface-3); }
+.dancerNameInput:focus { background: var(--surface-3); }
 
 .dancerRemove {
   font-size: 16px;
@@ -502,14 +520,9 @@
 .moveClip {
   height: 100%;
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 8px;
+  align-items: stretch;
   background: var(--surface-2);
   border-right: 1px solid var(--border);
-  border: none;
-  cursor: pointer;
-  text-align: left;
   overflow: hidden;
   transition: background 100ms;
   position: relative;
@@ -575,3 +588,311 @@
   transform: translateX(-1px);
   z-index: 2;
 }
+
+/* Taller music row */
+.tlRowMusic {
+  height: 52px;
+}
+
+/* Music multi-track container */
+.musicTrackWrap {
+  flex: 1;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Track block overlay */
+.trackBlock {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border: 1.5px solid;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: opacity 100ms;
+  min-width: 20px;
+}
+.trackBlock:hover { opacity: 0.7; }
+
+.trackBlockActive {
+  box-shadow: 0 0 0 1.5px currentColor;
+}
+
+.trackBlockLabel {
+  font-size: 9.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* + Track button in music row */
+.addTrackBtn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-3);
+  background: var(--surface-3);
+  border: 1px solid var(--border-2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 100ms;
+  z-index: 3;
+}
+.addTrackBtn:hover { color: var(--text); border-color: var(--accent); }
+
+/* Add Track panel */
+.addTrackPanel {
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  padding: 12px 16px;
+}
+
+.addTrackHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.addTrackTitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.addTrackClose {
+  font-size: 16px;
+  line-height: 1;
+  color: var(--text-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 2px;
+  transition: color 100ms;
+}
+.addTrackClose:hover { color: var(--text); }
+
+.addTrackBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.addTrackSearch {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.addTrackInput {
+  flex: 1;
+  padding: 7px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: var(--text);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 100ms;
+}
+.addTrackInput:focus { border-color: var(--border-2); }
+.addTrackInput::placeholder { color: var(--text-4); }
+
+.addTrackSpinner {
+  position: absolute;
+  right: 10px;
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+.addTrackDurRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.addTrackDurLabel {
+  font-size: 11px;
+  color: var(--text-4);
+  font-family: var(--font-mono);
+}
+
+.addTrackSecInput {
+  width: 52px;
+  padding: 4px 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--text);
+  outline: none;
+  font-family: var(--font-mono);
+  text-align: right;
+  -moz-appearance: textfield;
+}
+.addTrackSecInput::-webkit-outer-spin-button,
+.addTrackSecInput::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.addTrackResults {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.addTrackResult {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  text-align: left;
+  transition: background 100ms;
+  width: 100%;
+}
+.addTrackResult:last-child { border-bottom: none; }
+.addTrackResult:hover { background: var(--surface-2); }
+
+.addTrackArt {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.addTrackInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.addTrackName {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.addTrackArtist {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.addTrackPreviewBadge {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.addTrackEmpty {
+  font-size: 12px;
+  color: var(--text-4);
+  text-align: center;
+  padding: 8px 0;
+  font-style: italic;
+}
+
+/* Taller moves row */
+.tlRowMoves {
+  height: 52px;
+}
+
+/* Seek area inside clip */
+.clipSeekArea {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 0 6px;
+  overflow: hidden;
+}
+
+/* Duration + delete grouped on right of clip */
+.clipControls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 0 4px 0 2px;
+}
+
+.clipDurInput {
+  width: 30px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-4);
+  text-align: right;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+.clipDurInput::-webkit-outer-spin-button,
+.clipDurInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.clipDurInput:focus {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 3px;
+  padding: 1px 3px;
+  width: 36px;
+}
+.moveClipActive .clipDurInput { color: var(--accent); }
+
+.clipDurUnit {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-4);
+}
+.moveClipActive .clipDurUnit { color: var(--accent); opacity: 0.7; }
+
+.clipDelete {
+  font-size: 14px;
+  line-height: 1;
+  color: var(--text-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 2px;
+  opacity: 0;
+  transition: opacity 100ms, color 100ms;
+  flex-shrink: 0;
+}
+.moveClip:hover .clipDelete { opacity: 1; }
+.clipDelete:hover { color: oklch(0.72 0.19 25); }
