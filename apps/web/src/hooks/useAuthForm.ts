@@ -103,6 +103,7 @@ export function useAuthForm(mode: Mode) {
     if (Object.keys(validation).length > 0) return;
 
     setIsSubmitting(true);
+    let navigating = false;
     try {
       if (mode === "signup") {
         const response = await fetch("/api/auth/signup", {
@@ -138,6 +139,7 @@ export function useAuthForm(mode: Mode) {
         url.searchParams.set("method", values.method);
         url.searchParams.set("dest", destination);
 
+        navigating = true;
         router.push(url.pathname + url.search);
         return;
       }
@@ -153,10 +155,12 @@ export function useAuthForm(mode: Mode) {
         return;
       }
 
+      navigating = true;
       router.push(ROUTES.DASHBOARD);
       router.refresh();
     } finally {
-      setIsSubmitting(false);
+      // Keep spinner visible while navigating — component unmounts when page loads
+      if (!navigating) setIsSubmitting(false);
     }
   }
 

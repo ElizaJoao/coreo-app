@@ -670,6 +670,9 @@
 }
 
 .confirmBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   padding: 7px 20px;
   font-size: 13px;
   font-weight: 600;

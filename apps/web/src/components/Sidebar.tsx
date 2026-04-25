@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import type { Plan } from "../constants/plans";
 import { IconHome, IconSpark, IconLibrary, IconCalendar, IconTrend, IconSettings, IconAdmin, IconShop } from "./Icons";
@@ -41,17 +41,19 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSignOut
   const t = useTranslations("dashboard");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pillRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
+  // Close dropdown on outside click — use mousedown but exclude both the pill AND the dropdown
   useEffect(() => {
     if (!dropdownOpen) return;
-    function handleClick(e: MouseEvent) {
-      if (pillRef.current && !pillRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
+    function handleMouseDown(e: MouseEvent) {
+      const target = e.target as Node;
+      const inPill = pillRef.current?.contains(target) ?? false;
+      const inDropdown = dropdownRef.current?.contains(target) ?? false;
+      if (!inPill && !inDropdown) setDropdownOpen(false);
     }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("mousedown", handleMouseDown);
+    return () => document.removeEventListener("mousedown", handleMouseDown);
   }, [dropdownOpen]);
 
   const primary: SidebarNavItem[] = [
@@ -158,7 +160,7 @@ export function Sidebar({ activeRoute, user, libraryCount, onNavigate, onSignOut
       {/* User pill — click to open dropdown */}
       <div className={styles.userPillWrap}>
         {dropdownOpen && (
-          <div className={styles.userDropdown}>
+          <div ref={dropdownRef} className={styles.userDropdown}>
             <button
               type="button"
               className={styles.dropdownItem}
