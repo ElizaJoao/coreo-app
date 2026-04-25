@@ -699,7 +699,18 @@
   font-weight: 500;
   color: var(--text);
   flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 2px 4px;
+  border-radius: 5px;
+  font-family: inherit;
+  min-width: 0;
+  transition: background 100ms;
 }
+.rosterName:hover { background: var(--surface-3); }
+.rosterName:focus { background: var(--surface-3); }
+.rosterName::placeholder { color: var(--text-4); }
 
 .rosterRemove {
   font-size: 15px;

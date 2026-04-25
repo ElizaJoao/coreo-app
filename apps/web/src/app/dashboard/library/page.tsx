@@ -12,7 +12,7 @@ import { getMyPurchasedPacks } from "../../../lib/marketplace-service";
 import styles from "./page.module.css";
 
 type Props = {
-  searchParams: Promise<{ style?: string; diff?: string; sort?: string; fav?: string; tag?: string }>;
+  searchParams: Promise<{ style?: string; diff?: string; sort?: string; fav?: string; tag?: string; q?: string }>;
 };
 
 export default async function LibraryPage({ searchParams }: Props) {
@@ -30,6 +30,7 @@ export default async function LibraryPage({ searchParams }: Props) {
   const sort = params.sort ?? "newest";
   const showFav = params.fav === "1";
   const activeTag = params.tag ?? "";
+  const searchQuery = (params.q ?? "").toLowerCase().trim();
 
   // Monthly count for upgrade banner
   const now = new Date();
@@ -63,6 +64,10 @@ export default async function LibraryPage({ searchParams }: Props) {
     if (diff !== "All" && c.difficulty !== diff) return false;
     if (showFav && !c.isFavorite) return false;
     if (activeTag && !c.tags.includes(activeTag)) return false;
+    if (searchQuery) {
+      const haystack = [c.name, c.style, c.description, c.music?.title, c.music?.artist, ...c.moves.map(m => m.name)].join(" ").toLowerCase();
+      if (!haystack.includes(searchQuery)) return false;
+    }
     return true;
   });
 
@@ -84,6 +89,13 @@ export default async function LibraryPage({ searchParams }: Props) {
         <div className={styles.upgradeBanner}>
           <span>{t("upgradeBanner")}</span>
           <Link href="/dashboard/upgrade" className={styles.upgradeBannerLink}>{t("upgradeLink")}</Link>
+        </div>
+      )}
+
+      {searchQuery && (
+        <div className={styles.searchBanner}>
+          Showing results for <strong>"{params.q}"</strong> · {filtered.length} found
+          <Link href={href({})} className={styles.searchClear}>Clear ×</Link>
         </div>
       )}
 

@@ -469,9 +469,14 @@ export function NewChoreographyClient({ plan }: { plan: Plan }) {
                 {dancers.map((d) => (
                   <div key={d.id} className={styles.rosterRow}>
                     <span className={styles.rosterAvatar} style={{ background: d.color }}>
-                      {d.name[0]}
+                      {d.name[0] || "?"}
                     </span>
-                    <span className={styles.rosterName}>{d.name}</span>
+                    <input
+                      className={styles.rosterName}
+                      value={d.name}
+                      onChange={(e) => setDancers((prev) => prev.map((x) => x.id === d.id ? { ...x, name: e.target.value } : x))}
+                      placeholder="Name"
+                    />
                     <button
                       type="button"
                       className={styles.rosterRemove}
