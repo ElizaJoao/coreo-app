@@ -72,6 +72,7 @@ export function TimelineEditor({ choreography, plan }: Props) {
   const editor = useChoreographyEditor(choreography);
   const pb = useChoreographyPlayback(editor.moves);
   const [suggestionDone, setSuggestionDone] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const [dragging, setDragging] = useState<{ dancerId: string } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   // ── Multi-track audio ──────────────────────────────────────────────────────
@@ -142,6 +143,37 @@ export function TimelineEditor({ choreography, plan }: Props) {
   useEffect(() => () => { trackAudios.current.forEach(a => a.pause()); }, []);
 
   // ── Add Track state ────────────────────────────────────────────────────────
+  const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
+  const [resizing, setResizing] = useState<{ trackId: string; edge: "left" | "right"; startX: number } | null>(null);
+  const musicWrapRef = useRef<HTMLDivElement>(null);
+
+  // Resize drag via document events
+  useEffect(() => {
+    if (!resizing) return;
+    const trackId = resizing.trackId;
+    const edge = resizing.edge;
+    function onMove(e: MouseEvent) {
+      const wrap = musicWrapRef.current;
+      if (!wrap) return;
+      const rect = wrap.getBoundingClientRect();
+      const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      const newSec = Math.round(frac * pb.totalSec);
+      editor.updateMusic({
+        tracks: (editor.music?.tracks ?? []).map(t => {
+          if (t.id !== trackId) return t;
+          return edge === "left"
+            ? { ...t, startSec: Math.min(newSec, t.endSec - 1) }
+            : { ...t, endSec: Math.max(newSec, t.startSec + 1) };
+        }),
+      });
+    }
+    function onUp() { setResizing(null); }
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+    return () => { document.removeEventListener("mousemove", onMove); document.removeEventListener("mouseup", onUp); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resizing, pb.totalSec]);
+
   const [addingTrack, setAddingTrack] = useState(false);
   const [trackQuery, setTrackQuery] = useState("");
   const [trackResults, setTrackResults] = useState<Array<{ trackId: number; trackName: string; artistName: string; previewUrl?: string; artworkUrl60?: string }>>([]);
@@ -260,9 +292,13 @@ export function TimelineEditor({ choreography, plan }: Props) {
           <button
             type="button"
             className={styles.shareBtn}
-            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/share/${choreography.id}`)}
+            onClick={() => {
+              navigator.clipboard.writeText(`${window.location.origin}/share/${choreography.id}`);
+              setShareCopied(true);
+              setTimeout(() => setShareCopied(false), 2000);
+            }}
           >
-            Share
+            {shareCopied ? "Copied!" : "Share"}
           </button>
           <button
             type="button"
@@ -335,11 +371,20 @@ export function TimelineEditor({ choreography, plan }: Props) {
                     }}
                     onMouseDown={(e) => { e.preventDefault(); setDragging({ dancerId: dancer.id }); }}
                   >
-                    <StageFigure color={dancer.color} />
-                    <circle cx="0" cy="-80" r="14" fill={dancer.color} opacity="0.9" />
-                    <text x="0" y="-76" textAnchor="middle" fontSize="9" fontWeight="700" fill="white" fontFamily="sans-serif">
-                      {dancer.name[0]}
-                    </text>
+                    <g
+                      className={pb.playing ? styles.figDancing : undefined}
+                      style={pb.playing ? {
+                        animationDelay: `-${i * (60 / bpm) * 0.5}s`,
+                        animationDuration: `${(60 / bpm) * 2}s`,
+                        transformOrigin: "0 30px",
+                      } : undefined}
+                    >
+                      <StageFigure color={dancer.color} />
+                      <circle cx="0" cy="-80" r="14" fill={dancer.color} opacity="0.9" />
+                      <text x="0" y="-76" textAnchor="middle" fontSize="9" fontWeight="700" fill="white" fontFamily="sans-serif">
+                        {dancer.name[0]}
+                      </text>
+                    </g>
                   </g>
                 );
               })
@@ -455,7 +500,7 @@ export function TimelineEditor({ choreography, plan }: Props) {
         {/* Music multi-track row */}
         <div className={`${styles.tlRow} ${styles.tlRowMusic}`}>
           <div className={styles.tlLabel}>MUSIC</div>
-          <div className={styles.musicTrackWrap}>
+          <div className={styles.musicTrackWrap} ref={musicWrapRef}>
             {/* Waveform background (seekable) */}
             <div
               className={styles.tlContent}
@@ -485,17 +530,26 @@ export function TimelineEditor({ choreography, plan }: Props) {
               const width = pb.totalSec > 0 ? ((track.endSec - track.startSec) / pb.totalSec) * 100 : 2;
               const color = track.color ?? "#e8c45d";
               const isActive = activeNamedTrack?.id === track.id;
+              const isSelected = selectedTrackId === track.id;
               return (
                 <div
                   key={track.id}
-                  className={`${styles.trackBlock} ${isActive ? styles.trackBlockActive : ""}`}
+                  className={`${styles.trackBlock} ${isActive ? styles.trackBlockActive : ""} ${isSelected ? styles.trackBlockSelected : ""}`}
                   style={{ left: `${left}%`, width: `${Math.max(width, 1)}%`, borderColor: color, background: `${color}22` }}
-                  title={`${track.title} — ${track.artist} · ${track.startSec}s–${track.endSec}s · click to remove`}
-                  onClick={(e) => { e.stopPropagation(); editor.updateMusic({ tracks: musicTracks.filter(t => t.id !== track.id) }); }}
+                  title={`${track.title} — ${track.artist} · ${track.startSec}s–${track.endSec}s`}
+                  onClick={(e) => { e.stopPropagation(); setSelectedTrackId(isSelected ? null : track.id); setAddingTrack(false); }}
                 >
+                  <div
+                    className={styles.trackResizeLeft}
+                    onMouseDown={(e) => { e.stopPropagation(); setResizing({ trackId: track.id, edge: "left", startX: e.clientX }); }}
+                  />
                   <span className={styles.trackBlockLabel} style={{ color }}>
                     {track.title}
                   </span>
+                  <div
+                    className={styles.trackResizeRight}
+                    onMouseDown={(e) => { e.stopPropagation(); setResizing({ trackId: track.id, edge: "right", startX: e.clientX }); }}
+                  />
                 </div>
               );
             })}
@@ -566,6 +620,54 @@ export function TimelineEditor({ choreography, plan }: Props) {
             </div>
           </div>
         )}
+
+        {/* Selected track edit panel */}
+        {selectedTrackId && !addingTrack && (() => {
+          const track = musicTracks.find(t => t.id === selectedTrackId);
+          if (!track) return null;
+          return (
+            <div className={styles.addTrackPanel}>
+              <div className={styles.addTrackHead}>
+                <span className={styles.addTrackTitle}>{track.title} — {track.artist}</span>
+                <button type="button" className={styles.addTrackClose} onClick={() => setSelectedTrackId(null)}>×</button>
+              </div>
+              <div className={styles.trackEditBody}>
+                <div className={styles.trackEditField}>
+                  <span className={styles.trackEditLabel}>Start</span>
+                  <input
+                    type="number"
+                    className={styles.addTrackSecInput}
+                    value={track.startSec}
+                    min={0}
+                    max={track.endSec - 1}
+                    onChange={(e) => editor.updateMusic({ tracks: musicTracks.map(t => t.id === track.id ? { ...t, startSec: Math.min(Number(e.target.value), t.endSec - 1) } : t) })}
+                  />
+                  <span className={styles.addTrackDurLabel}>s</span>
+                </div>
+                <div className={styles.trackEditField}>
+                  <span className={styles.trackEditLabel}>End</span>
+                  <input
+                    type="number"
+                    className={styles.addTrackSecInput}
+                    value={track.endSec}
+                    min={track.startSec + 1}
+                    max={pb.totalSec}
+                    onChange={(e) => editor.updateMusic({ tracks: musicTracks.map(t => t.id === track.id ? { ...t, endSec: Math.max(Number(e.target.value), t.startSec + 1) } : t) })}
+                  />
+                  <span className={styles.addTrackDurLabel}>s</span>
+                </div>
+                <span className={styles.addTrackDurLabel}>({track.endSec - track.startSec}s)</span>
+                <button
+                  type="button"
+                  className={styles.trackDeleteBtn}
+                  onClick={() => { editor.updateMusic({ tracks: musicTracks.filter(t => t.id !== track.id) }); setSelectedTrackId(null); }}
+                >
+                  Remove track
+                </button>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Moves clips row */}
         <div className={`${styles.tlRow} ${styles.tlRowMoves}`}>

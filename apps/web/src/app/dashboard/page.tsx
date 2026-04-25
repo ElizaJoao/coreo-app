@@ -16,7 +16,7 @@ import type { Choreography } from "../../types/choreography";
 import styles from "./page.module.css";
 
 type PageProps = {
-  searchParams: Promise<{ cat?: string; diff?: string; success?: string; plan?: string }>;
+  searchParams: Promise<{ cat?: string; diff?: string; success?: string; plan?: string; view?: string }>;
 };
 
 function getCategory(style: string): string {
@@ -59,6 +59,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const cat = params.cat ?? "All";
   const diff = params.diff ?? "All";
+  const view = params.view === "list" ? "list" : "grid";
 
   const filtered = allChoreos.filter((c) => {
     if (cat !== "All" && getCategory(c.style) !== cat) return false;
@@ -98,9 +99,12 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           <p className={styles.pageSub}>{DASHBOARD_COPY.PAGE_SUBTITLE}</p>
         </div>
         <div className={styles.pageActions}>
-          <button type="button" className={styles.btnGhost}>
-            <IconGrid size={14} /> View
-          </button>
+          <Link
+            href={view === "list" ? "/dashboard" : "/dashboard?view=list"}
+            className={styles.btnGhost}
+          >
+            <IconGrid size={14} /> {view === "list" ? "Grid" : "List"}
+          </Link>
           <Link href={ROUTES.DASHBOARD_NEW} className={styles.btnPrimary}>
             <IconSpark size={14} /> Generate new
           </Link>
@@ -140,7 +144,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         </div>
       </div>
 
-      <div className={styles.grid}>
+      <div className={view === "list" ? styles.gridList : styles.grid}>
         {filtered.map((c) => (
           <ChoreographyCard key={c.id} choreography={c} href={ROUTES.DASHBOARD_ITEM(c.id)} />
         ))}

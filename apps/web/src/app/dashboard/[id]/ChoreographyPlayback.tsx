@@ -78,11 +78,12 @@ function getPresetPosition(dancerIdx: number, moveIdx: number, total: number): {
 
 // Overhead colored dancer blob (Classic + Rehearsal)
 function DancerBlob({
-  x, y, color, label, r = 22,
+  x, y, color, label, r = 22, playing = false, phaseOffset = 0, bpm = 120,
 }: {
   x: number; y: number; color: string; label: string; r?: number;
+  playing?: boolean; phaseOffset?: number; bpm?: number;
 }) {
-  const gradId = `blob-${label.replace(/\s/g, "")}`;
+  const gradId = `blob-${label.replace(/\s/g, "")}-${r}`;
   return (
     <g style={{ transform: `translate(${x}px, ${y}px)`, transition: "transform 0.75s ease" }}>
       <defs>
@@ -91,10 +92,18 @@ function DancerBlob({
           <stop offset="100%" stopColor={color} stopOpacity="0.55" />
         </radialGradient>
       </defs>
-      <ellipse cx="0" cy="4" rx={r} ry={r * 1.3} fill={`url(#${gradId})`} />
-      {/* Highlight */}
-      <ellipse cx={-r * 0.3} cy={-r * 0.25} rx={r * 0.35} ry={r * 0.25} fill="white" opacity="0.18" />
-      <text x="0" y="6" textAnchor="middle" fontSize={r * 0.55} fontWeight="700" fill="white" opacity="0.9" fontFamily="sans-serif">{label[0]}</text>
+      <g
+        className={playing ? styles.blobPulsing : undefined}
+        style={playing ? {
+          animationDelay: `-${phaseOffset}s`,
+          animationDuration: `${60 / bpm}s`,
+          transformOrigin: "0 0",
+        } : undefined}
+      >
+        <ellipse cx="0" cy="4" rx={r} ry={r * 1.3} fill={`url(#${gradId})`} />
+        <ellipse cx={-r * 0.3} cy={-r * 0.25} rx={r * 0.35} ry={r * 0.25} fill="white" opacity="0.18" />
+        <text x="0" y="6" textAnchor="middle" fontSize={r * 0.55} fontWeight="700" fill="white" opacity="0.9" fontFamily="sans-serif">{label[0]}</text>
+      </g>
     </g>
   );
 }
@@ -189,7 +198,16 @@ function CinematicView({
             const yBase = formPos ? 180 + formPos.y * 100 : 200 + preset.y * 80;
             return (
               <g key={i} style={{ transform: `translate(${x}px, ${yBase}px)`, transition: "transform 0.75s ease" }}>
-                <StageFigure color={d ? d.color : "#5a5a5a"} scale={1.1} />
+                <g
+                  className={playing ? styles.figDancing : undefined}
+                  style={playing ? {
+                    animationDelay: `-${i * (60 / bpm) * 0.5}s`,
+                    animationDuration: `${(60 / bpm) * 2}s`,
+                    transformOrigin: "0 30px",
+                  } : undefined}
+                >
+                  <StageFigure color={d ? d.color : "#5a5a5a"} scale={1.1} />
+                </g>
               </g>
             );
           })}
@@ -304,6 +322,9 @@ function ClassicView({
                   color={d.color}
                   label={d.name}
                   r={22}
+                  playing={playing}
+                  phaseOffset={i * (60 / bpm) * 0.25}
+                  bpm={bpm}
                 />
               );
             })}
@@ -478,7 +499,7 @@ function RehearsalView({
               const angle = (i / ringDancers.length) * 2 * Math.PI - Math.PI / 2;
               const bx = CX + ringR * Math.cos(angle);
               const by = CY + ringR * Math.sin(angle);
-              return <DancerBlob key={d.id} x={bx} y={by} color={d.color} label={d.name} r={16} />;
+              return <DancerBlob key={d.id} x={bx} y={by} color={d.color} label={d.name} r={16} playing={playing} phaseOffset={i * (60 / bpm) * 0.25} bpm={bpm} />;
             })}
             {/* Countdown */}
             <text x={CX} y={CY + 14} textAnchor="middle" fontSize="58" fontWeight="800" fill="var(--accent)" fontFamily="inherit" letterSpacing="-2">

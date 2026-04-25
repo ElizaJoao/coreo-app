@@ -18,6 +18,33 @@
 .waveBarPlayed { background: var(--accent); }
 .waveBarCursor { background: var(--text); }
 
+/* ── Figure / blob animations ─────────────────────────────────────────────── */
+@keyframes figDance {
+  0%   { transform: rotate(-4deg) translateY(0px); }
+  25%  { transform: rotate(2deg) translateY(-4px); }
+  50%  { transform: rotate(-2deg) translateY(-1px); }
+  75%  { transform: rotate(4deg) translateY(-3px); }
+  100% { transform: rotate(-4deg) translateY(0px); }
+}
+
+.figDancing {
+  animation: figDance 1s linear infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 85%;
+}
+
+@keyframes blobPulse {
+  0%, 100% { transform: scale(1); }
+  40%       { transform: scale(1.12); }
+  60%       { transform: scale(0.92); }
+}
+
+.blobPulsing {
+  animation: blobPulse 0.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    01 · Cinematic mode
    ═══════════════════════════════════════════════════════════════════════════ */

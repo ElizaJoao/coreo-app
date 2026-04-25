@@ -199,6 +199,13 @@
   margin-top: 18px;
 }
 
+.gridList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 18px;
+}
+
 @media (max-width: 960px) {
   .stats {
     grid-template-columns: repeat(2, 1fr);
