@@ -1,74 +1,82 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useState } from "react";
 import { DANCE_STYLES, DIFFICULTIES, DURATIONS, FITNESS_STYLES } from "../../../constants/choreography";
 import { ROUTES } from "../../../constants/routes";
 import { useChoreographyForm } from "../../../hooks/useChoreographyForm";
 import { useChoreographyGenerator } from "../../../hooks/useChoreographyGenerator";
 import { GeneratingOverlay } from "../../../components/GeneratingOverlay";
+import { Spinner } from "../../../components/Spinner";
 import type { Plan } from "../../../constants/plans";
-import type { ChoreographyStyle, ChoreographyDifficulty } from "../../../types/choreography";
+import type { ChoreographyDifficulty } from "../../../types/choreography";
 import styles from "./page.module.css";
 
-// ── Wizard types ───────────────────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-type WizardStep = 0 | 1 | 2 | 3; // Vibe | Music | Dancers | Review
+type Step = 0 | 1 | 2 | 3;
+const STEPS = ["Style", "Music", "Dancers", "Generate"] as const;
 
 type WizardDancer = { id: string; name: string; color: string };
-
 type Formation = "line" | "v-shape" | "diamond" | "circle" | "free";
 
-const WIZARD_STEPS = ["Vibe", "Music", "Dancers", "Review"] as const;
+type ItunesTrack = {
+  trackId: number;
+  trackName: string;
+  artistName: string;
+  previewUrl?: string;
+  artworkUrl60?: string;
+};
+
+// ── Constants ─────────────────────────────────────────────────────────────────
 
 const DEFAULT_DANCERS: WizardDancer[] = [
-  { id: "d1", name: "Ana",   color: "#e85d5d" },
-  { id: "d2", name: "Bruno", color: "#5d9be8" },
-  { id: "d3", name: "Clara", color: "#5de87a" },
-  { id: "d4", name: "Diego", color: "#e8c45d" },
-  { id: "d5", name: "Elena", color: "#c45de8" },
-  { id: "d6", name: "Faris", color: "#5de8d4" },
+  { id: "d1", name: "Alex",   color: "#e85d5d" },
+  { id: "d2", name: "Sam",    color: "#5d9be8" },
+  { id: "d3", name: "Jordan", color: "#5de87a" },
+  { id: "d4", name: "Morgan", color: "#e8c45d" },
+  { id: "d5", name: "Taylor", color: "#c45de8" },
+  { id: "d6", name: "Casey",  color: "#5de8d4" },
 ];
 
 const DANCER_COLORS = ["#e85d5d","#5d9be8","#5de87a","#e8c45d","#c45de8","#5de8d4","#e8875d","#9b5de8"];
-const DANCER_NAMES  = ["Alex","Sam","Jordan","Morgan","Taylor","Casey","Riley","Drew"];
+const DANCER_NAMES  = ["Alex","Sam","Jordan","Morgan","Taylor","Casey","Riley","Drew","Maya","Leo","Zoe","Kai"];
 
-const DIFF_META: Record<string, { desc: string; dots: number }> = {
-  Beginner:     { desc: "Simple cues, low impact", dots: 1 },
-  Intermediate: { desc: "Combines + light syncopation", dots: 2 },
-  Advanced:     { desc: "Complex patterns, full range", dots: 3 },
-};
-
-// Formation positions for the mini stage (x/y as fraction of 200×160)
 const FORMATION_POSITIONS: Record<Formation, [number, number][]> = {
-  line:     [[0.15,0.5],[0.32,0.5],[0.5,0.5],[0.68,0.5],[0.85,0.5]],
-  "v-shape":[[0.5,0.25],[0.3,0.55],[0.7,0.55],[0.15,0.8],[0.85,0.8]],
-  diamond:  [[0.5,0.15],[0.2,0.5],[0.8,0.5],[0.5,0.85]],
-  circle:   [[0.5,0.15],[0.82,0.35],[0.82,0.7],[0.5,0.88],[0.18,0.7],[0.18,0.35]],
-  free:     [[0.25,0.3],[0.6,0.25],[0.8,0.5],[0.4,0.65],[0.15,0.7],[0.65,0.8]],
+  line:      [[0.15,0.5],[0.32,0.5],[0.5,0.5],[0.68,0.5],[0.85,0.5]],
+  "v-shape": [[0.5,0.22],[0.28,0.55],[0.72,0.55],[0.12,0.82],[0.88,0.82]],
+  diamond:   [[0.5,0.14],[0.18,0.5],[0.82,0.5],[0.5,0.86]],
+  circle:    [[0.5,0.13],[0.84,0.34],[0.84,0.7],[0.5,0.88],[0.16,0.7],[0.16,0.34]],
+  free:      [[0.22,0.28],[0.62,0.22],[0.82,0.52],[0.38,0.66],[0.14,0.72],[0.66,0.82]],
 };
 
-// ── Mini stage (overhead blobs) ─────────────────────────────────────────────
+const DIFF_META = {
+  Beginner:     { desc: "Simple cues, low impact",           dots: 1 },
+  Intermediate: { desc: "Combinations + light syncopation",  dots: 2 },
+  Advanced:     { desc: "Complex patterns, full range",      dots: 3 },
+} as const;
+
+// ── Mini stage (overhead dancer blobs) ────────────────────────────────────────
 
 function MiniStage({ dancers, formation }: { dancers: WizardDancer[]; formation: Formation }) {
   const positions = FORMATION_POSITIONS[formation];
-  const W = 200, H = 160;
+  const W = 240, H = 160;
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className={styles.miniStage}>
       <rect width={W} height={H} fill="#0d0d0d" rx="8" />
-      <ellipse cx={W / 2} cy={H / 2} rx={W * 0.44} ry={H * 0.42} fill="#181818" stroke="#252525" strokeWidth="1" />
+      <ellipse cx={W/2} cy={H/2} rx={W*0.44} ry={H*0.42} fill="#181818" stroke="#262626" strokeWidth="1" />
       {dancers.map((d, i) => {
         const [xf, yf] = positions[i % positions.length];
         return (
           <g key={d.id} transform={`translate(${W * xf}, ${H * yf})`}>
             <defs>
-              <radialGradient id={`ms-${d.id}`} cx="35%" cy="30%" r="65%">
+              <radialGradient id={`blob-${d.id}`} cx="35%" cy="30%" r="65%">
                 <stop offset="0%" stopColor={d.color} stopOpacity="1" />
-                <stop offset="100%" stopColor={d.color} stopOpacity="0.5" />
+                <stop offset="100%" stopColor={d.color} stopOpacity="0.45" />
               </radialGradient>
             </defs>
-            <ellipse cx="0" cy="0" rx="11" ry="14" fill={`url(#ms-${d.id})`} />
-            <text x="0" y="4" textAnchor="middle" fontSize="7" fontWeight="700" fill="white" opacity="0.9" fontFamily="sans-serif">
+            <ellipse cx="0" cy="0" rx="11" ry="14" fill={`url(#blob-${d.id})`} />
+            <text x="0" y="4.5" textAnchor="middle" fontSize="7" fontWeight="700" fill="white" opacity="0.9" fontFamily="sans-serif">
               {d.name[0]}
             </text>
           </g>
@@ -78,37 +86,36 @@ function MiniStage({ dancers, formation }: { dancers: WizardDancer[]; formation:
   );
 }
 
-// ── Icons ────────────────────────────────────────────────────────────────────
+// ── Root component ────────────────────────────────────────────────────────────
 
-function IconSpark() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-      <path d="M8 1l1.5 4.5L14 7l-4.5 1.5L8 13l-1.5-4.5L2 7l4.5-1.5z" />
-    </svg>
-  );
-}
+export function NewChoreographyClient({ plan }: { plan: Plan }) {
+  const generator = useChoreographyGenerator();
+  const form = useChoreographyForm();
 
-function IconPlus() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-      <path d="M8 2v12M2 8h12" />
-    </svg>
-  );
-}
-
-// ── Left panel: AI-first brief ───────────────────────────────────────────────
-
-function AiBriefPanel({ plan }: { plan: Plan }) {
+  const [step, setStep] = useState<Step>(0);
   const [category, setCategory] = useState<"Dance" | "Fitness">("Dance");
-  const [bpm, setBpm] = useState(118);
-  const [dancerCount, setDancerCount] = useState(6);
+
+  // Music step state
+  const [bpm, setBpm] = useState(120);
+  const [musicQuery, setMusicQuery] = useState("");
+  const [musicResults, setMusicResults] = useState<ItunesTrack[]>([]);
+  const [musicSearching, setMusicSearching] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState<ItunesTrack | null>(null);
+  const [playingId, setPlayingId] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Dancers step state
+  const [dancers, setDancers] = useState<WizardDancer[]>(DEFAULT_DANCERS);
+  const [formation, setFormation] = useState<Formation>("circle");
+
+  // Generate step state
   const [brief, setBrief] = useState("");
 
-  const generator = useChoreographyGenerator();
-  const form = useChoreographyForm({ onValidSubmit: generator.generate });
+  const styleList = category === "Dance" ? DANCE_STYLES : FITNESS_STYLES;
 
-  const styleList: readonly ChoreographyStyle[] =
-    category === "Dance" ? DANCE_STYLES : FITNESS_STYLES;
+  // Stop audio on unmount
+  useEffect(() => () => { audioRef.current?.pause(); }, []);
 
   function handleCategoryChange(cat: "Dance" | "Fitness") {
     setCategory(cat);
@@ -118,372 +125,486 @@ function AiBriefPanel({ plan }: { plan: Plan }) {
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!form.isValid) return;
-    generator.generate(form.values);
+  function handleMusicQueryChange(q: string) {
+    setMusicQuery(q);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    if (!q.trim()) { setMusicResults([]); return; }
+    searchTimerRef.current = setTimeout(async () => {
+      setMusicSearching(true);
+      try {
+        const res = await fetch(
+          `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&entity=song&limit=6`,
+        );
+        const data = await res.json() as { results: ItunesTrack[] };
+        setMusicResults(data.results ?? []);
+      } catch {
+        setMusicResults([]);
+      } finally {
+        setMusicSearching(false);
+      }
+    }, 500);
   }
 
-  return (
-    <div className={styles.leftPanel}>
-      {generator.isGenerating && (
-        <GeneratingOverlay plan={plan} style={form.values.style} bpm={bpm} />
-      )}
+  function togglePreview(track: ItunesTrack) {
+    if (!track.previewUrl) return;
+    if (playingId === track.trackId) {
+      audioRef.current?.pause();
+      audioRef.current = null;
+      setPlayingId(null);
+    } else {
+      audioRef.current?.pause();
+      const audio = new Audio(track.previewUrl);
+      audio.play().catch(() => {});
+      audio.onended = () => { setPlayingId(null); audioRef.current = null; };
+      audioRef.current = audio;
+      setPlayingId(track.trackId);
+    }
+  }
 
-      <Link href={ROUTES.DASHBOARD} className={styles.backLink}>← Back</Link>
-
-      <div className={styles.leftHeader}>
-        <h1 className={styles.pageTitle}>
-          Compose a <span className={styles.accentWord}>new set</span>
-        </h1>
-        <p className={styles.pageSub}>
-          Describe the vibe. Claude crafts the sequence. You refine.
-        </p>
-      </div>
-
-      {generator.error && (
-        <div className={styles.errorBanner}>{generator.error}</div>
-      )}
-
-      {/* Brief card */}
-      <div className={styles.briefCard}>
-        <div className={styles.briefLabel}>
-          <IconSpark /> THE BRIEF
-        </div>
-        <textarea
-          className={styles.briefArea}
-          value={brief}
-          onChange={(e) => setBrief(e.target.value)}
-          placeholder="A 30-minute hip hop warm-up for teens, energetic, should peak at minute 20."
-          rows={4}
-        />
-      </div>
-
-      <form onSubmit={handleSubmit}>
-        {/* Discipline */}
-        <div className={styles.miniSection}>
-          <span className={styles.miniLabel}>DISCIPLINE</span>
-          <div className={styles.styleTabs}>
-            {(["Dance", "Fitness"] as const).map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                className={category === cat ? styles.styleTabActive : styles.styleTab}
-                onClick={() => handleCategoryChange(cat)}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-          <div className={styles.styleGrid}>
-            {styleList.map((s) => (
-              <button
-                key={s}
-                type="button"
-                className={form.values.style === s ? styles.styleOptSelected : styles.styleOpt}
-                onClick={() => form.setStyle(s)}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Difficulty */}
-        <div className={styles.miniSection}>
-          <span className={styles.miniLabel}>DIFFICULTY</span>
-          <div className={styles.diffRow}>
-            {DIFFICULTIES.map((d, i) => (
-              <button
-                key={d}
-                type="button"
-                className={form.values.difficulty === d ? styles.diffBtnActive : styles.diffBtn}
-                onClick={() => form.setDifficulty(d as ChoreographyDifficulty)}
-              >
-                {d}
-                <span className={styles.diffBtnDots}>
-                  {[0, 1, 2].map((n) => (
-                    <span key={n} className={n <= i ? styles.dotOn : styles.dot} />
-                  ))}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Duration + Dancers */}
-        <div className={styles.miniSectionRow}>
-          <div className={styles.miniSection}>
-            <span className={styles.miniLabel}>DURATION</span>
-            <div className={styles.durationRow}>
-              <span className={styles.durationVal}>
-                {form.values.duration}
-                <span className={styles.durationUnit}>min</span>
-              </span>
-              <div className={styles.sliderCol}>
-                <input
-                  type="range"
-                  className={styles.rangeSlider}
-                  min={0}
-                  max={DURATIONS.length - 1}
-                  step={1}
-                  value={form.durationIndex}
-                  onChange={(e) => form.setDurationIndex(Number(e.target.value))}
-                />
-                <div className={styles.durationLabels}>
-                  {DURATIONS.map((d, i) => (
-                    <span key={d} className={i === form.durationIndex ? styles.durLabelActive : styles.durLabel}>
-                      {d}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.miniSection}>
-            <span className={styles.miniLabel}>DANCERS / STUDENTS</span>
-            <div className={styles.dancersRow}>
-              <span className={styles.dancersVal}>
-                {dancerCount}
-                <span className={styles.dancersUnit}>on stage</span>
-              </span>
-              <input
-                type="range"
-                className={styles.rangeSlider}
-                min={1}
-                max={12}
-                step={1}
-                value={dancerCount}
-                onChange={(e) => setDancerCount(Number(e.target.value))}
-              />
-              <div className={styles.dancerDots}>
-                {Array.from({ length: Math.min(dancerCount, 8) }, (_, i) => (
-                  <span
-                    key={i}
-                    className={styles.dancerDot}
-                    style={{ background: DANCER_COLORS[i % DANCER_COLORS.length] }}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className={styles.formFoot}>
-          <div className={styles.footNote}>
-            <IconSpark />
-            Claude will draft 8–14 moves + formation per move.
-          </div>
-          <div className={styles.footActions}>
-            <Link href={ROUTES.DASHBOARD} className={styles.cancelBtn}>Cancel</Link>
-            <button
-              type="submit"
-              className={styles.generateBtn}
-              disabled={!form.isValid || generator.isGenerating}
-            >
-              <IconSpark /> Generate
-            </button>
-          </div>
-        </div>
-      </form>
-
-      {/* Secondary options */}
-      <div className={styles.altCards}>
-        <div className={styles.altCard}>
-          <div className={styles.altCardTitle}>Start from blank</div>
-          <div className={styles.altCardDesc}>Build move by move on the timeline.</div>
-        </div>
-        <div className={styles.altCard}>
-          <div className={styles.altCardTitle}>Remix a template</div>
-          <div className={styles.altCardDesc}>Pick a blueprint — reggaeton warm-up, K-pop combo…</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Right panel: Guided wizard ───────────────────────────────────────────────
-
-function GuidedWizardPanel() {
-  const [step, setStep] = useState<WizardStep>(2); // start on Dancers step for demo
-  const [dancers, setDancers] = useState<WizardDancer[]>(DEFAULT_DANCERS);
-  const [formation, setFormation] = useState<Formation>("circle");
+  function selectTrack(track: ItunesTrack) {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    setPlayingId(null);
+    setSelectedTrack(track);
+    setMusicResults([]);
+  }
 
   function addDancer() {
     if (dancers.length >= 12) return;
     const i = dancers.length % DANCER_NAMES.length;
-    setDancers([
-      ...dancers,
-      { id: `d-${Date.now()}`, name: DANCER_NAMES[i], color: DANCER_COLORS[i % DANCER_COLORS.length] },
-    ]);
+    setDancers((prev) => [...prev, { id: `d-${Date.now()}`, name: DANCER_NAMES[i], color: DANCER_COLORS[i % DANCER_COLORS.length] }]);
   }
 
   function removeDancer(id: string) {
-    setDancers(dancers.filter((d) => d.id !== id));
+    setDancers((prev) => prev.filter((d) => d.id !== id));
   }
 
-  return (
-    <div className={styles.rightPanel}>
-      <Link href={ROUTES.DASHBOARD} className={styles.backLink}>← Back</Link>
+  function handleGenerate() {
+    const descParts = [
+      brief.trim(),
+      `Target BPM: ${bpm}.`,
+      selectedTrack
+        ? `Music reference: "${selectedTrack.trackName}" by ${selectedTrack.artistName}.`
+        : "",
+      `${dancers.length} dancers, starting in ${formation} formation.`,
+    ].filter(Boolean);
 
-      {/* Step tabs */}
-      <div className={styles.wizardSteps}>
-        {WIZARD_STEPS.map((label, i) => {
+    generator.generate({
+      ...form.values,
+      targetAudience: form.values.targetAudience.trim() || "General",
+      description: descParts.join(" "),
+    });
+  }
+
+  const canAdvance =
+    step === 0 ? !!form.values.style && !!form.values.difficulty
+    : step === 1 ? true
+    : step === 2 ? dancers.length > 0
+    : true;
+
+  function goNext() { if (canAdvance) setStep((s) => Math.min(3, s + 1) as Step); }
+  function goBack() { setStep((s) => Math.max(0, s - 1) as Step); }
+
+  return (
+    <div className={styles.page}>
+      {generator.isGenerating && (
+        <GeneratingOverlay plan={plan} style={form.values.style} bpm={bpm} />
+      )}
+
+      {/* Page header */}
+      <div className={styles.pageHead}>
+        <Link href={ROUTES.DASHBOARD} className={styles.backLink}>← Back to dashboard</Link>
+        <h1 className={styles.pageTitle}>New choreography</h1>
+      </div>
+
+      {/* Step indicator */}
+      <div className={styles.stepBar}>
+        {STEPS.map((label, i) => {
           const done = i < step;
           const active = i === step;
           return (
             <button
               key={label}
               type="button"
-              className={`${styles.wizardStep} ${done ? styles.wizardStepDone : ""} ${active ? styles.wizardStepActive : ""}`}
-              onClick={() => setStep(i as WizardStep)}
+              className={`${styles.stepItem} ${active ? styles.stepItemActive : ""} ${done ? styles.stepItemDone : ""}`}
+              onClick={() => { if (done) setStep(i as Step); }}
+              disabled={i > step}
             >
-              <span className={styles.wizardStepNum}>
-                {done ? "✓" : String(i + 1).padStart(2, "0")}
-              </span>
-              <span className={styles.wizardStepLabel}>{label}</span>
-              {i < WIZARD_STEPS.length - 1 && <span className={styles.wizardStepLine} />}
+              <span className={styles.stepNum}>{done ? "✓" : i + 1}</span>
+              <span className={styles.stepLabel}>{label}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Step content */}
-      <div className={styles.wizardContent}>
-        {step === 2 && (
-          <>
-            <div className={styles.wizardStepCrumb}>STEP 03 · DANCERS</div>
-            <h2 className={styles.wizardTitle}>Who's on stage?</h2>
-            <p className={styles.wizardDesc}>
-              Name your dancers. Claude will assign positions per move — you can edit later.
-            </p>
+      {generator.error && <div className={styles.errorBanner}>{generator.error}</div>}
 
-            <div className={styles.wizardCols}>
-              {/* Dancer roster */}
-              <div className={styles.rosterCard}>
-                <div className={styles.rosterHead}>
-                  <span className={styles.rosterLabel}>ROSTER · {dancers.length}</span>
-                </div>
-                <div className={styles.rosterList}>
-                  {dancers.map((d, i) => (
-                    <div key={d.id} className={styles.rosterRow}>
-                      <span className={styles.rosterAvatar} style={{ background: d.color }}>
-                        {d.name[0]}
-                      </span>
-                      <span className={styles.rosterName}>{d.name}</span>
-                      <div className={styles.rosterRowActions}>
-                        <span className={styles.rosterTag}>eq {i}</span>
-                        <span className={styles.rosterTag}>f{i + 1}</span>
-                        <button
-                          type="button"
-                          className={styles.rosterRemove}
-                          onClick={() => removeDancer(d.id)}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <button type="button" className={styles.addDancerBtn} onClick={addDancer}>
-                  <IconPlus /> Add dancer
+      {/* ── Step 0: Style ──────────────────────────────────────────────────── */}
+      {step === 0 && (
+        <div className={styles.stepPanel}>
+          <div className={styles.stepHead}>
+            <span className={styles.stepCrumb}>STEP 01 · STYLE</span>
+            <h2 className={styles.stepTitle}>What kind of class?</h2>
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>Discipline</label>
+            <div className={styles.categoryTabs}>
+              {(["Dance", "Fitness"] as const).map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  className={category === cat ? styles.categoryTabActive : styles.categoryTab}
+                  onClick={() => handleCategoryChange(cat)}
+                >
+                  {cat}
                 </button>
-              </div>
+              ))}
+            </div>
+          </div>
 
-              {/* Formation preview */}
-              <div className={styles.formationCard}>
-                <div className={styles.rosterHead}>
-                  <span className={styles.rosterLabel}>STARTING FORMATION</span>
-                </div>
-                <div className={styles.formationCrumb}>STAGE · INTRO</div>
-                <MiniStage dancers={dancers} formation={formation} />
-                <div className={styles.formationPresets}>
-                  {(["line", "v-shape", "diamond", "circle", "free"] as Formation[]).map((f) => (
-                    <button
-                      key={f}
-                      type="button"
-                      className={formation === f ? styles.presetBtnActive : styles.presetBtn}
-                      onClick={() => setFormation(f)}
-                    >
-                      {f.charAt(0).toUpperCase() + f.slice(1).replace("-", "-")}
-                    </button>
-                  ))}
-                </div>
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>Style</label>
+            <div className={styles.styleGrid}>
+              {styleList.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  className={form.values.style === s ? styles.styleOptActive : styles.styleOpt}
+                  onClick={() => form.setStyle(s)}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>Difficulty</label>
+            <div className={styles.diffRow}>
+              {DIFFICULTIES.map((d) => {
+                const meta = DIFF_META[d as keyof typeof DIFF_META];
+                const active = form.values.difficulty === d;
+                return (
+                  <button
+                    key={d}
+                    type="button"
+                    className={active ? styles.diffBtnActive : styles.diffBtn}
+                    onClick={() => form.setDifficulty(d as ChoreographyDifficulty)}
+                  >
+                    <span className={styles.diffBtnDots}>
+                      {[0, 1, 2].map((n) => (
+                        <span key={n} className={n < meta.dots ? styles.dotOn : styles.dot} />
+                      ))}
+                    </span>
+                    <span className={styles.diffBtnName}>{d}</span>
+                    <span className={styles.diffBtnDesc}>{meta.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>Duration</label>
+            <div className={styles.durationRow}>
+              <span className={styles.durationVal}>
+                {form.values.duration}
+                <span className={styles.durationUnit}> min</span>
+              </span>
+              <input
+                type="range"
+                className={styles.rangeSlider}
+                min={0}
+                max={DURATIONS.length - 1}
+                step={1}
+                value={form.durationIndex}
+                onChange={(e) => form.setDurationIndex(Number(e.target.value))}
+              />
+              <div className={styles.durationTicks}>
+                {DURATIONS.map((d) => (
+                  <span key={d} className={form.values.duration === d ? styles.tickActive : styles.tick}>{d}</span>
+                ))}
               </div>
             </div>
-          </>
-        )}
+          </div>
 
-        {step === 0 && (
-          <>
-            <div className={styles.wizardStepCrumb}>STEP 01 · VIBE</div>
-            <h2 className={styles.wizardTitle}>Set the vibe</h2>
-            <p className={styles.wizardDesc}>Choose style, difficulty, and duration to match your class.</p>
-          </>
-        )}
-
-        {step === 1 && (
-          <>
-            <div className={styles.wizardStepCrumb}>STEP 02 · MUSIC</div>
-            <h2 className={styles.wizardTitle}>Pick a sound</h2>
-            <p className={styles.wizardDesc}>Set the BPM and genre. Claude will suggest matching tracks.</p>
-          </>
-        )}
-
-        {step === 3 && (
-          <>
-            <div className={styles.wizardStepCrumb}>STEP 04 · REVIEW</div>
-            <h2 className={styles.wizardTitle}>Ready to generate</h2>
-            <p className={styles.wizardDesc}>Review your setup, then let Claude compose the full sequence.</p>
-          </>
-        )}
-      </div>
-
-      {/* Navigation */}
-      <div className={styles.wizardNav}>
-        <button
-          type="button"
-          className={styles.backBtn}
-          onClick={() => setStep((s) => Math.max(0, s - 1) as WizardStep)}
-          disabled={step === 0}
-        >
-          ← Back
-        </button>
-        <button
-          type="button"
-          className={styles.continueBtn}
-          onClick={() => setStep((s) => Math.min(3, s + 1) as WizardStep)}
-        >
-          {step === 3 ? "Generate →" : "Continue →"}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// ── Page root ────────────────────────────────────────────────────────────────
-
-export function NewChoreographyClient({ plan }: { plan: Plan }) {
-  return (
-    <div className={styles.twoCol}>
-      <div className={styles.colLeft}>
-        <div className={styles.colHeader}>
-          <span className={styles.colNum}>01</span>
-          <span className={styles.colName}>AI-first brief</span>
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>
+              Who is this class for? <span className={styles.optional}>(optional)</span>
+            </label>
+            <input
+              className={styles.fieldInput}
+              value={form.values.targetAudience}
+              onChange={(e) => form.setTargetAudience(e.target.value)}
+              placeholder="e.g. Adult beginners, competitive teens, senior fitness group…"
+            />
+          </div>
         </div>
-        <AiBriefPanel plan={plan} />
-      </div>
+      )}
 
-      <div className={styles.colDivider} />
+      {/* ── Step 1: Music ─────────────────────────────────────────────────── */}
+      {step === 1 && (
+        <div className={styles.stepPanel}>
+          <div className={styles.stepHead}>
+            <span className={styles.stepCrumb}>STEP 02 · MUSIC</span>
+            <h2 className={styles.stepTitle}>Set the beat</h2>
+            <p className={styles.stepDesc}>
+              Set the target BPM and search for a reference track. Claude will suggest music — this helps it nail the energy. Totally optional.
+            </p>
+          </div>
 
-      <div className={styles.colRight}>
-        <div className={styles.colHeader}>
-          <span className={styles.colNum}>02</span>
-          <span className={styles.colName}>Guided wizard</span>
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>
+              Target BPM · <span className={styles.bpmVal}>{bpm}</span>
+            </label>
+            <input
+              type="range"
+              className={styles.rangeSlider}
+              min={60}
+              max={180}
+              step={1}
+              value={bpm}
+              onChange={(e) => setBpm(Number(e.target.value))}
+            />
+            <div className={styles.bpmMarkers}>
+              <span>60 slow</span>
+              <span>90 walk</span>
+              <span>120 medium</span>
+              <span>150 fast</span>
+              <span>180 intense</span>
+            </div>
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>Reference track search</label>
+            <div className={styles.searchWrap}>
+              <input
+                className={styles.fieldInput}
+                value={musicQuery}
+                onChange={(e) => handleMusicQueryChange(e.target.value)}
+                placeholder={`Search by artist or song — e.g. "Bad Bunny" or "Blinding Lights"`}
+              />
+              {musicSearching && (
+                <span className={styles.searchSpinner}><Spinner /></span>
+              )}
+            </div>
+
+            {/* Selected track */}
+            {selectedTrack && (
+              <div className={styles.selectedTrack}>
+                {selectedTrack.artworkUrl60 && (
+                  <img src={selectedTrack.artworkUrl60} alt="" className={styles.trackArt} />
+                )}
+                <div className={styles.trackInfo}>
+                  <div className={styles.trackName}>{selectedTrack.trackName}</div>
+                  <div className={styles.trackArtist}>{selectedTrack.artistName}</div>
+                </div>
+                <button type="button" className={styles.trackClear} onClick={() => setSelectedTrack(null)}>
+                  ×
+                </button>
+              </div>
+            )}
+
+            {/* Results list */}
+            {musicResults.length > 0 && !selectedTrack && (
+              <div className={styles.searchResults}>
+                {musicResults.map((track) => (
+                  <div key={track.trackId} className={styles.searchResult}>
+                    {track.artworkUrl60 && (
+                      <img src={track.artworkUrl60} alt="" className={styles.resultArt} />
+                    )}
+                    <div className={styles.resultInfo}>
+                      <div className={styles.resultName}>{track.trackName}</div>
+                      <div className={styles.resultArtist}>{track.artistName}</div>
+                    </div>
+                    <div className={styles.resultActions}>
+                      {track.previewUrl && (
+                        <button
+                          type="button"
+                          className={`${styles.previewBtn} ${playingId === track.trackId ? styles.previewBtnActive : ""}`}
+                          onClick={() => togglePreview(track)}
+                        >
+                          {playingId === track.trackId ? "■" : "▶"}
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className={styles.selectBtn}
+                        onClick={() => selectTrack(track)}
+                      >
+                        Use
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {musicQuery && !musicSearching && musicResults.length === 0 && !selectedTrack && (
+              <div className={styles.searchEmpty}>No results — try a different search</div>
+            )}
+          </div>
         </div>
-        <GuidedWizardPanel />
+      )}
+
+      {/* ── Step 2: Dancers ───────────────────────────────────────────────── */}
+      {step === 2 && (
+        <div className={styles.stepPanel}>
+          <div className={styles.stepHead}>
+            <span className={styles.stepCrumb}>STEP 03 · DANCERS</span>
+            <h2 className={styles.stepTitle}>Who's on stage?</h2>
+            <p className={styles.stepDesc}>
+              Name your dancers and pick a starting formation. Claude assigns positions per move — you can edit later.
+            </p>
+          </div>
+
+          <div className={styles.dancersLayout}>
+            {/* Roster */}
+            <div className={styles.rosterCard}>
+              <div className={styles.rosterHead}>
+                <span className={styles.fieldLabel}>ROSTER · {dancers.length}</span>
+              </div>
+              <div className={styles.rosterList}>
+                {dancers.map((d) => (
+                  <div key={d.id} className={styles.rosterRow}>
+                    <span className={styles.rosterAvatar} style={{ background: d.color }}>
+                      {d.name[0]}
+                    </span>
+                    <span className={styles.rosterName}>{d.name}</span>
+                    <button
+                      type="button"
+                      className={styles.rosterRemove}
+                      onClick={() => removeDancer(d.id)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                className={styles.addDancerBtn}
+                onClick={addDancer}
+                disabled={dancers.length >= 12}
+              >
+                + Add dancer
+              </button>
+            </div>
+
+            {/* Formation */}
+            <div className={styles.formationCard}>
+              <span className={styles.fieldLabel}>STARTING FORMATION</span>
+              <MiniStage dancers={dancers} formation={formation} />
+              <div className={styles.formationPresets}>
+                {(["line","v-shape","diamond","circle","free"] as Formation[]).map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    className={formation === f ? styles.presetBtnActive : styles.presetBtn}
+                    onClick={() => setFormation(f)}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Step 3: Generate ──────────────────────────────────────────────── */}
+      {step === 3 && (
+        <div className={styles.stepPanel}>
+          <div className={styles.stepHead}>
+            <span className={styles.stepCrumb}>STEP 04 · GENERATE</span>
+            <h2 className={styles.stepTitle}>Ready to compose</h2>
+            <p className={styles.stepDesc}>Review your setup and add any extra cues, then let Claude compose your full sequence.</p>
+          </div>
+
+          {/* Summary card */}
+          <div className={styles.summaryCard}>
+            <div className={styles.summaryRow}>
+              <span className={styles.sumKey}>Style</span>
+              <span className={styles.sumVal}>{form.values.style}</span>
+            </div>
+            <div className={styles.summaryRow}>
+              <span className={styles.sumKey}>Difficulty</span>
+              <span className={styles.sumVal}>{form.values.difficulty}</span>
+            </div>
+            <div className={styles.summaryRow}>
+              <span className={styles.sumKey}>Duration</span>
+              <span className={styles.sumVal}>{form.values.duration} min</span>
+            </div>
+            <div className={styles.summaryRow}>
+              <span className={styles.sumKey}>BPM</span>
+              <span className={styles.sumVal}>{bpm}</span>
+            </div>
+            <div className={styles.summaryRow}>
+              <span className={styles.sumKey}>Dancers</span>
+              <span className={styles.sumVal}>{dancers.length} · {formation}</span>
+            </div>
+            {form.values.targetAudience && (
+              <div className={styles.summaryRow}>
+                <span className={styles.sumKey}>Audience</span>
+                <span className={styles.sumVal}>{form.values.targetAudience}</span>
+              </div>
+            )}
+            {selectedTrack && (
+              <div className={styles.summaryRow}>
+                <span className={styles.sumKey}>Music ref</span>
+                <span className={styles.sumVal}>{selectedTrack.trackName} — {selectedTrack.artistName}</span>
+              </div>
+            )}
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.fieldLabel}>
+              Extra cues for Claude <span className={styles.optional}>(optional)</span>
+            </label>
+            <textarea
+              className={styles.briefArea}
+              value={brief}
+              onChange={(e) => setBrief(e.target.value)}
+              placeholder="e.g. Peak energy at minute 20, focus on arm isolations, avoid floor work, include a 2-minute cool-down…"
+              rows={3}
+            />
+          </div>
+
+          <button
+            type="button"
+            className={styles.generateBtn}
+            onClick={handleGenerate}
+            disabled={generator.isGenerating}
+          >
+            {generator.isGenerating ? (
+              <><Spinner /> Generating…</>
+            ) : (
+              "✦ Generate with Claude"
+            )}
+          </button>
+        </div>
+      )}
+
+      {/* Bottom nav */}
+      <div className={styles.stepNav}>
+        {step > 0 && (
+          <button type="button" className={styles.stepNavBack} onClick={goBack}>
+            ← Back
+          </button>
+        )}
+        <div className={styles.stepNavRight}>
+          {step < 3 && (
+            <button
+              type="button"
+              className={styles.stepNavContinue}
+              onClick={goNext}
+              disabled={!canAdvance}
+            >
+              Continue →
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
