@@ -50,6 +50,22 @@ const DEFAULT_DANCER_NAMES = ["Alex", "Sam", "Jordan", "Morgan", "Taylor", "Case
 const DEFAULT_DANCER_COLORS = ["#e85d5d","#5d9be8","#5de87a","#e8c45d","#c45de8","#5de8d4","#e8875d","#9b5de8"];
 const TRACK_COLORS = ["#e85d5d","#5d9be8","#5de87a","#e8c45d","#c45de8","#5de8d4"];
 
+// Returns a {x,y} position (0–1) for a dancer keyed by move index — 5 distinct presets so figures move between moves
+function getPresetPosition(dancerIdx: number, moveIdx: number, total: number): { x: number; y: number } {
+  const n = Math.max(total, 1);
+  const presets = [
+    (i: number) => ({ x: (i + 1) / (n + 1), y: 0.5 }),
+    (i: number) => ({ x: (Math.floor(i / 2) + 1) / (Math.ceil(n / 2) + 1), y: i % 2 === 0 ? 0.32 : 0.68 }),
+    (i: number) => ({ x: (i + 1) / (n + 1), y: 0.5 - Math.abs(i - (n - 1) / 2) * 0.2 }),
+    (i: number) => ({
+      x: 0.5 + 0.32 * Math.cos((i / n) * Math.PI * 2 - Math.PI / 2),
+      y: 0.5 + 0.28 * Math.sin((i / n) * Math.PI * 2 - Math.PI / 2),
+    }),
+    (i: number) => ({ x: 0.15 + (i / Math.max(n - 1, 1)) * 0.7, y: 0.25 + (i / Math.max(n - 1, 1)) * 0.5 }),
+  ];
+  return presets[moveIdx % presets.length](dancerIdx);
+}
+
 type Props = { choreography: Choreography; plan: Plan };
 
 export function TimelineEditor({ choreography, plan }: Props) {
@@ -305,8 +321,9 @@ export function TimelineEditor({ choreography, plan }: Props) {
             ) : (
               editor.dancers.map((dancer, i) => {
                 const pos = formation[dancer.id];
-                const dx = pos ? pos.x * stageW : (stageW / (editor.dancers.length + 1)) * (i + 1);
-                const dy = pos ? pos.y * stageH : stageH * 0.58;
+                const preset = getPresetPosition(i, pb.activeMoveIndex, editor.dancers.length);
+                const dx = pos ? pos.x * stageW : stageW * (0.1 + preset.x * 0.8);
+                const dy = pos ? pos.y * stageH : stageH * (0.25 + preset.y * 0.45);
                 const isDragging = dragging?.dancerId === dancer.id;
                 return (
                   <g
