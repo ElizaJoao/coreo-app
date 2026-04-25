@@ -135,8 +135,8 @@ export function ScheduleClient({ initialSchedules, choreographies }: Props) {
     }
   }
 
-  async function handleRemoveSchedule(id: string) {
-    await fetch(`/api/schedule/${id}`, { method: "DELETE" });
+  function handleRemoveSchedule(id: string) {
+    // Optimistic: remove immediately
     setSchedules((prev) => prev.filter((s) => s.id !== id));
     setAssignments((prev) => {
       const next = new Map(prev);
@@ -145,33 +145,58 @@ export function ScheduleClient({ initialSchedules, choreographies }: Props) {
       }
       return next;
     });
+    fetch(`/api/schedule/${id}`, { method: "DELETE" });
   }
 
-  async function handlePinChoreo(scheduleId: string, date: string, choreographyId: string) {
-    const res = await fetch("/api/schedule/assignments", {
+  function handlePinChoreo(scheduleId: string, date: string, choreographyId: string) {
+    setPinSlot(null);
+    // Optimistic: show assignment immediately with a temp ID
+    const optimistic: ClassAssignment = {
+      id: `tmp_${Date.now()}`,
+      userId: "",
+      scheduleId,
+      assignedDate: date,
+      choreographyId,
+      notes: "",
+      status: "scheduled",
+      createdAt: new Date().toISOString(),
+    };
+    const key = assignmentKey(scheduleId, date);
+    setAssignments((prev) => new Map(prev).set(key, optimistic));
+    // Confirm with server and replace temp with real record
+    fetch("/api/schedule/assignments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ scheduleId, assignedDate: date, choreographyId }),
-    });
-    if (!res.ok) return;
-    const assignment: ClassAssignment = await res.json();
-    setAssignments((prev) => {
-      const next = new Map(prev);
-      next.set(assignmentKey(scheduleId, date), assignment);
-      return next;
-    });
-    setPinSlot(null);
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((assignment: ClassAssignment | null) => {
+        if (assignment) {
+          setAssignments((prev) => new Map(prev).set(key, assignment));
+        } else {
+          // Rollback on failure
+          setAssignments((prev) => {
+            const next = new Map(prev);
+            next.delete(key);
+            return next;
+          });
+        }
+      });
   }
 
-  async function handleUnpin(scheduleId: string, date: string) {
+  function handleUnpin(scheduleId: string, date: string) {
     const key = assignmentKey(scheduleId, date);
     const assignment = assignments.get(key);
     if (!assignment) return;
-    await fetch(`/api/schedule/assignments/${assignment.id}`, { method: "DELETE" });
+    // Optimistic: remove immediately
     setAssignments((prev) => {
       const next = new Map(prev);
       next.delete(key);
       return next;
+    });
+    fetch(`/api/schedule/assignments/${assignment.id}`, { method: "DELETE" }).catch(() => {
+      // Rollback on failure
+      setAssignments((prev) => new Map(prev).set(key, assignment));
     });
   }
 
