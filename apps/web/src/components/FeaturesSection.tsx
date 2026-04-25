@@ -25,6 +25,11 @@ const FEATURES = [
     body: "Every plan gets an AI-recommended track with title, artist, and BPM matched to your class style and tempo.",
   },
   {
+    icon: "⬡",
+    title: "Dancer formations",
+    body: "Drag dancers to their exact position on the stage for each move. Every move stores its own formation.",
+  },
+  {
     icon: "🎬",
     title: "Video demos per move",
     body: "Pro plan: each move comes with a YouTube search link so you or your students can see the exact movement before class.",
@@ -34,6 +39,12 @@ const FEATURES = [
     icon: "🔗",
     title: "Student share page",
     body: "Pro plan: share a clean, read-only link with your class — they see the full sequence, timings, and video references.",
+    plan: "Pro",
+  },
+  {
+    icon: "🛒",
+    title: "Marketplace",
+    body: "Pro plan: browse ready-made routines from top instructors or publish your own and earn every time someone buys it.",
     plan: "Pro",
   },
   {

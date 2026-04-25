@@ -1,0 +1,221 @@
+@reference "tailwindcss";
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 96px 24px 80px;
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  margin: 0 0 16px;
+  line-height: 1.1;
+}
+
+.sub {
+  font-size: 15px;
+  color: var(--text-3);
+  max-width: 480px;
+  line-height: 1.65;
+  margin: 0 0 56px;
+}
+
+/* Pack grid */
+.packGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 48px;
+}
+
+@media (max-width: 700px) {
+  .packGrid { grid-template-columns: 1fr; }
+}
+
+.packCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  text-align: left;
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+
+.packCard:hover {
+  border-color: var(--border-2);
+  transform: translateY(-2px);
+}
+
+.packCover {
+  padding: 20px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 100px;
+}
+
+.packStyleBadge {
+  align-self: flex-start;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: 99px;
+  padding: 2px 9px;
+}
+
+.packTitle {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.packCreator {
+  font-size: 12px;
+  color: var(--text-4);
+}
+
+.packBody {
+  padding: 12px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.packMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.packStat {
+  font-size: 11.5px;
+  color: var(--text-3);
+}
+
+.packDot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--border-2);
+}
+
+.packRatingRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stars {
+  color: var(--accent);
+  font-size: 12px;
+  letter-spacing: -1px;
+}
+
+.ratingNum {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.ratingCount {
+  font-size: 11px;
+  color: var(--text-4);
+}
+
+.packFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.packPrice {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.packCta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* CTA row */
+.ctaRow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 13px 28px;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 4px 24px -4px oklch(0.82 0.17 85 / 0.4);
+}
+
+.btnPrimary:hover { opacity: 0.9; transform: translateY(-2px); }
+
+.sellerPitch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 20px;
+  max-width: 480px;
+}
+
+.sellerIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.sellerText {
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.4;
+  text-align: left;
+}
+
+.sellerText strong {
+  color: var(--text);
+}

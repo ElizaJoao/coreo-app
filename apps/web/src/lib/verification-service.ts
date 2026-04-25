@@ -134,11 +134,23 @@ export async function sendEmailCode(
   code: string,
   locale = "en",
 ): Promise<void> {
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const apiKey = process.env.RESEND_API_KEY;
+
+  // Dev fallback: log the code when no API key is configured
+  if (!apiKey) {
+    console.log(`[DEV] Verification code for ${email}: ${code}`);
+    return;
+  }
+
+  // RESEND_FROM_EMAIL must be set to a verified domain address in Resend.
+  // The default onboarding@resend.dev only delivers to the Resend account email.
+  const from = process.env.RESEND_FROM_EMAIL ?? "Offbeat <onboarding@resend.dev>";
+
+  const resend = new Resend(apiKey);
   const i18n = VERIFICATION_EMAIL_I18N[locale] ?? VERIFICATION_EMAIL_I18N.en;
 
   await resend.emails.send({
-    from: "Offbeat <onboarding@resend.dev>",
+    from,
     to: email,
     subject: i18n.subject(code),
     html: `

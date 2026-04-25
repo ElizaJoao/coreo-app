@@ -1,0 +1,419 @@
+@reference "tailwindcss";
+
+.outer {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px 0;
+  position: relative;
+}
+
+.glow {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 400px;
+  background: radial-gradient(ellipse at center, oklch(0.82 0.17 85 / 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Browser frame */
+.frame {
+  border-radius: 14px;
+  border: 1px solid var(--border-2);
+  background: #0a0a0a;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 32px 80px rgba(0,0,0,0.6),
+    0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* Window chrome */
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #111;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.urlBar {
+  flex: 1;
+  background: #0d0d0d;
+  border: 1px solid #1e1e1e;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 11px;
+  color: #555;
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+/* App UI */
+.ui {
+  display: flex;
+  flex-direction: column;
+  height: 440px;
+}
+
+/* View tabs */
+.tabBar {
+  display: flex;
+  gap: 2px;
+  padding: 6px 14px;
+  border-bottom: 1px solid #161616;
+  background: #0a0a0a;
+  flex-shrink: 0;
+}
+
+.tab {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #444;
+}
+
+.tabActive {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #ccc;
+  background: #1a1a1a;
+}
+
+/* Body */
+.body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Stage */
+.stage {
+  flex: 1;
+  background: #090909;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.stageFloor {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 12%;
+  background: #141414;
+  border-radius: 50%;
+  border: 1px solid #1e1e1e;
+}
+
+.dancer {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.stageLabel {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #333;
+  text-transform: uppercase;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 160px;
+  background: #0c0c0c;
+  border-left: 1px solid #161616;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sideSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sideLabel {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #333;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.sideRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.avatarName {
+  font-size: 11px;
+  color: #777;
+}
+
+.trackCard {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 7px;
+  padding: 7px 8px;
+}
+
+.trackNote {
+  font-size: 14px;
+  color: #555;
+}
+
+.trackTitle {
+  font-size: 10px;
+  font-weight: 600;
+  color: #aaa;
+  line-height: 1.2;
+}
+
+.trackSub {
+  font-size: 9px;
+  color: #444;
+}
+
+/* Mini waveform in sidebar */
+.miniWave {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  height: 20px;
+}
+
+/* Timeline */
+.timeline {
+  flex-shrink: 0;
+  background: #080808;
+  border-top: 1px solid #161616;
+}
+
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border-bottom: 1px solid #141414;
+}
+
+.playBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 1px solid #262626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: #888;
+}
+
+.timeCode {
+  font-size: 10px;
+  color: #555;
+  font-family: var(--font-mono);
+}
+
+.bpmBadge {
+  font-size: 9px;
+  font-weight: 600;
+  color: #444;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+/* Timeline rows */
+.tlRow {
+  display: flex;
+  align-items: stretch;
+  height: 32px;
+  border-bottom: 1px solid #111;
+}
+
+.tlLabel {
+  width: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #2a2a2a;
+  border-right: 1px solid #141414;
+}
+
+.waveWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 4px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.bar {
+  flex-shrink: 0;
+  width: 2px;
+  background: #1e1e1e;
+  border-radius: 1px;
+}
+
+.barPlayed {
+  flex-shrink: 0;
+  width: 2px;
+  background: oklch(0.82 0.17 85 / 0.35);
+  border-radius: 1px;
+}
+
+/* Track block overlay */
+.trackBlock {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border: 1px solid;
+  border-radius: 4px;
+  background: rgba(232, 196, 93, 0.08);
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-size: 8px;
+  font-weight: 600;
+  color: #e8c45d;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--accent);
+  opacity: 0.7;
+}
+
+/* Moves row */
+.movesWrap {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  overflow: hidden;
+  gap: 1px;
+  padding: 3px 0;
+}
+
+.clip {
+  display: flex;
+  align-items: center;
+  background: #141414;
+  border: 1px solid #1e1e1e;
+  border-radius: 3px;
+  padding: 0 4px;
+  min-width: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.clipActive {
+  display: flex;
+  align-items: center;
+  background: oklch(0.82 0.17 85 / 0.1);
+  border: 1px solid oklch(0.82 0.17 85 / 0.35);
+  border-radius: 3px;
+  padding: 0 4px;
+  min-width: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.clipName {
+  font-size: 8px;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.clipActive .clipName {
+  color: var(--accent);
+}
+
+/* Bottom fade overlay */
+.bottomFade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+  pointer-events: none;
+}
