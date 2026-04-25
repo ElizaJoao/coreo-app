@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ROUTES } from "../../../constants/routes";
 import { useChoreographyEditor } from "../../../hooks/useChoreographyEditor";
 import { useChoreographyPlayback } from "../../../hooks/useChoreographyPlayback";
+import { Spinner } from "../../../components/Spinner";
 import type { Choreography, Dancer, DancerPosition } from "../../../types/choreography";
 import type { Plan } from "../../../constants/plans";
 import styles from "./TimelineEditor.module.css";
@@ -118,6 +119,7 @@ export function TimelineEditor({ choreography, plan }: Props) {
             onClick={editor.save}
             disabled={editor.status === "saving"}
           >
+            {editor.status === "saving" && <Spinner />}
             {editor.status === "saving" ? "Saving…" : "Save"}
           </button>
         </div>

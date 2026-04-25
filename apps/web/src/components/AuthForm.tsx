@@ -5,6 +5,7 @@ import { useState } from "react";
 import clsx from "clsx";
 
 import { type VerificationMethod } from "../constants/auth";
+import { Spinner } from "./Spinner";
 import styles from "./AuthForm.module.css";
 
 export type AuthFormValues = {
@@ -160,7 +161,8 @@ export function AuthForm(props: AuthFormProps) {
         disabled={props.isSubmitting || !props.isFormValid}
         className={styles.submitBtn}
       >
-        {props.isSubmitting ? "Please wait..." : isSignup ? "Continue" : "Sign in"}
+        {props.isSubmitting && <Spinner />}
+        {props.isSubmitting ? (isSignup ? "Creating account…" : "Signing in…") : isSignup ? "Continue" : "Sign in"}
       </button>
     </form>
   );
