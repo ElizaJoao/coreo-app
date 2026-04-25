@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { ROUTES } from "../constants/routes";
 import type { ChoreographyFormValues } from "./useChoreographyForm";
-import type { Choreography } from "../types/choreography";
+import type { Choreography, Dancer } from "../types/choreography";
 
 type State =
   | { status: "idle" }
@@ -17,13 +17,13 @@ export function useChoreographyGenerator() {
   const [state, setState] = useState<State>({ status: "idle" });
 
   const generate = useCallback(
-    async (values: ChoreographyFormValues) => {
+    async (values: ChoreographyFormValues, dancers?: Dancer[]) => {
       setState({ status: "generating" });
       try {
         const response = await fetch("/api/choreography/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
+          body: JSON.stringify({ ...values, dancers: dancers ?? [] }),
         });
 
         if (!response.ok) {
