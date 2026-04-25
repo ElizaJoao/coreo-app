@@ -159,6 +159,7 @@
   height: 100%;
   display: block;
 }
+.stageDragging { cursor: grabbing; }
 
 /* Side panel */
 .sidePanel {
@@ -234,6 +235,23 @@
   color: var(--text);
   flex: 1;
 }
+
+.dancerNameInput {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 2px 4px;
+  border-radius: 5px;
+  min-width: 0;
+  transition: background 100ms;
+  font-family: inherit;
+}
+.dancerNameInput:hover { background: var(--surface-3); }
+.dancerNameInput:focus { background: var(--surface-3); }
 
 .dancerRemove {
   font-size: 16px;
@@ -502,14 +520,9 @@
 .moveClip {
   height: 100%;
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 8px;
+  align-items: stretch;
   background: var(--surface-2);
   border-right: 1px solid var(--border);
-  border: none;
-  cursor: pointer;
-  text-align: left;
   overflow: hidden;
   transition: background 100ms;
   position: relative;
@@ -575,3 +588,81 @@
   transform: translateX(-1px);
   z-index: 2;
 }
+
+/* Taller moves row */
+.tlRowMoves {
+  height: 52px;
+}
+
+/* Seek area inside clip */
+.clipSeekArea {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 0 6px;
+  overflow: hidden;
+}
+
+/* Duration + delete grouped on right of clip */
+.clipControls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 0 4px 0 2px;
+}
+
+.clipDurInput {
+  width: 30px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-4);
+  text-align: right;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+.clipDurInput::-webkit-outer-spin-button,
+.clipDurInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.clipDurInput:focus {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 3px;
+  padding: 1px 3px;
+  width: 36px;
+}
+.moveClipActive .clipDurInput { color: var(--accent); }
+
+.clipDurUnit {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-4);
+}
+.moveClipActive .clipDurUnit { color: var(--accent); opacity: 0.7; }
+
+.clipDelete {
+  font-size: 14px;
+  line-height: 1;
+  color: var(--text-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 2px;
+  opacity: 0;
+  transition: opacity 100ms, color 100ms;
+  flex-shrink: 0;
+}
+.moveClip:hover .clipDelete { opacity: 1; }
+.clipDelete:hover { color: oklch(0.72 0.19 25); }

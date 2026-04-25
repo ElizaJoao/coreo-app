@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ROUTES } from "../../../constants/routes";
 import { useChoreographyEditor } from "../../../hooks/useChoreographyEditor";
@@ -55,6 +55,39 @@ export function TimelineEditor({ choreography, plan }: Props) {
   const editor = useChoreographyEditor(choreography);
   const pb = useChoreographyPlayback(editor.moves);
   const [suggestionDone, setSuggestionDone] = useState(false);
+  const [dragging, setDragging] = useState<{ dancerId: string } | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const m = editor.music;
+    if (!m?.title || !m?.artist) return;
+    let cancelled = false;
+    const q = encodeURIComponent(`${m.title} ${m.artist}`);
+    fetch(`https://itunes.apple.com/search?term=${q}&media=music&entity=song&limit=3`)
+      .then(r => r.json())
+      .then((d: { results: Array<{ previewUrl?: string }> }) => {
+        if (!cancelled) setPreviewUrl(d.results?.[0]?.previewUrl ?? null);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [editor.music?.title, editor.music?.artist]);
+
+  useEffect(() => {
+    if (!previewUrl) return;
+    const audio = new Audio(previewUrl);
+    audioRef.current = audio;
+    return () => { audio.pause(); audioRef.current = null; };
+  }, [previewUrl]);
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+    if (pb.playing) audioRef.current.play().catch(() => {});
+    else audioRef.current.pause();
+  }, [pb.playing]);
+
+  useEffect(() => () => { audioRef.current?.pause(); }, []);
 
   const bpm = editor.music?.bpm ?? 120;
   const activeMove = editor.moves[pb.activeMoveIndex];
@@ -70,6 +103,26 @@ export function TimelineEditor({ choreography, plan }: Props) {
   function handleProgressClick(e: React.MouseEvent<HTMLDivElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
     pb.seek(pb.totalSec * ((e.clientX - rect.left) / rect.width));
+  }
+
+  function getSvgFraction(e: React.MouseEvent<SVGSVGElement>): { x: number; y: number } {
+    const svg = svgRef.current;
+    if (!svg) return { x: 0.5, y: 0.5 };
+    const rect = svg.getBoundingClientRect();
+    return {
+      x: Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)),
+      y: Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height)),
+    };
+  }
+
+  function handleSvgMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+    if (!dragging || !activeMove) return;
+    const { x, y } = getSvgFraction(e);
+    editor.updateDancerPosition(activeMove.id, dragging.dancerId, { x, y });
+  }
+
+  function handleSvgMouseUp() {
+    setDragging(null);
   }
 
   function handleAddDancer() {
@@ -135,7 +188,15 @@ export function TimelineEditor({ choreography, plan }: Props) {
               <span className={styles.grooveBadge}>{activeMove.tag.toUpperCase()}</span>
             )}
           </div>
-          <svg viewBox={`0 0 ${stageW} ${stageH}`} className={styles.stageSvg} aria-label="Stage">
+          <svg
+            ref={svgRef}
+            viewBox={`0 0 ${stageW} ${stageH}`}
+            className={`${styles.stageSvg} ${dragging ? styles.stageDragging : ""}`}
+            aria-label="Stage"
+            onMouseMove={handleSvgMouseMove}
+            onMouseUp={handleSvgMouseUp}
+            onMouseLeave={handleSvgMouseUp}
+          >
             <defs>
               <radialGradient id="te-spot" cx="50%" cy="72%" r="52%">
                 <stop offset="0%" stopColor="oklch(0.82 0.17 85 / 0.12)" />
@@ -155,7 +216,7 @@ export function TimelineEditor({ choreography, plan }: Props) {
             {/* Figures */}
             {editor.dancers.length === 0 ? (
               [0.28, 0.5, 0.72].map((xf, i) => (
-                <g key={i} transform={`translate(${stageW * xf}, ${stageH * 0.58})`}>
+                <g key={i} style={{ transform: `translate(${stageW * xf}px, ${stageH * 0.58}px)` }}>
                   <StageFigure color="#505050" />
                 </g>
               ))
@@ -163,10 +224,23 @@ export function TimelineEditor({ choreography, plan }: Props) {
               editor.dancers.map((dancer, i) => {
                 const pos = formation[dancer.id];
                 const dx = pos ? pos.x * stageW : (stageW / (editor.dancers.length + 1)) * (i + 1);
-                const dy = pos ? pos.y * stageH * 0.7 + stageH * 0.1 : stageH * 0.58;
+                const dy = pos ? pos.y * stageH : stageH * 0.58;
+                const isDragging = dragging?.dancerId === dancer.id;
                 return (
-                  <g key={dancer.id} transform={`translate(${dx}, ${dy})`}>
+                  <g
+                    key={dancer.id}
+                    style={{
+                      transform: `translate(${dx}px, ${dy}px)`,
+                      transition: isDragging ? "none" : "transform 0.75s ease",
+                      cursor: "grab",
+                    }}
+                    onMouseDown={(e) => { e.preventDefault(); setDragging({ dancerId: dancer.id }); }}
+                  >
                     <StageFigure color={dancer.color} />
+                    <circle cx="0" cy="-80" r="14" fill={dancer.color} opacity="0.9" />
+                    <text x="0" y="-76" textAnchor="middle" fontSize="9" fontWeight="700" fill="white" fontFamily="sans-serif">
+                      {dancer.name[0]}
+                    </text>
                   </g>
                 );
               })
@@ -188,7 +262,13 @@ export function TimelineEditor({ choreography, plan }: Props) {
                   <span className={styles.dancerAvatar} style={{ background: d.color }}>
                     {d.name[0]}
                   </span>
-                  <span className={styles.dancerName}>{d.name}</span>
+                  <input
+                    className={styles.dancerNameInput}
+                    value={d.name}
+                    onChange={(e) => editor.setDancers(
+                      editor.dancers.map((x) => x.id === d.id ? { ...x, name: e.target.value } : x)
+                    )}
+                  />
                   <button
                     type="button"
                     className={styles.dancerRemove}
@@ -301,24 +381,44 @@ export function TimelineEditor({ choreography, plan }: Props) {
         </div>
 
         {/* Moves clips row */}
-        <div className={styles.tlRow}>
+        <div className={`${styles.tlRow} ${styles.tlRowMoves}`}>
           <div className={styles.tlLabel}>MOVES</div>
           <div className={styles.movesTrack}>
             {editor.moves.map((move, i) => {
               const w = (move.duration / totalDur) * 100;
               const isActive = i === pb.activeMoveIndex;
               return (
-                <button
+                <div
                   key={move.id}
-                  type="button"
                   className={`${styles.moveClip} ${isActive ? styles.moveClipActive : ""}`}
                   style={{ width: `${w}%` }}
-                  onClick={() => pb.seekToMove(i)}
                 >
-                  <span className={styles.clipOrd}>{String(i + 1).padStart(2, "0")}</span>
-                  <span className={styles.clipName}>{move.name}</span>
-                  <span className={styles.clipDur}>{fmtSec(move.duration)}</span>
-                </button>
+                  <button type="button" className={styles.clipSeekArea} onClick={() => pb.seekToMove(i)}>
+                    <span className={styles.clipOrd}>{String(i + 1).padStart(2, "0")}</span>
+                    <span className={styles.clipName}>{move.name}</span>
+                  </button>
+                  <div className={styles.clipControls}>
+                    <input
+                      type="number"
+                      className={styles.clipDurInput}
+                      value={move.duration}
+                      min={1}
+                      max={600}
+                      onChange={(e) => editor.updateMove(move.id, { duration: Math.max(1, Number(e.target.value)) })}
+                      onClick={(e) => e.stopPropagation()}
+                      title="Duration in seconds"
+                    />
+                    <span className={styles.clipDurUnit}>s</span>
+                    <button
+                      type="button"
+                      className={styles.clipDelete}
+                      onClick={(e) => { e.stopPropagation(); editor.deleteMove(move.id); }}
+                      title="Delete move"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
               );
             })}
             <button type="button" className={styles.addClipBtn} onClick={editor.addMove}>
