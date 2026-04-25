@@ -1,14 +1,11 @@
 import Link from "next/link";
 
 import { auth } from "../../auth";
-import { ChoreographyCard } from "../../components/ChoreographyCard";
-import { CreateCard } from "../../components/CreateCard";
 import { DayCell } from "../../components/DayCell";
-import { IconGrid, IconSpark } from "../../components/Icons";
+import { IconSpark } from "../../components/Icons";
 import { StatCard } from "../../components/StatCard";
 import { UpgradeBanner } from "../../components/UpgradeBanner";
-import { DANCE_STYLES } from "../../constants/choreography";
-import { DIFFICULTIES } from "../../constants/choreography";
+import { WelcomeModal } from "../../components/WelcomeModal";
 import { DASHBOARD_COPY } from "../../constants/ui";
 import { ROUTES } from "../../constants/routes";
 import { getChoreographiesByUser } from "../../lib/choreography-service";
@@ -16,12 +13,8 @@ import type { Choreography } from "../../types/choreography";
 import styles from "./page.module.css";
 
 type PageProps = {
-  searchParams: Promise<{ cat?: string; diff?: string; success?: string; plan?: string; view?: string }>;
+  searchParams: Promise<{ success?: string; plan?: string }>;
 };
-
-function getCategory(style: string): string {
-  return (DANCE_STYLES as readonly string[]).includes(style) ? "Dance" : "Fitness";
-}
 
 function computeStats(choreos: Choreography[]) {
   const totalMinutes = choreos.reduce((s, c) => s + c.duration, 0);
@@ -51,40 +44,39 @@ function getWeekDays() {
   });
 }
 
+function timeAgo(iso: string): string {
+  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (diff < 60) return "just now";
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  if (diff < 86400 * 7) return `${Math.floor(diff / 86400)}d ago`;
+  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
+const STYLE_COLORS: Record<string, string> = {
+  Zumba: "#e85d5d", "Hip Hop": "#5d9be8", Ballet: "#c45de8", Salsa: "#e8c45d",
+  Yoga: "#5de8d4", Bachata: "#f5a9b8", Pilates: "#9b5de8", "Body Combat": "#e8875d",
+  "Body Pump": "#d4e85d", Aerobics: "#5de87a", "K-Pop": "#9b5de8",
+  Flamenco: "#e85d9b", Contemporary: "#5d9be8", Jazz: "#e8c45d",
+};
+
+function styleColor(style: string): string {
+  return STYLE_COLORS[style] ?? "#888";
+}
+
 export default async function DashboardPage({ searchParams }: PageProps) {
   const session = await auth();
   const userId = session?.user?.id;
   const allChoreos = userId ? await getChoreographiesByUser(userId) : [];
 
   const params = await searchParams;
-  const cat = params.cat ?? "All";
-  const diff = params.diff ?? "All";
-  const view = params.view === "list" ? "list" : "grid";
-
-  const filtered = allChoreos.filter((c) => {
-    if (cat !== "All" && getCategory(c.style) !== cat) return false;
-    if (diff !== "All" && c.difficulty !== diff) return false;
-    return true;
-  });
-
   const stats = computeStats(allChoreos);
   const week = getWeekDays();
-
-  function chipHref(key: "cat" | "diff", value: string): string {
-    const sp = new URLSearchParams();
-    if (key === "cat") {
-      if (value !== "All") sp.set("cat", value);
-      if (diff !== "All") sp.set("diff", diff);
-    } else {
-      if (cat !== "All") sp.set("cat", cat);
-      if (value !== "All") sp.set("diff", value);
-    }
-    const qs = sp.toString();
-    return qs ? `/dashboard?${qs}` : "/dashboard";
-  }
+  const recent = allChoreos.slice(0, 5);
 
   return (
     <div className={styles.page}>
+      <WelcomeModal />
       {params.success === "1" && params.plan && (
         <UpgradeBanner plan={params.plan} />
       )}
@@ -99,12 +91,6 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           <p className={styles.pageSub}>{DASHBOARD_COPY.PAGE_SUBTITLE}</p>
         </div>
         <div className={styles.pageActions}>
-          <Link
-            href={view === "list" ? "/dashboard" : "/dashboard?view=list"}
-            className={styles.btnGhost}
-          >
-            <IconGrid size={14} /> {view === "list" ? "Grid" : "List"}
-          </Link>
           <Link href={ROUTES.DASHBOARD_NEW} className={styles.btnPrimary}>
             <IconSpark size={14} /> Generate new
           </Link>
@@ -130,26 +116,39 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         ))}
       </div>
 
-      {/* Choreographies */}
+      {/* Recent choreographies */}
       <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>Your choreographies</h2>
-        <div className={styles.filters}>
-          {(["All", "Dance", "Fitness"] as const).map((c) => (
-            <Link key={c} href={chipHref("cat", c)} className={cat === c ? styles.chipActive : styles.chip}>{c}</Link>
-          ))}
-          <div className={styles.filterDivider} />
-          {(["All", ...DIFFICULTIES] as const).map((d) => (
-            <Link key={d} href={chipHref("diff", d)} className={diff === d ? styles.chipActive : styles.chip}>{d}</Link>
-          ))}
-        </div>
+        <h2 className={styles.sectionTitle}>Recent</h2>
+        <Link href="/dashboard/library" className={styles.sectionAction}>View all in library →</Link>
       </div>
 
-      <div className={view === "list" ? styles.gridList : styles.grid}>
-        {filtered.map((c) => (
-          <ChoreographyCard key={c.id} choreography={c} href={ROUTES.DASHBOARD_ITEM(c.id)} />
-        ))}
-        <CreateCard />
-      </div>
+      {recent.length === 0 ? (
+        <div className={styles.emptyRecent}>
+          <p className={styles.emptyRecentText}>No choreographies yet.</p>
+          <Link href={ROUTES.DASHBOARD_NEW} className={styles.btnPrimary}>
+            <IconSpark size={13} /> Generate your first
+          </Link>
+        </div>
+      ) : (
+        <div className={styles.recentList}>
+          {recent.map((c) => (
+            <Link key={c.id} href={ROUTES.DASHBOARD_ITEM(c.id)} className={styles.recentRow}>
+              <div className={styles.recentAccent} style={{ background: styleColor(c.style) }} />
+              <div className={styles.recentMain}>
+                <span className={styles.recentName}>{c.name}</span>
+                <span className={styles.recentStyle}>{c.style}</span>
+              </div>
+              <div className={styles.recentChips}>
+                <span className={styles.recentChip}>{c.difficulty}</span>
+                <span className={styles.recentChip}>{c.duration} min</span>
+                <span className={styles.recentChip}>{c.moves.length} moves</span>
+              </div>
+              <span className={styles.recentDate}>{timeAgo(c.updatedAt)}</span>
+              <span className={styles.recentOpen}>Open →</span>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
