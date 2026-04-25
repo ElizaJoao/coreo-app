@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { DANCE_STYLES } from "../../../constants/choreography";
 import { ROUTES } from "../../../constants/routes";
@@ -62,7 +62,7 @@ function DancerBlob({
 }) {
   const gradId = `blob-${label.replace(/\s/g, "")}`;
   return (
-    <g transform={`translate(${x},${y})`}>
+    <g style={{ transform: `translate(${x}px, ${y}px)`, transition: "transform 0.75s ease" }}>
       <defs>
         <radialGradient id={gradId} cx="35%" cy="30%" r="65%">
           <stop offset="0%" stopColor={color} stopOpacity="1" />
@@ -112,10 +112,11 @@ function CinematicView({
   activeMoveIndex: number; progress: number;
   toggle: () => void; seek: (s: number) => void;
 }) {
-  const { moves, music, name, style, dancers = [] } = choreography;
+  const { moves, music, name, style, dancers = [], formations = [] } = choreography;
   const activeMove = moves[activeMoveIndex];
   const bpm = music?.bpm ?? 120;
   const category = (DANCE_STYLES as readonly string[]).includes(style) ? "Dance" : "Fitness";
+  const activeFormation = formations.find(f => f.moveId === activeMove?.id);
 
   function handleWaveClick(e: React.MouseEvent<HTMLDivElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -158,12 +159,15 @@ function CinematicView({
           {[-2, -1, 0, 1, 2].map((n) => (
             <line key={n} x1={400 + n * 100} y1={330} x2={400 + n * 65} y2={400} stroke="#1e1e1e" strokeWidth="1" />
           ))}
-          {/* Default 3 figures or dancer-count figures */}
+          {/* Default 3 figures or dancer-count figures, animated by formation */}
           {(dancers.length > 0 ? dancers.slice(0, 5) : [null, null, null] as null[]).map((d, i, arr) => {
             const count = arr.length;
-            const x = (800 / (count + 1)) * (i + 1);
+            const defaultX = (800 / (count + 1)) * (i + 1);
+            const formPos = d ? activeFormation?.positions[d.id] : undefined;
+            const x = formPos ? 80 + formPos.x * 640 : defaultX;
+            const yBase = formPos ? 180 + formPos.y * 120 : 240;
             return (
-              <g key={i} transform={`translate(${x}, 240)`}>
+              <g key={i} style={{ transform: `translate(${x}px, ${yBase}px)`, transition: "transform 0.75s ease" }}>
                 <StageFigure color={d ? d.color : "#5a5a5a"} scale={1.1} />
               </g>
             );
@@ -221,9 +225,10 @@ function ClassicView({
   activeMoveIndex: number; progress: number;
   toggle: () => void; seek: (s: number) => void; seekToMove: (i: number) => void;
 }) {
-  const { moves, music, name, dancers = [] } = choreography;
+  const { moves, music, name, dancers = [], formations = [] } = choreography;
   const activeMove = moves[activeMoveIndex];
   const bpm = music?.bpm ?? 120;
+  const activeFormation = formations.find(f => f.moveId === activeMove?.id);
 
   const moveCumStart = moves.slice(0, activeMoveIndex).reduce((s, m) => s + m.duration, 0);
   const moveElapsed = elapsed - moveCumStart;
@@ -267,17 +272,20 @@ function ClassicView({
             </defs>
             <rect width={stageW} height={stageH} fill="#0d0d0d" />
             <ellipse cx={stageW / 2} cy={stageH / 2} rx={stageW * 0.46} ry={stageH * 0.44} fill="url(#cls-floor)" stroke="#222" strokeWidth="1" />
-            {/* Dancer blobs */}
+            {/* Dancer blobs — position driven by formation data, animated via CSS transition */}
             {(dancers.length > 0 ? dancers : Array.from({ length: 6 }, (_, i) => ({
               id: `ph-${i}`, name: ["Ana", "Bruno", "Clara", "Diego", "Elena", "Faris"][i],
               color: ["#e85d5d", "#5d9be8", "#5de87a", "#e8c45d", "#c45de8", "#5de8d4"][i],
             }))).map((d, i) => {
-              const [xf, yf] = defaultPositions[i % defaultPositions.length];
+              const [defaultXf, defaultYf] = defaultPositions[i % defaultPositions.length];
+              const formPos = activeFormation?.positions[d.id];
+              const x = formPos ? stageW * formPos.x : stageW * defaultXf;
+              const y = formPos ? stageH * formPos.y : stageH * defaultYf;
               return (
                 <DancerBlob
                   key={d.id}
-                  x={stageW * xf}
-                  y={stageH * yf}
+                  x={x}
+                  y={y}
                   color={d.color}
                   label={d.name}
                   r={22}
@@ -477,6 +485,42 @@ type Props = { choreography: Choreography; mode: PlaybackMode };
 
 export function ChoreographyPlayback({ choreography, mode }: Props) {
   const pb = useChoreographyPlayback(choreography.moves);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Search iTunes for a preview URL of the AI-generated music metadata
+  useEffect(() => {
+    const m = choreography.music;
+    if (!m?.title || !m?.artist) return;
+    let cancelled = false;
+    const q = encodeURIComponent(`${m.title} ${m.artist}`);
+    fetch(`https://itunes.apple.com/search?term=${q}&media=music&entity=song&limit=3`)
+      .then(r => r.json())
+      .then((d: { results: Array<{ previewUrl?: string }> }) => {
+        if (!cancelled) setPreviewUrl(d.results?.[0]?.previewUrl ?? null);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [choreography.music?.title, choreography.music?.artist]);
+
+  // Create/destroy audio element whenever the preview URL changes
+  useEffect(() => {
+    if (!previewUrl) return;
+    const audio = new Audio(previewUrl);
+    audio.loop = true;
+    audioRef.current = audio;
+    return () => { audio.pause(); audioRef.current = null; };
+  }, [previewUrl]);
+
+  // Sync audio play/pause with the playback timer
+  useEffect(() => {
+    if (!audioRef.current) return;
+    if (pb.playing) audioRef.current.play().catch(() => {});
+    else audioRef.current.pause();
+  }, [pb.playing]);
+
+  // Cleanup on unmount
+  useEffect(() => () => { audioRef.current?.pause(); }, []);
 
   const shared = {
     choreography,
