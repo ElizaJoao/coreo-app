@@ -10,7 +10,7 @@ const GEN_STEPS = [
   "Finalising the sequence",
 ] as const;
 
-const STEP_TIMERS_MS = [2000, 5000, 9000] as const;
+const STEP_TIMERS_MS = [4000, 11000, 20000] as const;
 
 function IconCheck() {
   return (
